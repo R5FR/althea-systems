@@ -1,39 +1,33 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Web\\Web.csproj": {}
+    "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Web\\Web.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Application\\Application.csproj": {
+    "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Application\\Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Application\\Application.csproj",
+        "projectUniqueName": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Application\\Application.csproj",
         "projectName": "Application",
-        "projectPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Application\\Application.csproj",
-        "packagesPath": "C:\\Users\\ArthurL'AFFETER\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Application\\obj\\",
+        "projectPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Application\\Application.csproj",
+        "packagesPath": "C:\\Users\\Tom\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Application\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\ArthurL'AFFETER\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\Tom\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Domain\\Domain.csproj": {
-                "projectPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Domain\\Domain.csproj"
+              "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Domain\\Domain.csproj": {
+                "projectPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Domain\\Domain.csproj"
               }
             }
           }
@@ -47,8 +41,7 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "10.0.100"
+        }
       },
       "frameworks": {
         "net7.0": {
@@ -101,43 +94,37 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.419\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Authentication\\Authentication.csproj": {
+    "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Authentication\\Authentication.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Authentication\\Authentication.csproj",
+        "projectUniqueName": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Authentication\\Authentication.csproj",
         "projectName": "Authentication",
-        "projectPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Authentication\\Authentication.csproj",
-        "packagesPath": "C:\\Users\\ArthurL'AFFETER\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Authentication\\obj\\",
+        "projectPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Authentication\\Authentication.csproj",
+        "packagesPath": "C:\\Users\\Tom\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Authentication\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\ArthurL'AFFETER\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\Tom\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Application\\Application.csproj": {
-                "projectPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Application\\Application.csproj"
+              "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Application\\Application.csproj": {
+                "projectPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Application\\Application.csproj"
               },
-              "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Domain\\Domain.csproj": {
-                "projectPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Domain\\Domain.csproj"
+              "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Domain\\Domain.csproj": {
+                "projectPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Domain\\Domain.csproj"
               }
             }
           }
@@ -151,8 +138,7 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "10.0.100"
+        }
       },
       "frameworks": {
         "net7.0": {
@@ -205,43 +191,37 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.419\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\DAL\\DAL.csproj": {
+    "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\DAL\\DAL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\DAL\\DAL.csproj",
+        "projectUniqueName": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\DAL\\DAL.csproj",
         "projectName": "DAL",
-        "projectPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\DAL\\DAL.csproj",
-        "packagesPath": "C:\\Users\\ArthurL'AFFETER\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\DAL\\obj\\",
+        "projectPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\DAL\\DAL.csproj",
+        "packagesPath": "C:\\Users\\Tom\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\DAL\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\ArthurL'AFFETER\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\Tom\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Application\\Application.csproj": {
-                "projectPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Application\\Application.csproj"
+              "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Application\\Application.csproj": {
+                "projectPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Application\\Application.csproj"
               },
-              "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Domain\\Domain.csproj": {
-                "projectPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Domain\\Domain.csproj"
+              "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Domain\\Domain.csproj": {
+                "projectPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Domain\\Domain.csproj"
               }
             }
           }
@@ -255,8 +235,7 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "10.0.100"
+        }
       },
       "frameworks": {
         "net7.0": {
@@ -309,32 +288,26 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.419\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Domain\\Domain.csproj": {
+    "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Domain\\Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Domain\\Domain.csproj",
+        "projectUniqueName": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Domain\\Domain.csproj",
         "projectName": "Domain",
-        "projectPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Domain\\Domain.csproj",
-        "packagesPath": "C:\\Users\\ArthurL'AFFETER\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Domain\\obj\\",
+        "projectPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Domain\\Domain.csproj",
+        "packagesPath": "C:\\Users\\Tom\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Domain\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\ArthurL'AFFETER\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\Tom\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -352,8 +325,7 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "10.0.100"
+        }
       },
       "frameworks": {
         "net7.0": {
@@ -388,40 +360,34 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.419\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\ErrorHandling\\ErrorHandling.csproj": {
+    "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\ErrorHandling\\ErrorHandling.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\ErrorHandling\\ErrorHandling.csproj",
+        "projectUniqueName": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\ErrorHandling\\ErrorHandling.csproj",
         "projectName": "ErrorHandling",
-        "projectPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\ErrorHandling\\ErrorHandling.csproj",
-        "packagesPath": "C:\\Users\\ArthurL'AFFETER\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\ErrorHandling\\obj\\",
+        "projectPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\ErrorHandling\\ErrorHandling.csproj",
+        "packagesPath": "C:\\Users\\Tom\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\ErrorHandling\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\ArthurL'AFFETER\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\Tom\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Domain\\Domain.csproj": {
-                "projectPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Domain\\Domain.csproj"
+              "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Domain\\Domain.csproj": {
+                "projectPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Domain\\Domain.csproj"
               }
             }
           }
@@ -435,8 +401,7 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "10.0.100"
+        }
       },
       "frameworks": {
         "net7.0": {
@@ -485,52 +450,46 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.419\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Web\\Web.csproj": {
+    "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Web\\Web.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Web\\Web.csproj",
+        "projectUniqueName": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Web\\Web.csproj",
         "projectName": "Web",
-        "projectPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Web\\Web.csproj",
-        "packagesPath": "C:\\Users\\ArthurL'AFFETER\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Web\\obj\\",
+        "projectPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Web\\Web.csproj",
+        "packagesPath": "C:\\Users\\Tom\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Web\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\ArthurL'AFFETER\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\Tom\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Application\\Application.csproj": {
-                "projectPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Application\\Application.csproj"
+              "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Application\\Application.csproj": {
+                "projectPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Application\\Application.csproj"
               },
-              "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Authentication\\Authentication.csproj": {
-                "projectPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Authentication\\Authentication.csproj"
+              "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Authentication\\Authentication.csproj": {
+                "projectPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Authentication\\Authentication.csproj"
               },
-              "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\DAL\\DAL.csproj": {
-                "projectPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\DAL\\DAL.csproj"
+              "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\DAL\\DAL.csproj": {
+                "projectPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\DAL\\DAL.csproj"
               },
-              "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Domain\\Domain.csproj": {
-                "projectPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Domain\\Domain.csproj"
+              "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Domain\\Domain.csproj": {
+                "projectPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Domain\\Domain.csproj"
               },
-              "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\ErrorHandling\\ErrorHandling.csproj": {
-                "projectPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\ErrorHandling\\ErrorHandling.csproj"
+              "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\ErrorHandling\\ErrorHandling.csproj": {
+                "projectPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\ErrorHandling\\ErrorHandling.csproj"
               }
             }
           }
@@ -544,8 +503,7 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "10.0.100"
+        }
       },
       "frameworks": {
         "net7.0": {
@@ -605,7 +563,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.419\\RuntimeIdentifierGraph.json"
         }
       }
     }

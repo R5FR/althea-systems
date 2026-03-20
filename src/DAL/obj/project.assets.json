@@ -3635,42 +3635,35 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\ArthurL'AFFETER\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\Tom\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\DAL\\DAL.csproj",
+      "projectUniqueName": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\DAL\\DAL.csproj",
       "projectName": "DAL",
-      "projectPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\DAL\\DAL.csproj",
-      "packagesPath": "C:\\Users\\ArthurL'AFFETER\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\DAL\\obj\\",
+      "projectPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\DAL\\DAL.csproj",
+      "packagesPath": "C:\\Users\\Tom\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\DAL\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\ArthurL'AFFETER\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Users\\Tom\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Application\\Application.csproj": {
-              "projectPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Application\\Application.csproj"
+            "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Application\\Application.csproj": {
+              "projectPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Application\\Application.csproj"
             },
-            "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Domain\\Domain.csproj": {
-              "projectPath": "C:\\Users\\ArthurL'AFFETER\\Documents\\Work\\Projet etude\\b3\\src\\Domain\\Domain.csproj"
+            "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Domain\\Domain.csproj": {
+              "projectPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Domain\\Domain.csproj"
             }
           }
         }
@@ -3684,8 +3677,7 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      },
-      "SdkAnalysisLevel": "10.0.100"
+      }
     },
     "frameworks": {
       "net7.0": {
@@ -3738,7 +3730,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.419\\RuntimeIdentifierGraph.json"
       }
     }
   },
@@ -3747,7 +3739,7 @@
       "code": "NU1603",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Application depends on Microsoft.Extensions.DependencyInjection.Abstractions (>= 7.0.1) but Microsoft.Extensions.DependencyInjection.Abstractions 7.0.1 was not found. Microsoft.Extensions.DependencyInjection.Abstractions 8.0.0 was resolved instead.",
+      "message": "Application depends on Microsoft.Extensions.DependencyInjection.Abstractions (>= 7.0.1) but Microsoft.Extensions.DependencyInjection.Abstractions 7.0.1 was not found. An approximate best match of Microsoft.Extensions.DependencyInjection.Abstractions 8.0.0 was resolved.",
       "libraryId": "Microsoft.Extensions.DependencyInjection.Abstractions",
       "targetGraphs": [
         "net7.0"
