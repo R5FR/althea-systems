@@ -38,11 +38,11 @@ const EXAMPLE_SLIDES: CarouselSlide[] = [
 ];
 
 const EXAMPLE_CATEGORIES: (Category & { gradient: string })[] = [
-  { id: 'c1', name: 'Imagerie médicale',         slug: 'imagerie-medicale',  description: '', imageUrl: 'https://picsum.photos/seed/cat-imagerie/600/400',  status: 'Active', displayOrder: 1, gradient: 'linear-gradient(135deg,#005C5D,#2DAAAA)' },
-  { id: 'c2', name: 'Monitoring & Surveillance', slug: 'monitoring',         description: '', imageUrl: 'https://picsum.photos/seed/cat-monitor/600/400',   status: 'Active', displayOrder: 2, gradient: 'linear-gradient(135deg,#111E35,#243558)' },
-  { id: 'c3', name: 'Chirurgie & Blocs',         slug: 'chirurgie',          description: '', imageUrl: 'https://picsum.photos/seed/cat-chirurgie/600/400', status: 'Active', displayOrder: 3, gradient: 'linear-gradient(135deg,#1E3A5F,#2C4A6E)' },
-  { id: 'c4', name: 'Diagnostic clinique',       slug: 'diagnostic',         description: '', imageUrl: 'https://picsum.photos/seed/cat-diagno/600/400',    status: 'Active', displayOrder: 4, gradient: 'linear-gradient(135deg,#003F40,#007A7C)' },
-  { id: 'c5', name: 'Cardiologie',               slug: 'cardiologie',        description: '', imageUrl: 'https://picsum.photos/seed/cat-cardio/600/400',    status: 'Active', displayOrder: 5, gradient: 'linear-gradient(135deg,#1B2A4A,#3D5A80)' },
+  { id: 'c1', name: 'Imagerie médicale',         slug: 'imagerie-medicale',  description: '', imageUrl: 'https://picsum.photos/seed/cat-imagerie/600/400',  status: 'Active', displayOrder: 1, gradient: 'linear-gradient(135deg,#0094A0,#33BFC9)' },
+  { id: 'c2', name: 'Monitoring & Surveillance', slug: 'monitoring',         description: '', imageUrl: 'https://picsum.photos/seed/cat-monitor/600/400',   status: 'Active', displayOrder: 2, gradient: 'linear-gradient(135deg,#003D5C,#004D74)' },
+  { id: 'c3', name: 'Chirurgie & Blocs',         slug: 'chirurgie',          description: '', imageUrl: 'https://picsum.photos/seed/cat-chirurgie/600/400', status: 'Active', displayOrder: 3, gradient: 'linear-gradient(135deg,#003D5C,#003D5C)' },
+  { id: 'c4', name: 'Diagnostic clinique',       slug: 'diagnostic',         description: '', imageUrl: 'https://picsum.photos/seed/cat-diagno/600/400',    status: 'Active', displayOrder: 4, gradient: 'linear-gradient(135deg,#0094A0,#00A8B5)' },
+  { id: 'c5', name: 'Cardiologie',               slug: 'cardiologie',        description: '', imageUrl: 'https://picsum.photos/seed/cat-cardio/600/400',    status: 'Active', displayOrder: 5, gradient: 'linear-gradient(135deg,#003D5C,#004D74)' },
   { id: 'c6', name: 'Ophtalmologie',             slug: 'ophtalmologie',      description: '', imageUrl: 'https://picsum.photos/seed/cat-ophtalmo/600/400',  status: 'Active', displayOrder: 6, gradient: 'linear-gradient(135deg,#006D77,#48CAE4)' },
   { id: 'c7', name: 'Stérilisation',             slug: 'sterilisation',      description: '', imageUrl: 'https://picsum.photos/seed/cat-steril/600/400',    status: 'Active', displayOrder: 7, gradient: 'linear-gradient(135deg,#2D3A3A,#4A7C7E)' },
   { id: 'c8', name: 'Mobilier médical',          slug: 'mobilier-medical',   description: '', imageUrl: 'https://picsum.photos/seed/cat-mobilier/600/400',  status: 'Active', displayOrder: 8, gradient: 'linear-gradient(135deg,#3D3D3D,#5C6B7A)' },
@@ -61,9 +61,9 @@ const EXAMPLE_PRODUCTS: ProductListItem[] = [
 
 // ── Hero gradient palette by slide index ──────────────────────────────────
 const HERO_GRADIENTS = [
-  'linear-gradient(135deg, #111E35 0%, #005C5D 60%, #002323 100%)',
-  'linear-gradient(135deg, #1B2A4A 0%, #007A7C 60%, #003F40 100%)',
-  'linear-gradient(135deg, #002323 0%, #1E3A5F 60%, #111E35 100%)',
+  'linear-gradient(135deg, #003D5C 0%, #0094A0 60%, #002323 100%)',
+  'linear-gradient(135deg, #003D5C 0%, #00A8B5 60%, #0094A0 100%)',
+  'linear-gradient(135deg, #002323 0%, #003D5C 60%, #003D5C 100%)',
 ];
 
 // Icon paths for hero decorative background
@@ -105,7 +105,7 @@ const HERO_PATTERN = `<svg xmlns="http://www.w3.org/2000/svg" width="60" height=
             <div class="max-w-xl animate-fade-up" style="animation-delay: 0.1s;">
               <!-- Slide label -->
               <div class="flex items-center gap-2 mb-4">
-                <div class="w-6 h-0.5" style="background:#007A7C;"></div>
+                <div class="w-6 h-0.5" style="background:#00A8B5;"></div>
                 <span class="text-xs font-semibold tracking-widest uppercase text-white/60">Althea Systems</span>
               </div>
               <!-- Title — supports line breaks via whitespace-pre-line -->
@@ -140,7 +140,7 @@ const HERO_PATTERN = `<svg xmlns="http://www.w3.org/2000/svg" width="60" height=
               class="transition-all duration-300 rounded-full"
               [style.width]="currentSlide() === i ? '24px' : '8px'"
               [style.height]="'8px'"
-              [style.background]="currentSlide() === i ? '#007A7C' : 'rgba(255,255,255,0.35)'">
+              [style.background]="currentSlide() === i ? '#00A8B5' : 'rgba(255,255,255,0.35)'">
             </button>
           }
         </div>
@@ -325,7 +325,7 @@ const HERO_PATTERN = `<svg xmlns="http://www.w3.org/2000/svg" width="60" height=
     </section>
 
     <!-- ── Why Althea ────────────────────────────────────────────────────── -->
-    <section class="py-16 md:py-24" style="background-color:#F7F6F3;">
+    <section class="py-16 md:py-24" style="background-color:#D4F4F7;">
       <div class="page-container">
         <div class="grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
           <!-- Left: text -->
@@ -333,7 +333,7 @@ const HERO_PATTERN = `<svg xmlns="http://www.w3.org/2000/svg" width="60" height=
             <p class="section-label">Pourquoi nous choisir</p>
             <h2 class="font-display font-semibold text-3xl md:text-4xl text-navy leading-tight mb-6">
               L'excellence médicale,<br/>
-              <span style="color:#007A7C;">à votre service</span>
+              <span style="color:#00A8B5;">à votre service</span>
             </h2>
             <p class="text-gray-600 leading-relaxed mb-8">
               Depuis plus de 15 ans, Althea Systems accompagne les professionnels de santé avec
@@ -390,7 +390,7 @@ const HERO_PATTERN = `<svg xmlns="http://www.w3.org/2000/svg" width="60" height=
     </section>
 
     <!-- ── CTA banner ─────────────────────────────────────────────────────── -->
-    <section class="py-16" style="background: linear-gradient(135deg, #111E35 0%, #007A7C 100%);">
+    <section class="py-16" style="background: linear-gradient(135deg, #003D5C 0%, #00A8B5 100%);">
       <div class="page-container text-center">
         <h2 class="font-display font-semibold text-3xl md:text-4xl text-white mb-4">
           Besoin d'un devis personnalisé ?
@@ -460,7 +460,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     {
       title: 'Références produits',
       value: '2 400+',
-      bg: 'linear-gradient(135deg, #005C5D, #007A7C)',
+      bg: 'linear-gradient(135deg, #0094A0, #00A8B5)',
       iconBg: 'rgba(255,255,255,0.15)',
       textColor: 'white',
       subColor: 'rgba(255,255,255,0.6)',
@@ -471,23 +471,23 @@ export class HomeComponent implements OnInit, OnDestroy {
       value: '98 %',
       bg: '#ffffff',
       iconBg: 'rgba(0,122,124,0.1)',
-      textColor: '#111E35',
+      textColor: '#003D5C',
       subColor: '#9CA3AF',
-      icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:#007A7C"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>`,
+      icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:#00A8B5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>`,
     },
     {
       title: 'Années d\'expertise',
       value: '15 ans',
       bg: '#ffffff',
       iconBg: 'rgba(0,122,124,0.1)',
-      textColor: '#111E35',
+      textColor: '#003D5C',
       subColor: '#9CA3AF',
-      icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:#007A7C"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>`,
+      icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:#00A8B5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>`,
     },
     {
       title: 'Livraison garantie',
       value: '48 h',
-      bg: 'linear-gradient(135deg, #111E35, #1B2A4A)',
+      bg: 'linear-gradient(135deg, #003D5C, #003D5C)',
       iconBg: 'rgba(255,255,255,0.12)',
       textColor: 'white',
       subColor: 'rgba(255,255,255,0.5)',
@@ -569,11 +569,11 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   getCategoryGradient(index: number): string {
     const defaults = [
-      'linear-gradient(135deg,#005C5D,#2DAAAA)',
-      'linear-gradient(135deg,#111E35,#243558)',
-      'linear-gradient(135deg,#1E3A5F,#2C4A6E)',
-      'linear-gradient(135deg,#003F40,#007A7C)',
-      'linear-gradient(135deg,#1B2A4A,#3D5A80)',
+      'linear-gradient(135deg,#0094A0,#33BFC9)',
+      'linear-gradient(135deg,#003D5C,#004D74)',
+      'linear-gradient(135deg,#003D5C,#003D5C)',
+      'linear-gradient(135deg,#0094A0,#00A8B5)',
+      'linear-gradient(135deg,#003D5C,#004D74)',
       'linear-gradient(135deg,#006D77,#48CAE4)',
       'linear-gradient(135deg,#2D3A3A,#4A7C7E)',
       'linear-gradient(135deg,#3D3D3D,#5C6B7A)',
@@ -585,13 +585,13 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   getProductGradient(index: number): string {
     const palettes = [
-      'linear-gradient(135deg,#005C5D,#007A7C)',
-      'linear-gradient(135deg,#111E35,#1B2A4A)',
-      'linear-gradient(135deg,#003F40,#005C5D)',
-      'linear-gradient(135deg,#1E3A5F,#1B2A4A)',
+      'linear-gradient(135deg,#0094A0,#00A8B5)',
+      'linear-gradient(135deg,#003D5C,#003D5C)',
+      'linear-gradient(135deg,#0094A0,#0094A0)',
+      'linear-gradient(135deg,#003D5C,#003D5C)',
       'linear-gradient(135deg,#2D3A3A,#3D5A5B)',
-      'linear-gradient(135deg,#006D77,#007A7C)',
-      'linear-gradient(135deg,#243558,#3D5A80)',
+      'linear-gradient(135deg,#006D77,#00A8B5)',
+      'linear-gradient(135deg,#004D74,#004D74)',
       'linear-gradient(135deg,#004242,#006D77)',
     ];
     return palettes[index % palettes.length];

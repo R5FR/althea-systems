@@ -36,14 +36,14 @@ const EXAMPLE_CATALOGUE: ProductListItem[] = [
 ];
 
 const PRODUCT_GRADIENTS = [
-  'linear-gradient(135deg,#005C5D,#007A7C)',
-  'linear-gradient(135deg,#111E35,#1B2A4A)',
-  'linear-gradient(135deg,#003F40,#005C5D)',
+  'linear-gradient(135deg,#0094A0,#00A8B5)',
+  'linear-gradient(135deg,#003D5C,#003D5C)',
+  'linear-gradient(135deg,#0094A0,#00A8B5)',
   'linear-gradient(135deg,#1E3A5F,#2C4A6E)',
-  'linear-gradient(135deg,#2D3A3A,#3D5A5B)',
-  'linear-gradient(135deg,#006D77,#2DAAAA)',
-  'linear-gradient(135deg,#243558,#3D5A80)',
-  'linear-gradient(135deg,#004242,#006D77)',
+  'linear-gradient(135deg,#003D5C,#0094A0)',
+  'linear-gradient(135deg,#00A8B5,#33BFC9)',
+  'linear-gradient(135deg,#004D74,#004D74)',
+  'linear-gradient(135deg,#0094A0,#00A8B5)',
 ];
 
 @Component({

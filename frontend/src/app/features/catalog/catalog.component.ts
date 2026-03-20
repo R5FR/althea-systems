@@ -97,14 +97,14 @@ const FALLBACK_CATEGORY_NAMES: Record<string, string> = {
 
 // ── Gradient palette for products without images ───────────────────────────
 const PRODUCT_GRADIENTS = [
-  'linear-gradient(135deg,#005C5D,#007A7C)',
-  'linear-gradient(135deg,#111E35,#1B2A4A)',
-  'linear-gradient(135deg,#003F40,#005C5D)',
-  'linear-gradient(135deg,#1E3A5F,#2C4A6E)',
+  'linear-gradient(135deg,#0094A0,#00A8B5)',
+  'linear-gradient(135deg,#003D5C,#003D5C)',
+  'linear-gradient(135deg,#0094A0,#0094A0)',
+  'linear-gradient(135deg,#003D5C,#003D5C)',
   'linear-gradient(135deg,#2D3A3A,#3D5A5B)',
-  'linear-gradient(135deg,#006D77,#2DAAAA)',
-  'linear-gradient(135deg,#243558,#3D5A80)',
-  'linear-gradient(135deg,#004242,#006D77)',
+  'linear-gradient(135deg,#00A8B5,#33BFC9)',
+  'linear-gradient(135deg,#004D74,#004D74)',
+  'linear-gradient(135deg,#0094A0,#00A8B5)',
 ];
 
 // ── Product Card ──────────────────────────────────────────────────────────
@@ -202,7 +202,7 @@ export class ProductCardComponent {
             <div class="absolute inset-0" style="background: linear-gradient(90deg, rgba(17,30,53,0.85) 0%, rgba(17,30,53,0.35) 70%, transparent 100%);"></div>
           } @else {
             <!-- Gradient banner -->
-            <div class="absolute inset-0" style="background: linear-gradient(135deg, #111E35 0%, #007A7C 100%);">
+            <div class="absolute inset-0" style="background: linear-gradient(135deg, #003D5C 0%, #00A8B5 100%);">
               <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect x=%2227%22 y=%225%22 width=%226%22 height=%2250%22 rx=%223%22 fill=%22white%22 opacity=%22.05%22/%3E%3Crect x=%225%22 y=%2227%22 width=%2250%22 height=%226%22 rx=%223%22 fill=%22white%22 opacity=%22.05%22/%3E%3C/svg%3E'); background-size: 60px 60px;"></div>
             </div>
           }
@@ -325,7 +325,7 @@ export class ProductCardComponent {
             <button (click)="changePage(p)"
               class="w-9 h-9 rounded-lg text-sm font-medium transition-all"
               [class.text-white]="p === page()"
-              [style.background]="p === page() ? '#007A7C' : 'transparent'"
+              [style.background]="p === page() ? '#00A8B5' : 'transparent'"
               [class.text-gray-700]="p !== page()"
               [class.hover:bg-gray-100]="p !== page()">
               {{ p }}

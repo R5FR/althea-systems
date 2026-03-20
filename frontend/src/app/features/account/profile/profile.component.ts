@@ -10,7 +10,7 @@ import { AuthService } from '../../../core/services/auth.service';
   imports: [CommonModule, ReactiveFormsModule],
   template: `
     <div class="space-y-6">
-      <h1 class="text-xl font-bold text-gray-900">Mon profil</h1>
+      <h1 class="text-xl font-bold text-navy">Mon profil</h1>
 
       <!-- Personal info -->
       <div class="card p-6">

@@ -5,25 +5,27 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          50:  '#E5F4F4',
-          100: '#B8E2E2',
-          200: '#88CECE',
-          300: '#55BABA',
-          400: '#2DAAAA',
-          500: '#009999',
-          600: '#007A7C',
-          700: '#005C5D',
-          800: '#003F40',
-          900: '#002323',
-          DEFAULT: '#007A7C',
+          50:  '#E6F8FA',
+          100: '#D4F4F7',  /* Backgrounds (charte) */
+          200: '#A9E9EE',
+          300: '#33BFC9',  /* Hover states (charte) */
+          400: '#1AB3BE',
+          500: '#00A8B5',  /* CTA, liens, badges (charte) */
+          600: '#0094A0',
+          700: '#007A85',
+          800: '#005D66',
+          900: '#003D47',
+          DEFAULT: '#00A8B5',
         },
         navy: {
-          DEFAULT: '#1B2A4A',
-          light:   '#243558',
-          dark:    '#111E35',
+          DEFAULT: '#003D5C',  /* Titres, navigation, footer (charte) */
+          light:   '#004D74',
+          dark:    '#002940',
         },
-        cream: '#F7F6F3',
-        accent: '#C8581A',
+        success: '#10B981',   /* Disponibilité (charte) */
+        danger:  '#EF4444',   /* Erreurs (charte) */
+        warning: '#F59E0B',   /* Alerte (charte) */
+        cream: '#F0FAFB',
       },
       fontFamily: {
         display: ['"Cormorant Garamond"', 'Georgia', 'serif'],

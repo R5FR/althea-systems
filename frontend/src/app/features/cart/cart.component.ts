@@ -11,7 +11,7 @@ import { Cart } from '../../core/models';
   imports: [CommonModule, RouterLink],
   template: `
     <div class="page-container py-8 max-w-4xl mx-auto">
-      <h1 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+      <h1 class="text-2xl font-bold text-navy mb-6 flex items-center gap-3">
         <svg class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
         </svg>
@@ -77,7 +77,7 @@ import { Cart } from '../../core/models';
                     </div>
                     <!-- Price -->
                     <div class="text-right">
-                      <p class="font-bold text-gray-900">{{ item.total | number:'1.2-2' }} €</p>
+                      <p class="font-bold text-navy">{{ item.total | number:'1.2-2' }} €</p>
                       <p class="text-gray-400 text-xs">{{ item.unitPriceTtc | number:'1.2-2' }} € / unité TTC</p>
                     </div>
                   </div>
@@ -106,7 +106,7 @@ import { Cart } from '../../core/models';
           <!-- Order summary -->
           <div class="lg:col-span-1">
             <div class="card p-5 sticky top-24">
-              <h2 class="font-bold text-gray-900 text-lg mb-4">Récapitulatif</h2>
+              <h2 class="font-bold text-navy text-lg mb-4">Récapitulatif</h2>
               <div class="space-y-2 text-sm">
                 <div class="flex justify-between text-gray-600">
                   <span>Sous-total HT</span>
@@ -116,7 +116,7 @@ import { Cart } from '../../core/models';
                   <span>TVA</span>
                   <span>{{ cart()!.totalTva | number:'1.2-2' }} €</span>
                 </div>
-                <div class="border-t pt-3 mt-3 flex justify-between font-bold text-gray-900 text-base">
+                <div class="border-t pt-3 mt-3 flex justify-between font-bold text-navy text-base">
                   <span>Total TTC</span>
                   <span class="text-primary text-lg">{{ cart()!.totalTtc | number:'1.2-2' }} €</span>
                 </div>

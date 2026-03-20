@@ -8,7 +8,7 @@ import { AuthService } from '../../../core/services/auth.service';
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-    <div class="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <div class="min-h-screen bg-primary-100 flex items-center justify-center px-4">
       <div class="card p-10 max-w-md w-full text-center">
         @if (loading()) {
           <div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>

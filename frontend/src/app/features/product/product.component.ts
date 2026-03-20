@@ -71,7 +71,7 @@ import { Product, ProductListItem } from '../../core/models';
             </nav>
 
             <div>
-              <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-3">{{ product()!.name }}</h1>
+              <h1 class="text-2xl md:text-3xl font-bold text-navy mb-3">{{ product()!.name }}</h1>
 
               <!-- Availability -->
               @if (product()!.stockQuantity > 0) {

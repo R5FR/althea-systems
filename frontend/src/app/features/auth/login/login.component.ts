@@ -9,16 +9,21 @@ import { AuthService } from '../../../core/services/auth.service';
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
   template: `
-    <div class="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
+    <div class="min-h-screen bg-primary-100 flex items-center justify-center px-4 py-12">
       <div class="w-full max-w-md">
         <div class="text-center mb-8">
-          <a routerLink="/" class="inline-flex items-center gap-2 mb-6">
-            <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
-              <span class="text-white font-bold">A</span>
+          <a routerLink="/" class="inline-flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 bg-navy rounded-xl flex items-center justify-center">
+              <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 3H14V0H10V3H5C3.9 3 3 3.9 3 5V10H0V14H3V19C3 20.1 3.9 21 5 21H10V24H14V21H19C20.1 21 21 20.1 21 19V14H24V10H21V5C21 3.9 20.1 3 19 3ZM19 19H5V5H19V19Z"/>
+              </svg>
             </div>
-            <span class="text-xl font-bold text-gray-900">Althea Systems</span>
+            <div class="leading-none text-left">
+              <span class="font-display font-semibold text-navy text-xl tracking-tight block">Althea</span>
+              <span class="text-xs font-medium text-primary tracking-widest uppercase">Systems</span>
+            </div>
           </a>
-          <h1 class="text-2xl font-bold text-gray-900">Connexion</h1>
+          <h1 class="text-2xl font-bold text-navy">Connexion</h1>
           <p class="text-gray-500 mt-1">Bienvenue ! Connectez-vous à votre espace.</p>
         </div>
 

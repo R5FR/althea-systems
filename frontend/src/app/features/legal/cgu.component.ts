@@ -8,12 +8,12 @@ import { CommonModule } from '@angular/common';
   template: `
     <div class="page-container py-12">
       <div class="max-w-3xl mx-auto prose prose-gray">
-        <h1 class="text-3xl font-bold text-gray-900 mb-8">Conditions Générales d'Utilisation</h1>
+        <h1 class="text-3xl font-bold text-navy mb-8">Conditions Générales d'Utilisation</h1>
         <p class="text-sm text-gray-400 mb-8">Dernière mise à jour : 1er janvier 2025</p>
 
         @for (section of sections; track section.title) {
           <div class="mb-8">
-            <h2 class="text-xl font-bold text-gray-900 mb-3">{{ section.title }}</h2>
+            <h2 class="text-xl font-bold text-navy mb-3">{{ section.title }}</h2>
             <div class="text-gray-600 space-y-2 text-sm leading-relaxed">
               @for (p of section.paragraphs; track p) {
                 <p>{{ p }}</p>

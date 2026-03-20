@@ -16,7 +16,7 @@ import { Order } from '../../core/models';
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
           </svg>
         </a>
-        <h1 class="text-xl font-bold text-gray-900">
+        <h1 class="text-xl font-bold text-navy">
           @if (order()) { Commande N° {{ order()!.orderNumber }} }
           @else { Détail de la commande }
         </h1>
@@ -139,7 +139,7 @@ import { Order } from '../../core/models';
                     <span>{{ order()!.shippingCost === 0 ? 'Offerte' : ((order()!.shippingCost | number:'1.2-2') + ' €') }}</span>
                   </div>
                 }
-                <div class="border-t border-gray-100 pt-2 flex justify-between font-bold text-gray-900">
+                <div class="border-t border-gray-100 pt-2 flex justify-between font-bold text-navy">
                   <span>Total TTC</span>
                   <span>{{ order()!.totalTtc | number:'1.2-2' }} €</span>
                 </div>

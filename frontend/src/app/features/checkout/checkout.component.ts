@@ -18,7 +18,7 @@ type Step = 'address' | 'payment' | 'confirm';
   imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
   template: `
     <div class="page-container py-8 max-w-5xl mx-auto">
-      <h1 class="text-2xl font-bold text-gray-900 mb-8">Finaliser ma commande</h1>
+      <h1 class="text-2xl font-bold text-navy mb-8">Finaliser ma commande</h1>
 
       <!-- Step indicator -->
       <div class="flex items-center mb-10">
@@ -53,7 +53,7 @@ type Step = 'address' | 'payment' | 'confirm';
           <!-- ── Step 1: Address ──────────────────────────────── -->
           @if (currentStep() === 'address') {
             <div class="card p-6">
-              <h2 class="font-bold text-gray-900 text-lg mb-5">Adresse de facturation</h2>
+              <h2 class="font-bold text-navy text-lg mb-5">Adresse de facturation</h2>
 
               <!-- Saved addresses -->
               @if (savedAddresses().length > 0) {
@@ -144,7 +144,7 @@ type Step = 'address' | 'payment' | 'confirm';
           <!-- ── Step 2: Payment ──────────────────────────────── -->
           @if (currentStep() === 'payment') {
             <div class="card p-6">
-              <h2 class="font-bold text-gray-900 text-lg mb-5">Informations de paiement</h2>
+              <h2 class="font-bold text-navy text-lg mb-5">Informations de paiement</h2>
 
               <!-- Saved cards -->
               @if (savedCards().length > 0) {
@@ -217,7 +217,7 @@ type Step = 'address' | 'payment' | 'confirm';
           <!-- ── Step 3: Confirmation ─────────────────────────── -->
           @if (currentStep() === 'confirm') {
             <div class="card p-6">
-              <h2 class="font-bold text-gray-900 text-lg mb-5">Vérifier et confirmer</h2>
+              <h2 class="font-bold text-navy text-lg mb-5">Vérifier et confirmer</h2>
 
               <!-- Recap address -->
               <div class="mb-5">
@@ -291,7 +291,7 @@ type Step = 'address' | 'payment' | 'confirm';
         <!-- Right: Order summary -->
         <div class="lg:col-span-1">
           <div class="card p-5 sticky top-24">
-            <h2 class="font-bold text-gray-900 mb-4">Récapitulatif</h2>
+            <h2 class="font-bold text-navy mb-4">Récapitulatif</h2>
             <div class="space-y-2 text-sm text-gray-600 mb-4">
               @for (item of cart()?.items ?? []; track item.id) {
                 <div class="flex justify-between">
@@ -307,7 +307,7 @@ type Step = 'address' | 'payment' | 'confirm';
               <div class="flex justify-between text-gray-500">
                 <span>TVA</span><span>{{ cart()?.totalTva | number:'1.2-2' }} €</span>
               </div>
-              <div class="flex justify-between font-bold text-gray-900 text-base pt-2 border-t">
+              <div class="flex justify-between font-bold text-navy text-base pt-2 border-t">
                 <span>Total TTC</span><span class="text-primary">{{ cart()?.totalTtc | number:'1.2-2' }} €</span>
               </div>
             </div>

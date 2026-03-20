@@ -12,7 +12,7 @@ import { Order } from '../../core/models';
   template: `
     <div class="space-y-6">
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <h1 class="text-xl font-bold text-gray-900">Mes commandes</h1>
+        <h1 class="text-xl font-bold text-navy">Mes commandes</h1>
         <!-- Search -->
         <input [(ngModel)]="search" (ngModelChange)="filterOrders()"
           type="search" placeholder="Rechercher une commande..." class="input-field max-w-xs text-sm" />
@@ -64,7 +64,7 @@ import { Order } from '../../core/models';
                     <p class="text-xs text-gray-500">{{ order.createdAt | date:'d MMMM yyyy':'':'fr' }}</p>
                   </div>
                   <div class="text-right flex-shrink-0">
-                    <p class="font-bold text-gray-900">{{ order.totalTtc | number:'1.2-2' }} €</p>
+                    <p class="font-bold text-navy">{{ order.totalTtc | number:'1.2-2' }} €</p>
                     <p class="text-xs text-gray-400">TTC</p>
                   </div>
                   <svg class="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">

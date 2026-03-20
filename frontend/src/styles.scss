@@ -11,7 +11,7 @@
 
   body {
     @apply font-sans text-gray-800 antialiased;
-    background-color: #F7F6F3;
+    background-color: #D4F4F7;
   }
 
   h1, h2, h3 { @apply tracking-tight; }
@@ -31,7 +31,7 @@
     @apply inline-flex items-center justify-center gap-2 px-6 py-2.5
            rounded-lg bg-primary text-white font-medium text-sm tracking-wide
            transition-all duration-200
-           hover:bg-primary-700 hover:shadow-md
+           hover:bg-primary-600 hover:shadow-md
            active:scale-[0.98]
            disabled:opacity-50 disabled:cursor-not-allowed
            focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2;
@@ -41,7 +41,7 @@
     @apply inline-flex items-center justify-center gap-2 px-6 py-2.5
            rounded-lg border border-primary text-primary font-medium text-sm tracking-wide
            transition-all duration-200
-           hover:bg-primary-50 hover:border-primary-700 hover:text-primary-700
+           hover:bg-primary-100 hover:border-primary-600 hover:text-primary-600
            active:scale-[0.98]
            disabled:opacity-50 disabled:cursor-not-allowed
            focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2;
@@ -96,17 +96,17 @@
   .badge {
     @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold tracking-wide;
   }
-  .badge-primary { @apply badge bg-primary/10 text-primary-700; }
+  .badge-primary { @apply badge bg-primary/10 text-primary-600; }
   .badge-success { @apply badge bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200/60; }
   .badge-warning { @apply badge bg-amber-50 text-amber-700 ring-1 ring-amber-200/60; }
   .badge-danger  { @apply badge bg-red-50 text-red-600 ring-1 ring-red-200/60; }
   .badge-gray    { @apply badge bg-gray-100 text-gray-600; }
-  .badge-promo   { @apply badge bg-accent/10 text-accent font-bold; }
+  .badge-promo   { @apply badge bg-primary-100 text-primary-600 font-bold; }
   .badge-navy    { @apply badge bg-navy/10 text-navy; }
 
   /* ── Typography ──────────────────────────────────────────────────────── */
   .section-title {
-    @apply font-display font-semibold text-3xl md:text-4xl text-gray-900 mb-6 leading-tight;
+    @apply font-display font-semibold text-3xl md:text-4xl text-navy mb-6 leading-tight;
   }
 
   .section-label {
@@ -122,9 +122,9 @@
   .skeleton {
     background: linear-gradient(
       90deg,
-      #e8e7e4 25%,
-      #f0efec 50%,
-      #e8e7e4 75%
+      #c8eef1 25%,
+      #d4f4f7 50%,
+      #c8eef1 75%
     );
     background-size: 400% 100%;
     @apply animate-shimmer rounded;
@@ -138,11 +138,11 @@
 
 /* ── Stripe ─────────────────────────────────────────────────────────────── */
 .StripeElement        { @apply input-field py-3; }
-.StripeElement--focus { border-color: #007A7C; box-shadow: 0 0 0 2px rgba(0,122,124,0.2); }
+.StripeElement--focus { border-color: #00A8B5; box-shadow: 0 0 0 2px rgba(0,168,181,0.2); }
 .StripeElement--invalid { @apply border-red-400; box-shadow: 0 0 0 2px rgba(239,68,68,0.2); }
 
 /* ── Custom scrollbar ───────────────────────────────────────────────────── */
 ::-webkit-scrollbar       { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: #F0EFEc; }
-::-webkit-scrollbar-thumb { background: #C8C5BE; border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: #A09D96; }
+::-webkit-scrollbar-track { background: #D4F4F7; }
+::-webkit-scrollbar-thumb { background: #33BFC9; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #00A8B5; }
