@@ -83,6 +83,7 @@ public class OrderService : IOrderService
         var orderNumber = GenerateOrderNumber();
         var order = new Order(
             Guid.NewGuid(),
+            user.Id,
             orderNumber,
             user,
             billingAddress,
@@ -96,6 +97,8 @@ public class OrderService : IOrderService
 
             var orderItem = new OrderItem(
                 Guid.NewGuid(),
+                order.Id,
+                product.Id,
                 product,
                 product.Name,
                 product.PriceHt,

@@ -1,3 +1,0 @@
-C:\Users\ArthurL'AFFETER\Documents\Work\Projet etude\b3\src\Application\obj\Debug\net7.0\Application.csproj.AssemblyReference.cache
-C:\Users\ArthurL'AFFETER\Documents\Work\Projet etude\b3\src\Application\obj\Debug\net7.0\Application.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\ArthurL'AFFETER\Documents\Work\Projet etude\b3\src\Application\obj\Debug\net7.0\Application.csproj.CoreCompileInputs.cache

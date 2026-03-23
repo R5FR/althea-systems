@@ -68,7 +68,9 @@ public class CartService : ICartService
         // Créer un CartItem et l'ajouter au panier
         var cartItem = new CartItem(
             Guid.NewGuid(),
+            cartId,
             cart,
+            productId,
             product,
             quantity,
             product.PriceTtc);
@@ -184,6 +186,7 @@ public class CartService : ICartService
         var orderNumber = GenerateOrderNumber();
         var order = new Order(
             Guid.NewGuid(),
+            user2.Id,
             orderNumber,
             user2,
             billingAddress!,
@@ -201,6 +204,8 @@ public class CartService : ICartService
 
             var orderItem = new OrderItem(
                 Guid.NewGuid(),
+                order.Id,
+                product.Id,
                 product,
                 product.Name,
                 product.PriceHt,

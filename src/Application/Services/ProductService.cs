@@ -93,16 +93,16 @@ public class ProductService : IProductService
         }
 
         // Créer la nouvelle entité Product
-        // Note: La catégorie doit être récupérée ou créée
-        // Pour l'instant, on utilise un placeholder
+        // Note: La catégorie sera récupérée par EF via la FK CategoryId
         var product = new Product(
             Guid.NewGuid(),
+            dto.CategoryId,
             dto.Name,
             dto.Description ?? string.Empty,
             dto.PriceHt,
             dto.TvaRate,
             dto.StockQuantity,
-            null!, // Category sera définie via EF selon la configuration
+            null!, // Category sera définie via EF selon la configuration FK
             slug);
 
         await _unitOfWork.ProductRepository.AddAsync(product);
