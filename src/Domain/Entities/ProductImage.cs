@@ -12,6 +12,8 @@ namespace Project.Domain.Entities
         public int DisplayOrder { get; private set; }
         public DateTime CreatedAt { get; private set; }
 
+        private ProductImage() { } // For EF Core
+
         public ProductImage(Guid id, Product product, string imageUrl, bool isMain = false, int displayOrder = 0)
         {
             if (id == Guid.Empty) throw new ValidationException("Id cannot be empty");

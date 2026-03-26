@@ -58,5 +58,87 @@ public interface IAdminService
     /// Envoie une alerte de restockage pour les produits en rupture.
     /// </summary>
     Task RestockAlertAsync();
+
+    /// <summary>
+    /// Retourne les statistiques du tableau de bord.
+    /// </summary>
+    Task<DashboardStatsDto> GetDashboardStatsAsync();
+
+    /// <summary>
+    /// Retourne la liste paginée des utilisateurs avec recherche optionnelle.
+    /// </summary>
+    Task<List<AdminUserDto>> GetUsersAsync(string? search = null, int page = 1, int pageSize = 25);
+
+    /// <summary>
+    /// Retourne le nombre total d'utilisateurs pour la pagination.
+    /// </summary>
+    Task<int> GetUsersTotalCountAsync(string? search = null);
+
+    /// <summary>
+    /// Désactive un compte utilisateur.
+    /// </summary>
+    /// <exception cref="NotFoundException">Si l'utilisateur n'existe pas</exception>
+    Task DisableUserAsync(Guid userId);
+
+    /// <summary>
+    /// Active un compte utilisateur.
+    /// </summary>
+    /// <exception cref="NotFoundException">Si l'utilisateur n'existe pas</exception>
+    Task EnableUserAsync(Guid userId);
+
+    /// <summary>
+    /// Retourne la liste paginée des commandes avec filtres optionnels.
+    /// </summary>
+    Task<List<AdminOrderDto>> GetOrdersAsync(string? search = null, string? status = null, int page = 1, int pageSize = 25);
+
+    /// <summary>
+    /// Retourne le nombre total de commandes pour la pagination.
+    /// </summary>
+    Task<int> GetOrdersTotalCountAsync(string? search = null, string? status = null);
+
+    /// <summary>
+    /// Met à jour le statut d'une commande.
+    /// </summary>
+    /// <exception cref="NotFoundException">Si la commande n'existe pas</exception>
+    /// <exception cref="ValidationException">Si le statut est invalide</exception>
+    Task UpdateOrderStatusAsync(Guid orderId, string newStatus);
+
+    /// <summary>
+    /// Retourne la liste des catégories pour l'administration.
+    /// </summary>
+    Task<List<CategoryDto>> GetCategoriesAdminAsync();
 }
 
+public class DashboardStatsDto
+{
+    public decimal RevenueToday { get; set; }
+    public decimal RevenueThisWeek { get; set; }
+    public decimal RevenueThisMonth { get; set; }
+    public int OrdersToday { get; set; }
+    public int LowStockCount { get; set; }
+    public int UnreadMessagesCount { get; set; }
+}
+
+public class AdminUserDto
+{
+    public Guid Id { get; set; }
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string AccountStatus { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; }
+    public DateTime? LastLoginAt { get; set; }
+    public int OrderCount { get; set; }
+}
+
+public class AdminOrderDto
+{
+    public Guid Id { get; set; }
+    public string OrderNumber { get; set; } = string.Empty;
+    public string CustomerEmail { get; set; } = string.Empty;
+    public string CustomerName { get; set; } = string.Empty;
+    public decimal TotalAmount { get; set; }
+    public string Status { get; set; } = string.Empty;
+    public string PaymentStatus { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; }
+}

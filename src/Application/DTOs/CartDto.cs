@@ -7,6 +7,9 @@ public class CartDto
     public string? SessionId { get; set; }
     public List<CartItemDto> Items { get; set; } = new();
     public decimal Total { get; set; }
+    public decimal TotalTtc { get; set; }
+    public decimal SubtotalHt { get; set; }
+    public decimal TotalTva { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }

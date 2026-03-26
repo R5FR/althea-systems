@@ -23,14 +23,14 @@ public class InvoiceRepository : IInvoiceRepository
     public async Task<List<Invoice>> GetByUserIdAsync(Guid userId)
     {
         return await _context.Invoices
-            .Where(i => i.UserId == userId)
-            .OrderByDescending(i => i.CreatedAt)
+            .Where(i => EF.Property<Guid>(i, "UserId") == userId)
+            .OrderByDescending(i => i.IssuedAt)
             .ToListAsync();
     }
 
     public async Task<Invoice?> GetByOrderIdAsync(Guid orderId)
     {
-        return await _context.Invoices.FirstOrDefaultAsync(i => i.OrderId == orderId);
+        return await _context.Invoices.FirstOrDefaultAsync(i => EF.Property<Guid>(i, "OrderId") == orderId);
     }
 
     public async Task AddAsync(Invoice invoice)
@@ -38,19 +38,20 @@ public class InvoiceRepository : IInvoiceRepository
         if (invoice == null)
             throw new ValidationException("Invoice cannot be null");
 
-        var existingInvoice = await _context.Invoices.FirstOrDefaultAsync(i => i.OrderId == invoice.OrderId);
+        var existingInvoice = await _context.Invoices.FirstOrDefaultAsync(i => i.Order.Id == invoice.Order.Id);
         if (existingInvoice != null)
-            throw new ConflictException($"Invoice for order '{invoice.OrderId}' already exists");
+            throw new ConflictException($"Invoice for this order already exists");
 
         await _context.Invoices.AddAsync(invoice);
     }
 
-    public void Update(Invoice invoice)
+    public Task UpdateAsync(Invoice invoice)
     {
         if (invoice == null)
             throw new ValidationException("Invoice cannot be null");
 
         _context.Invoices.Update(invoice);
+        return Task.CompletedTask;
     }
 
     public async Task DeleteAsync(Guid id)

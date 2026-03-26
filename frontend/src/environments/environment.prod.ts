@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.althea-systems.com/api',
-  stripePublicKey: 'pk_live_YOUR_STRIPE_LIVE_KEY',
+  apiUrl: '/api',
+  stripePublicKey: 'pk_test_51TCyPVRpIeJeimommCdnmK8zpyOopqhTdwPddHVWTgdQGGKigLxCeLlvAXoWOAmXBnWe8iez0QehdeaFW8a1Ov5G00vrz53hwp',
 };

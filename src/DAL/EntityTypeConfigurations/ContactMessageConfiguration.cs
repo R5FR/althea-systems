@@ -9,36 +9,15 @@ public class ContactMessageConfiguration : IEntityTypeConfiguration<ContactMessa
     public void Configure(EntityTypeBuilder<ContactMessage> builder)
     {
         builder.HasKey(cm => cm.Id);
-
         builder.Property(cm => cm.Id).ValueGeneratedNever();
 
-        builder.Property(cm => cm.Name)
-            .IsRequired()
-            .HasMaxLength(200);
+        builder.Property(cm => cm.Email).IsRequired().HasMaxLength(255);
+        builder.Property(cm => cm.Subject).IsRequired().HasMaxLength(255);
+        builder.Property(cm => cm.Message).IsRequired().HasMaxLength(5000);
+        builder.Property(cm => cm.Status).IsRequired().HasConversion<string>();
+        builder.Property(cm => cm.CreatedAt).IsRequired().HasDefaultValueSql("GETUTCDATE()");
 
-        builder.Property(cm => cm.Email)
-            .IsRequired()
-            .HasMaxLength(255);
-
-        builder.Property(cm => cm.Subject)
-            .IsRequired()
-            .HasMaxLength(255);
-
-        builder.Property(cm => cm.Message)
-            .IsRequired()
-            .HasMaxLength(5000);
-
-        builder.Property(cm => cm.Status)
-            .IsRequired()
-            .HasConversion<string>();
-
-        builder.Property(cm => cm.CreatedAt)
-            .IsRequired()
-            .HasDefaultValueSql("GETUTCDATE()");
-
-        builder.Property(cm => cm.UpdatedAt)
-            .IsRequired()
-            .HasDefaultValueSql("GETUTCDATE()");
+        builder.HasOne(cm => cm.User).WithMany().HasForeignKey("UserId").IsRequired(false).OnDelete(DeleteBehavior.SetNull);
 
         builder.HasIndex(cm => cm.Email);
         builder.HasIndex(cm => cm.Status);

@@ -14,6 +14,8 @@ namespace Project.Domain.Entities
         public DateTime IssuedAt { get; private set; }
         public string PdfUrl { get; private set; }
 
+        private Invoice() { } // For EF Core
+
         public Invoice(Guid id, string invoiceNumber, Order order, User user, decimal totalTtc, string pdfUrl)
         {
             if (id == Guid.Empty) throw new ValidationException("Id cannot be empty");

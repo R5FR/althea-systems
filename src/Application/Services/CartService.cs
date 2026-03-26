@@ -41,6 +41,21 @@ public class CartService : ICartService
         return MapCartToDto(cart);
     }
 
+    public async Task<CartDto> GetOrCreateCartAsync(Guid cartId)
+    {
+        if (cartId == Guid.Empty) throw new ArgumentException("CartId cannot be empty", nameof(cartId));
+
+        var cart = await _unitOfWork.CartRepository.GetByIdAsync(cartId);
+        if (cart == null)
+        {
+            cart = new Cart(cartId);
+            await _unitOfWork.CartRepository.AddAsync(cart);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        return MapCartToDto(cart);
+    }
+
     public async Task AddItemAsync(Guid cartId, Guid productId, int quantity)
     {
         if (cartId == Guid.Empty) throw new ArgumentException("CartId cannot be empty", nameof(cartId));
@@ -50,7 +65,9 @@ public class CartService : ICartService
         var cart = await _unitOfWork.CartRepository.GetByIdAsync(cartId);
         if (cart == null)
         {
-            throw new NotFoundException($"Cart with id '{cartId}' not found");
+            cart = new Cart(cartId);
+            await _unitOfWork.CartRepository.AddAsync(cart);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         var product = await _unitOfWork.ProductRepository.GetByIdAsync(productId);
@@ -83,21 +100,27 @@ public class CartService : ICartService
         if (itemId == Guid.Empty) throw new ArgumentException("ItemId cannot be empty", nameof(itemId));
         if (quantity <= 0) throw new ValidationException("Quantity must be positive");
 
-        // Note: CartItem n'est pas directement accessible via un repository
-        // Cette méthode nécessite une approche différente selon l'implémentation EF
-        // Pour l'instant, placeholder pour éviter erreur
+        var cart = await _unitOfWork.CartRepository.GetByItemIdAsync(itemId);
+        if (cart == null) throw new NotFoundException($"CartItem with id '{itemId}' not found");
 
-        throw new NotImplementedException("CartItem update not yet implemented - requires CartItem repository or entity tracking");
+        var item = cart.Items.FirstOrDefault(i => i.Id == itemId);
+        if (item == null) throw new NotFoundException($"CartItem with id '{itemId}' not found");
+
+        item.UpdateQuantity(quantity);
+        await _unitOfWork.CartRepository.UpdateAsync(cart);
+        await _unitOfWork.SaveChangesAsync();
     }
 
     public async Task RemoveItemAsync(Guid itemId)
     {
         if (itemId == Guid.Empty) throw new ArgumentException("ItemId cannot be empty", nameof(itemId));
 
-        // Note: CartItem n'est pas directement accessible via un repository
-        // Cette méthode nécessite une approche différente selon l'implémentation EF
+        var cart = await _unitOfWork.CartRepository.GetByItemIdAsync(itemId);
+        if (cart == null) throw new NotFoundException($"CartItem with id '{itemId}' not found");
 
-        throw new NotImplementedException("CartItem removal not yet implemented - requires CartItem repository or entity tracking");
+        cart.RemoveItem(itemId);
+        await _unitOfWork.CartRepository.UpdateAsync(cart);
+        await _unitOfWork.SaveChangesAsync();
     }
 
     public async Task ClearCartAsync(Guid cartId)
@@ -232,8 +255,10 @@ public class CartService : ICartService
     {
         var cartDto = _mapper.Map<CartDto>(cart);
 
-        // Calculer le total
-        cartDto.Total = cart.Items.Sum(item => item.UnitPriceTtc * item.Quantity);
+        cartDto.TotalTtc   = cart.Items.Sum(item => item.UnitPriceTtc * item.Quantity);
+        cartDto.SubtotalHt = cart.Items.Sum(item => item.Product != null ? item.Product.PriceHt * item.Quantity : 0m);
+        cartDto.TotalTva   = cartDto.TotalTtc - cartDto.SubtotalHt;
+        cartDto.Total      = cartDto.TotalTtc;
 
         return cartDto;
     }

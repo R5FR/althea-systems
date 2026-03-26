@@ -6,7 +6,7 @@ import { ContactService } from '../../core/services/contact.service';
 import { AuthService } from '../../core/services/auth.service';
 
 interface ChatMessage {
-  role: 'user' | 'bot';
+  from: 'user' | 'bot';
   text: string;
   time: Date;
 }
@@ -15,6 +15,20 @@ interface ChatMessage {
   selector: 'app-contact',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  styles: [`
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .chat-panel { animation: slideUp 0.22s ease; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    .msg-in  { animation: fadeIn 0.18s ease; }
+    .msg-out { animation: fadeIn 0.18s ease; }
+  `],
   template: `
     <div class="page-container py-12">
       <div class="max-w-5xl mx-auto">
@@ -50,10 +64,10 @@ interface ChatMessage {
               </div>
             </div>
 
-            <!-- Chatbot trigger -->
+            <!-- Chatbot trigger card -->
             <button (click)="openChat()"
               class="w-full card p-5 flex items-center gap-4 hover:shadow-md transition-all text-left group border-2 border-transparent hover:border-primary/20">
-              <div class="w-12 h-12 bg-gradient-to-br from-primary to-primary-700 rounded-full flex items-center justify-center flex-shrink-0">
+              <div class="w-12 h-12 bg-gradient-to-br from-primary to-primary-200 rounded-full flex items-center justify-center flex-shrink-0">
                 <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
                 </svg>
@@ -140,126 +154,173 @@ interface ChatMessage {
       </div>
     </div>
 
-    <!-- Chat window -->
+    <!-- ─── Chat panel ─────────────────────────────────────────────────────── -->
     @if (chatOpen()) {
-      <div class="fixed bottom-6 right-6 w-80 sm:w-96 z-50 flex flex-col" style="max-height: 520px;">
-        <div class="card flex flex-col shadow-2xl overflow-hidden" style="height: 520px;">
-          <!-- Header -->
-          <div class="bg-gradient-to-r from-primary to-primary-700 p-4 flex items-center gap-3 flex-shrink-0">
-            <div class="w-9 h-9 bg-white/20 rounded-full flex items-center justify-center">
-              <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+      <div class="chat-panel fixed bottom-24 right-6 z-50 w-80 sm:w-96 bg-white rounded-xl shadow-2xl flex flex-col overflow-hidden"
+           style="height: 460px;">
+
+        <!-- Header -->
+        <div class="bg-navy px-4 py-3 flex items-center justify-between flex-shrink-0">
+          <div class="flex items-center gap-2.5">
+            <!-- Medical cross icon -->
+            <div class="w-8 h-8 bg-white/15 rounded-full flex items-center justify-center">
+              <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 11h-6V5a1 1 0 00-2 0v6H5a1 1 0 000 2h6v6a1 1 0 002 0v-6h6a1 1 0 000-2z"/>
               </svg>
             </div>
-            <div class="flex-1">
-              <p class="font-semibold text-white text-sm">Assistant Althea</p>
-              <div class="flex items-center gap-1.5 mt-0.5">
-                <span class="w-2 h-2 bg-green-400 rounded-full"></span>
-                <span class="text-xs text-primary-100">En ligne</span>
+            <div>
+              <p class="font-semibold text-white text-sm leading-tight">Assistant Althea</p>
+              <div class="flex items-center gap-1 mt-0.5">
+                <span class="w-1.5 h-1.5 bg-green-400 rounded-full"></span>
+                <span class="text-xs text-white/60">En ligne</span>
               </div>
             </div>
-            <button (click)="chatOpen.set(false)" class="text-white/70 hover:text-white transition-colors">
-              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-              </svg>
-            </button>
           </div>
+          <button (click)="chatOpen.set(false)"
+            class="text-white/60 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/10"
+            aria-label="Fermer le chat">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
 
-          <!-- Messages -->
-          <div #chatBody class="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
-            @for (msg of messages(); track msg.time) {
-              <div [class]="msg.role === 'user' ? 'flex justify-end' : 'flex justify-start'">
-                <div [class]="msg.role === 'user'
-                  ? 'bg-primary text-white rounded-2xl rounded-br-sm px-4 py-2.5 max-w-[85%]'
-                  : 'bg-white border border-gray-200 text-gray-800 rounded-2xl rounded-bl-sm px-4 py-2.5 max-w-[85%] shadow-sm'">
+        <!-- Messages area -->
+        <div #chatBody class="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
+          @for (msg of chatMessages(); track msg.time) {
+            @if (msg.from === 'bot') {
+              <div class="flex justify-start msg-in">
+                <div class="bg-white border border-gray-200 text-gray-800 rounded-2xl rounded-bl-sm px-4 py-2.5 max-w-[85%] shadow-sm">
+                  <p class="text-sm leading-relaxed">{{ msg.text }}</p>
+                  <p class="text-xs mt-1 opacity-50 text-right">{{ msg.time | date:'HH:mm' }}</p>
+                </div>
+              </div>
+            } @else {
+              <div class="flex justify-end msg-out">
+                <div class="bg-primary text-white rounded-2xl rounded-br-sm px-4 py-2.5 max-w-[85%]">
                   <p class="text-sm leading-relaxed">{{ msg.text }}</p>
                   <p class="text-xs mt-1 opacity-60 text-right">{{ msg.time | date:'HH:mm' }}</p>
                 </div>
               </div>
             }
-            @if (botTyping()) {
-              <div class="flex justify-start">
-                <div class="bg-white border border-gray-200 rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
-                  <div class="flex gap-1.5 items-center">
-                    <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay:0ms"></span>
-                    <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay:150ms"></span>
-                    <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay:300ms"></span>
-                  </div>
-                </div>
-              </div>
-            }
-          </div>
-
-          <!-- Quick replies -->
-          @if (messages().length <= 1) {
-            <div class="px-4 pb-2 flex gap-2 flex-wrap bg-gray-50 flex-shrink-0">
-              @for (q of quickReplies; track q) {
-                <button (click)="sendMessage(q)"
-                  class="text-xs px-3 py-1.5 rounded-full border border-gray-200 bg-white text-gray-600 hover:border-primary hover:text-primary transition-colors">
-                  {{ q }}
-                </button>
-              }
-            </div>
           }
 
-          <!-- Input -->
-          <div class="p-3 border-t border-gray-100 bg-white flex-shrink-0">
-            <div class="flex gap-2">
-              <input [(ngModel)]="chatInput" (keydown.enter)="sendChatInput()"
-                type="text" placeholder="Votre message..."
-                class="flex-1 input-field text-sm py-2" />
-              <button (click)="sendChatInput()" [disabled]="!chatInput.trim()"
-                class="btn-primary px-3 py-2 flex-shrink-0">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                </svg>
-              </button>
+          <!-- Typing indicator -->
+          @if (isTyping()) {
+            <div class="flex justify-start">
+              <div class="bg-white border border-gray-200 rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
+                <div class="flex gap-1.5 items-center h-4">
+                  <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0ms"></span>
+                  <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 150ms"></span>
+                  <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 300ms"></span>
+                </div>
+              </div>
             </div>
+          }
+        </div>
+
+        <!-- Quick replies (shown only before user sends anything) -->
+        @if (chatMessages().length <= 1 && !isTyping()) {
+          <div class="px-4 pb-3 pt-1 flex gap-2 flex-wrap bg-gray-50 flex-shrink-0">
+            @for (q of quickReplies; track q) {
+              <button (click)="sendMessage(q)"
+                class="text-xs px-3 py-1.5 rounded-full border border-gray-200 bg-white text-gray-600 hover:border-primary hover:text-primary transition-colors whitespace-nowrap">
+                {{ q }}
+              </button>
+            }
+          </div>
+        }
+
+        <!-- Input area -->
+        <div class="p-3 border-t border-gray-100 bg-white flex-shrink-0">
+          <div class="flex gap-2">
+            <input
+              type="text"
+              [value]="chatInput()"
+              (input)="chatInput.set($any($event.target).value)"
+              (keydown.enter)="sendMessage(chatInput())"
+              placeholder="Votre question..."
+              class="flex-1 input-field text-sm py-2" />
+            <button (click)="sendMessage(chatInput())"
+              [disabled]="!chatInput().trim()"
+              class="btn-primary px-3 py-2 flex-shrink-0 disabled:opacity-40 disabled:cursor-not-allowed">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+              </svg>
+            </button>
           </div>
         </div>
       </div>
     }
 
-    <!-- Chat FAB (when closed) -->
-    @if (!chatOpen()) {
-      <button (click)="openChat()"
-        class="fixed bottom-6 right-6 w-14 h-14 bg-primary rounded-full flex items-center justify-center shadow-lg hover:shadow-xl hover:bg-primary-700 transition-all z-50">
-        <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <!-- ─── Floating chat button ───────────────────────────────────────────── -->
+    <button (click)="toggleChat()"
+      class="fixed bottom-6 right-6 z-50 w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:bg-primary-200 transition-all hover:shadow-xl hover:scale-105"
+      [attr.aria-label]="chatOpen() ? 'Fermer le chat' : 'Ouvrir le chat'">
+      @if (chatOpen()) {
+        <!-- X icon when open -->
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      } @else {
+        <!-- Chat bubble icon when closed -->
+        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
         </svg>
-      </button>
-    }
+      }
+    </button>
   `,
 })
 export class ContactComponent implements AfterViewChecked {
-  @ViewChild('chatBody') chatBodyRef!: ElementRef;
+  @ViewChild('chatBody') chatBodyRef!: ElementRef<HTMLElement>;
 
-  private fb = inject(FormBuilder);
-  private contactSvc = inject(ContactService);
-  private auth = inject(AuthService);
-  private sanitizer = inject(DomSanitizer);
+  private fb          = inject(FormBuilder);
+  private contactSvc  = inject(ContactService);
+  private auth        = inject(AuthService);
+  private sanitizer   = inject(DomSanitizer);
 
-  sent = signal(false);
+  // ── Contact form state ────────────────────────────────────────────────────
+  sent    = signal(false);
   sending = signal(false);
-  error = signal('');
-  chatOpen = signal(false);
-  messages = signal<ChatMessage[]>([]);
-  botTyping = signal(false);
-  chatInput = '';
+  error   = signal('');
+
+  // ── Chatbot state ─────────────────────────────────────────────────────────
+  chatOpen     = signal(false);
+  chatMessages = signal<ChatMessage[]>([{
+    from: 'bot',
+    text: 'Bonjour ! Je suis votre assistant Althea. Comment puis-je vous aider ?',
+    time: new Date(),
+  }]);
+  chatInput  = signal('');
+  isTyping   = signal(false);
+
   private shouldScroll = false;
 
-  contactInfos: { icon: SafeHtml; label: string; value: string }[] = [
+  // ── FAQ keyword map ───────────────────────────────────────────────────────
+  private readonly faqMap: { keyword: string; response: string }[] = [
     {
-      icon: this.sanitizer.bypassSecurityTrustHtml(`<svg class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>`),
-      label: 'Téléphone', value: '+33 1 23 45 67 89'
+      keyword: 'commande',
+      response: "Vous pouvez suivre vos commandes dans votre espace compte sous 'Mes commandes'.",
     },
     {
-      icon: this.sanitizer.bypassSecurityTrustHtml(`<svg class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>`),
-      label: 'E-mail', value: 'contact@althea-systems.fr'
+      keyword: 'livraison',
+      response: 'Nous livrons dans toute l\'Europe. Les délais sont de 3 à 5 jours ouvrables.',
     },
     {
-      icon: this.sanitizer.bypassSecurityTrustHtml(`<svg class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>`),
-      label: 'Adresse', value: '12 rue de la Paix, 75001 Paris'
+      keyword: 'retour',
+      response: 'Vous avez 30 jours pour retourner un produit. Contactez notre support.',
+    },
+    {
+      keyword: 'paiement',
+      response: 'Nous acceptons Visa, Mastercard, et virements bancaires via notre plateforme sécurisée Stripe.',
+    },
+    {
+      keyword: 'facture',
+      response: "Vos factures sont disponibles dans 'Mes commandes' → 'Détail de la commande'.",
+    },
+    {
+      keyword: 'contact',
+      response: 'Vous pouvez nous joindre au +33 1 23 45 67 89 ou via ce formulaire de contact.',
     },
   ];
 
@@ -270,13 +331,33 @@ export class ContactComponent implements AfterViewChecked {
     'Paiement sécurisé',
   ];
 
+  // ── Contact info cards ────────────────────────────────────────────────────
+  contactInfos: { icon: SafeHtml; label: string; value: string }[] = [
+    {
+      icon: this.sanitizer.bypassSecurityTrustHtml(`<svg class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>`),
+      label: 'Téléphone',
+      value: '+33 1 23 45 67 89',
+    },
+    {
+      icon: this.sanitizer.bypassSecurityTrustHtml(`<svg class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>`),
+      label: 'E-mail',
+      value: 'contact@althea-systems.fr',
+    },
+    {
+      icon: this.sanitizer.bypassSecurityTrustHtml(`<svg class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>`),
+      label: 'Adresse',
+      value: '12 rue de la Paix, 75001 Paris',
+    },
+  ];
+
+  // ── Reactive form ─────────────────────────────────────────────────────────
   form = this.fb.group({
     firstName: ['', Validators.required],
-    lastName: ['', Validators.required],
-    email: ['', [Validators.required, Validators.email]],
-    phone: [''],
-    subject: ['', Validators.required],
-    message: ['', [Validators.required, Validators.maxLength(2000)]],
+    lastName:  ['', Validators.required],
+    email:     ['', [Validators.required, Validators.email]],
+    phone:     [''],
+    subject:   ['', Validators.required],
+    message:   ['', [Validators.required, Validators.maxLength(2000)]],
   });
 
   constructor() {
@@ -286,70 +367,94 @@ export class ContactComponent implements AfterViewChecked {
     }
   }
 
-  ngAfterViewChecked() {
+  // ── Lifecycle ─────────────────────────────────────────────────────────────
+  ngAfterViewChecked(): void {
     if (this.shouldScroll) {
       this.scrollToBottom();
       this.shouldScroll = false;
     }
   }
 
-  private scrollToBottom() {
+  private scrollToBottom(): void {
     const el = this.chatBodyRef?.nativeElement;
     if (el) el.scrollTop = el.scrollHeight;
   }
 
-  send() {
+  // ── Contact form methods ──────────────────────────────────────────────────
+  send(): void {
     if (this.form.invalid) return;
-    this.sending.set(true); this.error.set('');
+    this.sending.set(true);
+    this.error.set('');
     this.contactSvc.sendMessage(this.form.value as any).subscribe({
-      next: () => { this.sent.set(true); this.sending.set(false); },
-      error: () => { this.error.set('Une erreur est survenue. Veuillez réessayer.'); this.sending.set(false); }
+      next:  () => { this.sent.set(true);  this.sending.set(false); },
+      error: () => { this.error.set('Une erreur est survenue. Veuillez réessayer.'); this.sending.set(false); },
     });
   }
 
-  resetForm() { this.sent.set(false); this.form.reset(); }
+  resetForm(): void {
+    this.sent.set(false);
+    this.form.reset();
+  }
 
-  openChat() {
-    this.chatOpen.set(true);
-    if (this.messages().length === 0) {
-      this.messages.set([{
-        role: 'bot',
-        text: 'Bonjour ! Je suis l\'assistant virtuel Althea Systems. Comment puis-je vous aider aujourd\'hui ?',
-        time: new Date()
-      }]);
+  // ── Chatbot methods ───────────────────────────────────────────────────────
+  toggleChat(): void {
+    this.chatOpen.update(v => !v);
+    if (this.chatOpen()) {
       this.shouldScroll = true;
     }
   }
 
-  sendChatInput() {
-    const text = this.chatInput.trim();
-    if (!text) return;
-    this.chatInput = '';
-    this.sendMessage(text);
+  openChat(): void {
+    this.chatOpen.set(true);
+    this.shouldScroll = true;
   }
 
-  sendMessage(text: string) {
-    this.messages.update(m => [...m, { role: 'user', text, time: new Date() }]);
-    this.shouldScroll = true;
-    this.botTyping.set(true);
+  sendMessage(text: string): void {
+    const trimmed = text.trim();
+    if (!trimmed || this.isTyping()) return;
 
-    this.contactSvc.getChatbotResponse(text).subscribe({
-      next: reply => {
+    // Clear input & add user bubble
+    this.chatInput.set('');
+    this.chatMessages.update(msgs => [...msgs, { from: 'user', text: trimmed, time: new Date() }]);
+    this.shouldScroll = true;
+
+    // Show typing indicator
+    this.isTyping.set(true);
+
+    // Resolve bot reply after 1 second
+    setTimeout(() => {
+      this.isTyping.set(false);
+
+      const { primary, isDefault } = this.getBotResponse(trimmed);
+
+      this.chatMessages.update(msgs => [...msgs, { from: 'bot', text: primary, time: new Date() }]);
+      this.shouldScroll = true;
+
+      // If no keyword matched, also append the "human agent" follow-up after a short delay
+      if (isDefault) {
         setTimeout(() => {
-          this.botTyping.set(false);
-          this.messages.update(m => [...m, { role: 'bot', text: reply, time: new Date() }]);
+          this.chatMessages.update(msgs => [
+            ...msgs,
+            { from: 'bot', text: 'Un agent humain va vous recontacter.', time: new Date() },
+          ]);
           this.shouldScroll = true;
         }, 600);
-      },
-      error: () => {
-        this.botTyping.set(false);
-        this.messages.update(m => [...m, {
-          role: 'bot',
-          text: 'Désolé, je n\'ai pas pu traiter votre demande. Utilisez le formulaire de contact pour nous joindre.',
-          time: new Date()
-        }]);
-        this.shouldScroll = true;
       }
-    });
+    }, 1000);
+  }
+
+  private getBotResponse(text: string): { primary: string; isDefault: boolean } {
+    const lower = text.toLowerCase();
+
+    for (const entry of this.faqMap) {
+      if (lower.includes(entry.keyword)) {
+        return { primary: entry.response, isDefault: false };
+      }
+    }
+
+    return {
+      primary: 'Je ne comprends pas encore cette question. Utilisez le formulaire ci-dessous ou appelez-nous au +33 1 23 45 67 89.',
+      isDefault: true,
+    };
   }
 }

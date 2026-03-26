@@ -14,6 +14,8 @@ namespace Project.Domain.Entities
         public Enums.MessageStatus Status { get; private set; }
         public DateTime CreatedAt { get; private set; }
 
+        private ContactMessage() { } // For EF Core
+
         public ContactMessage(Guid id, string email, string subject, string message, User? user = null)
         {
             if (id == Guid.Empty) throw new ValidationException("Id cannot be empty");
@@ -26,6 +28,16 @@ namespace Project.Domain.Entities
             Message = message?.Trim() ?? string.Empty;
             Status = Enums.MessageStatus.New;
             CreatedAt = DateTime.UtcNow;
+        }
+
+        public void MarkAsRead()
+        {
+            Status = Enums.MessageStatus.InProgress;
+        }
+
+        public void MarkAsAnswered()
+        {
+            Status = Enums.MessageStatus.Resolved;
         }
     }
 }

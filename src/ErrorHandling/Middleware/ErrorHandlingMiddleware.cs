@@ -4,6 +4,7 @@ using Project.Domain.Exceptions;
 using ErrorHandling.Mappers;
 using ErrorHandling.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 

@@ -18,6 +18,11 @@ namespace Project.Domain.Entities
         public DateTime CreatedAt { get; private set; }
         public DateTime UpdatedAt { get; private set; }
 
+        private readonly List<ProductImage> _images = new();
+        public IReadOnlyCollection<ProductImage> Images => _images.AsReadOnly();
+
+        private Product() { } // For EF Core
+
         public Product(Guid id, string name, string description, decimal priceHt, decimal tvaRate, int stockQuantity, Category category, string slug)
         {
             if (id == Guid.Empty) throw new ValidationException("Id cannot be empty");

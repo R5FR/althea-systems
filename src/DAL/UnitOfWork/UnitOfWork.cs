@@ -17,6 +17,9 @@ public class UnitOfWork : IUnitOfWork
     private ICartRepository? _cartRepository;
     private IOrderRepository? _orderRepository;
     private IInvoiceRepository? _invoiceRepository;
+    private ICategoryRepository? _categoryRepository;
+    private IContactMessageRepository? _contactRepository;
+    private IProductImageRepository? _productImageRepository;
 
     public UnitOfWork(AppDbContext context)
     {
@@ -28,6 +31,9 @@ public class UnitOfWork : IUnitOfWork
     public ICartRepository CartRepository => _cartRepository ??= new CartRepository(_context);
     public IOrderRepository OrderRepository => _orderRepository ??= new OrderRepository(_context);
     public IInvoiceRepository InvoiceRepository => _invoiceRepository ??= new InvoiceRepository(_context);
+    public ICategoryRepository CategoryRepository => _categoryRepository ??= new CategoryRepository(_context);
+    public IContactMessageRepository ContactRepository => _contactRepository ??= new ContactMessageRepository(_context);
+    public IProductImageRepository ProductImageRepository => _productImageRepository ??= new ProductImageRepository(_context);
 
     public async Task<int> SaveChangesAsync()
     {

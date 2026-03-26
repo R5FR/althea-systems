@@ -33,6 +33,17 @@ public class ProductService : IProductService
         return _mapper.Map<ProductDto>(product);
     }
 
+    public async Task<ProductDto> GetBySlugAsync(string slug)
+    {
+        if (string.IsNullOrWhiteSpace(slug)) throw new ArgumentException("Slug cannot be empty", nameof(slug));
+
+        var product = await _unitOfWork.ProductRepository.GetBySlugAsync(slug);
+        if (product == null)
+            throw new NotFoundException($"Product with slug '{slug}' not found");
+
+        return _mapper.Map<ProductDto>(product);
+    }
+
     public async Task<PaginatedResult<ProductListItemDto>> SearchAsync(ProductSearchParams searchParams)
     {
         if (searchParams == null) throw new ArgumentNullException(nameof(searchParams));
@@ -93,8 +104,7 @@ public class ProductService : IProductService
         }
 
         // Créer la nouvelle entité Product
-        // Note: La catégorie doit être récupérée ou créée
-        // Pour l'instant, on utilise un placeholder
+        // Note: La catégorie sera récupérée par EF via la FK CategoryId
         var product = new Product(
             Guid.NewGuid(),
             dto.Name,
@@ -102,7 +112,7 @@ public class ProductService : IProductService
             dto.PriceHt,
             dto.TvaRate,
             dto.StockQuantity,
-            null!, // Category sera définie via EF selon la configuration
+            null!, // Category sera définie via EF selon la configuration FK
             slug);
 
         await _unitOfWork.ProductRepository.AddAsync(product);

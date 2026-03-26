@@ -15,15 +15,33 @@ public class MappingProfile : Profile
 
         // Product mappings
         CreateMap<Product, ProductDto>()
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+            .ForMember(dest => dest.ImageUrls, opt => opt.MapFrom(src =>
+                src.Images.OrderBy(i => i.DisplayOrder).Select(i => i.ImageUrl).ToList()))
+            .ForMember(dest => dest.MainImageUrl, opt => opt.MapFrom(src =>
+                src.Images.OrderBy(i => i.DisplayOrder).Where(i => i.IsMain).Select(i => i.ImageUrl).FirstOrDefault()
+                ?? src.Images.OrderBy(i => i.DisplayOrder).Select(i => i.ImageUrl).FirstOrDefault()));
 
-        CreateMap<Product, ProductListItemDto>();
+        CreateMap<Product, ProductListItemDto>()
+            .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src =>
+                src.Images.OrderBy(i => i.DisplayOrder).Where(i => i.IsMain).Select(i => i.ImageUrl).FirstOrDefault()
+                ?? src.Images.OrderBy(i => i.DisplayOrder).Select(i => i.ImageUrl).FirstOrDefault()));
         CreateMap<CreateProductDto, Product>();
         CreateMap<UpdateProductDto, Product>();
 
         // Cart mappings
-        CreateMap<Cart, CartDto>();
-        CreateMap<CartItem, CartItemDto>();
+        CreateMap<Cart, CartDto>()
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.User != null ? src.User.Id : (Guid?)null));
+        CreateMap<CartItem, CartItemDto>()
+            .ForMember(dest => dest.ProductId,   opt => opt.MapFrom(src => src.Product.Id))
+            .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name))
+            .ForMember(dest => dest.UnitPriceHt, opt => opt.MapFrom(src => src.Product.PriceHt))
+            .ForMember(dest => dest.TvaRate,     opt => opt.MapFrom(src => src.Product.TvaRate))
+            .ForMember(dest => dest.StockQuantity, opt => opt.MapFrom(src => src.Product.StockQuantity))
+            .ForMember(dest => dest.IsAvailable, opt => opt.MapFrom(src => src.Product.StockQuantity > 0))
+            .ForMember(dest => dest.ImageUrl,    opt => opt.MapFrom(src =>
+                src.Product.Images.OrderBy(i => i.DisplayOrder).Where(i => i.IsMain).Select(i => i.ImageUrl).FirstOrDefault()
+                ?? src.Product.Images.OrderBy(i => i.DisplayOrder).Select(i => i.ImageUrl).FirstOrDefault()));
 
         // Order mappings
         CreateMap<Order, OrderDto>()

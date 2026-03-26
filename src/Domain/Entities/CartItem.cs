@@ -13,6 +13,8 @@ namespace Project.Domain.Entities
         public DateTime CreatedAt { get; private set; }
         public DateTime UpdatedAt { get; private set; }
 
+        private CartItem() { } // For EF Core
+
         public CartItem(Guid id, Cart cart, Product product, int quantity, decimal unitPriceTtc)
         {
             if (id == Guid.Empty) throw new ValidationException("Id cannot be empty");

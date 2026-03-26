@@ -51,173 +51,165 @@ type Step = 'address' | 'payment' | 'confirm';
         <div class="lg:col-span-2">
 
           <!-- ── Step 1: Address ──────────────────────────────── -->
-          @if (currentStep() === 'address') {
-            <div class="card p-6">
-              <h2 class="font-bold text-navy text-lg mb-5">Adresse de facturation</h2>
+          <div [hidden]="currentStep() !== 'address'" class="card p-6">
+            <h2 class="font-bold text-navy text-lg mb-5">Adresse de facturation</h2>
 
-              <!-- Saved addresses -->
-              @if (savedAddresses().length > 0) {
-                <div class="space-y-3 mb-5">
-                  @for (addr of savedAddresses(); track addr.id) {
-                    <label class="flex items-start gap-3 p-4 border-2 rounded-xl cursor-pointer transition-colors"
-                      [class.border-primary]="selectedAddressId === addr.id"
-                      [class.border-gray-200]="selectedAddressId !== addr.id">
-                      <input type="radio" name="address" [value]="addr.id" [(ngModel)]="selectedAddressId" class="mt-1 text-primary" />
-                      <div class="text-sm">
-                        <p class="font-semibold text-gray-900">{{ addr.firstName }} {{ addr.lastName }}</p>
-                        <p class="text-gray-600">{{ addr.addressLine1 }}</p>
-                        @if (addr.addressLine2) { <p class="text-gray-600">{{ addr.addressLine2 }}</p> }
-                        <p class="text-gray-600">{{ addr.postalCode }} {{ addr.city }}, {{ addr.country }}</p>
-                        <p class="text-gray-500">{{ addr.phone }}</p>
-                      </div>
-                    </label>
-                  }
+            <!-- Saved addresses -->
+            @if (savedAddresses().length > 0) {
+              <div class="space-y-3 mb-5">
+                @for (addr of savedAddresses(); track addr.id) {
                   <label class="flex items-start gap-3 p-4 border-2 rounded-xl cursor-pointer transition-colors"
-                    [class.border-primary]="selectedAddressId === 'new'"
-                    [class.border-gray-200]="selectedAddressId !== 'new'">
-                    <input type="radio" name="address" value="new" [(ngModel)]="selectedAddressId" class="mt-1 text-primary" />
-                    <span class="text-sm font-semibold text-gray-900">+ Nouvelle adresse</span>
+                    [class.border-primary]="selectedAddressId === addr.id"
+                    [class.border-gray-200]="selectedAddressId !== addr.id">
+                    <input type="radio" name="address" [value]="addr.id" [(ngModel)]="selectedAddressId" class="mt-1 text-primary" />
+                    <div class="text-sm">
+                      <p class="font-semibold text-gray-900">{{ addr.firstName }} {{ addr.lastName }}</p>
+                      <p class="text-gray-600">{{ addr.addressLine1 }}</p>
+                      @if (addr.addressLine2) { <p class="text-gray-600">{{ addr.addressLine2 }}</p> }
+                      <p class="text-gray-600">{{ addr.postalCode }} {{ addr.city }}, {{ addr.country }}</p>
+                      <p class="text-gray-500">{{ addr.phone }}</p>
+                    </div>
+                  </label>
+                }
+                <label class="flex items-start gap-3 p-4 border-2 rounded-xl cursor-pointer transition-colors"
+                  [class.border-primary]="selectedAddressId === 'new'"
+                  [class.border-gray-200]="selectedAddressId !== 'new'">
+                  <input type="radio" name="address" value="new" [(ngModel)]="selectedAddressId" class="mt-1 text-primary" />
+                  <span class="text-sm font-semibold text-gray-900">+ Nouvelle adresse</span>
+                </label>
+              </div>
+            }
+
+            <!-- New address form -->
+            @if (savedAddresses().length === 0 || selectedAddressId === 'new') {
+              <form [formGroup]="addressForm" class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Prénom *</label>
+                  <input formControlName="firstName" class="input-field" [class.input-error]="f['firstName'].invalid && f['firstName'].touched" />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Nom *</label>
+                  <input formControlName="lastName" class="input-field" [class.input-error]="f['lastName'].invalid && f['lastName'].touched" />
+                </div>
+                <div class="col-span-2">
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Adresse *</label>
+                  <input formControlName="addressLine1" class="input-field" placeholder="Rue, numéro" />
+                </div>
+                <div class="col-span-2">
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Complément d'adresse</label>
+                  <input formControlName="addressLine2" class="input-field" placeholder="Appartement, bâtiment..." />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Code postal *</label>
+                  <input formControlName="postalCode" class="input-field" />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Ville *</label>
+                  <input formControlName="city" class="input-field" />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Région</label>
+                  <input formControlName="region" class="input-field" />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Pays *</label>
+                  <select formControlName="country" class="input-field">
+                    <option value="FR">France</option>
+                    <option value="BE">Belgique</option>
+                    <option value="CH">Suisse</option>
+                    <option value="LU">Luxembourg</option>
+                  </select>
+                </div>
+                <div class="col-span-2">
+                  <label class="block text-xs font-medium text-gray-700 mb-1">Téléphone mobile *</label>
+                  <input formControlName="phone" type="tel" class="input-field" />
+                </div>
+                <div class="col-span-2">
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" [(ngModel)]="saveAddress" [ngModelOptions]="{standalone: true}" class="text-primary rounded" />
+                    <span class="text-sm text-gray-700">Enregistrer cette adresse</span>
                   </label>
                 </div>
-              }
+              </form>
+            }
 
-              <!-- New address form -->
-              @if (savedAddresses().length === 0 || selectedAddressId === 'new') {
-                <form [formGroup]="addressForm" class="grid grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-xs font-medium text-gray-700 mb-1">Prénom *</label>
-                    <input formControlName="firstName" class="input-field" [class.input-error]="f['firstName'].invalid && f['firstName'].touched" />
-                  </div>
-                  <div>
-                    <label class="block text-xs font-medium text-gray-700 mb-1">Nom *</label>
-                    <input formControlName="lastName" class="input-field" [class.input-error]="f['lastName'].invalid && f['lastName'].touched" />
-                  </div>
-                  <div class="col-span-2">
-                    <label class="block text-xs font-medium text-gray-700 mb-1">Adresse *</label>
-                    <input formControlName="addressLine1" class="input-field" placeholder="Rue, numéro" />
-                  </div>
-                  <div class="col-span-2">
-                    <label class="block text-xs font-medium text-gray-700 mb-1">Complément d'adresse</label>
-                    <input formControlName="addressLine2" class="input-field" placeholder="Appartement, bâtiment..." />
-                  </div>
-                  <div>
-                    <label class="block text-xs font-medium text-gray-700 mb-1">Code postal *</label>
-                    <input formControlName="postalCode" class="input-field" />
-                  </div>
-                  <div>
-                    <label class="block text-xs font-medium text-gray-700 mb-1">Ville *</label>
-                    <input formControlName="city" class="input-field" />
-                  </div>
-                  <div>
-                    <label class="block text-xs font-medium text-gray-700 mb-1">Région</label>
-                    <input formControlName="region" class="input-field" />
-                  </div>
-                  <div>
-                    <label class="block text-xs font-medium text-gray-700 mb-1">Pays *</label>
-                    <select formControlName="country" class="input-field">
-                      <option value="FR">France</option>
-                      <option value="BE">Belgique</option>
-                      <option value="CH">Suisse</option>
-                      <option value="LU">Luxembourg</option>
-                    </select>
-                  </div>
-                  <div class="col-span-2">
-                    <label class="block text-xs font-medium text-gray-700 mb-1">Téléphone mobile *</label>
-                    <input formControlName="phone" type="tel" class="input-field" />
-                  </div>
-                  <div class="col-span-2">
-                    <label class="flex items-center gap-2 cursor-pointer">
-                      <input type="checkbox" [(ngModel)]="saveAddress" [ngModelOptions]="{standalone: true}" class="text-primary rounded" />
-                      <span class="text-sm text-gray-700">Enregistrer cette adresse</span>
-                    </label>
-                  </div>
-                </form>
-              }
+            <button (click)="nextStep()" class="btn-primary mt-6 w-full justify-center py-3 text-base">
+              Continuer vers le paiement
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
 
-              <button (click)="nextStep()" class="btn-primary mt-6 w-full justify-center py-3 text-base">
-                Continuer vers le paiement
+          <!-- ── Step 2: Payment ──────────────────────────────── -->
+          <!-- [hidden] (not @if) so #stripeCard stays in DOM when moving to confirm step -->
+          <div [hidden]="currentStep() !== 'payment'" class="card p-6">
+            <h2 class="font-bold text-navy text-lg mb-5">Informations de paiement</h2>
+
+            <!-- Saved cards -->
+            @if (savedCards().length > 0) {
+              <div class="space-y-3 mb-5">
+                @for (card of savedCards(); track card.id) {
+                  <label class="flex items-center gap-3 p-4 border-2 rounded-xl cursor-pointer transition-colors"
+                    [class.border-primary]="selectedCardId === card.id"
+                    [class.border-gray-200]="selectedCardId !== card.id">
+                    <input type="radio" name="card" [value]="card.id" [(ngModel)]="selectedCardId" class="text-primary" />
+                    <div class="flex items-center gap-3 flex-1">
+                      <span class="text-xl">💳</span>
+                      <div class="text-sm">
+                        <p class="font-semibold text-gray-900">{{ card.cardBrand }} •••• {{ card.last4 }}</p>
+                        <p class="text-gray-500">Expire {{ card.expMonth }}/{{ card.expYear }}</p>
+                      </div>
+                    </div>
+                  </label>
+                }
+                <label class="flex items-center gap-3 p-4 border-2 rounded-xl cursor-pointer transition-colors"
+                  [class.border-primary]="selectedCardId === 'new'"
+                  [class.border-gray-200]="selectedCardId !== 'new'">
+                  <input type="radio" name="card" value="new" [(ngModel)]="selectedCardId" class="text-primary" />
+                  <span class="text-sm font-semibold text-gray-900">+ Nouvelle carte</span>
+                </label>
+              </div>
+            }
+
+            <!-- New card form — [hidden] keeps #stripeCard in DOM -->
+            <div [hidden]="savedCards().length > 0 && selectedCardId !== 'new'" class="space-y-4">
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1">Nom sur la carte *</label>
+                <input [(ngModel)]="cardholderName" type="text" class="input-field" placeholder="Jean Dupont" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-700 mb-1.5">Numéro de carte *</label>
+                <div #stripeCard class="input-field py-3 bg-white min-h-[44px]"></div>
+                @if (stripeError()) {
+                  <p class="text-red-500 text-xs mt-1">{{ stripeError() }}</p>
+                }
+              </div>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" [(ngModel)]="saveCard" class="text-primary rounded" />
+                <span class="text-sm text-gray-700">Enregistrer cette carte pour mes prochains achats</span>
+              </label>
+              <div class="flex items-center gap-2 text-xs text-gray-500">
+                <svg class="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+                Paiement sécurisé par Stripe (PCI-DSS)
+              </div>
+            </div>
+
+            <div class="flex gap-3 mt-6">
+              <button (click)="currentStep.set('address')" class="btn-ghost">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                Retour
+              </button>
+              <button (click)="nextStep()" class="btn-primary flex-1 justify-center py-3 text-base">
+                Vérifier la commande
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
               </button>
             </div>
-          }
-
-          <!-- ── Step 2: Payment ──────────────────────────────── -->
-          @if (currentStep() === 'payment') {
-            <div class="card p-6">
-              <h2 class="font-bold text-navy text-lg mb-5">Informations de paiement</h2>
-
-              <!-- Saved cards -->
-              @if (savedCards().length > 0) {
-                <div class="space-y-3 mb-5">
-                  @for (card of savedCards(); track card.id) {
-                    <label class="flex items-center gap-3 p-4 border-2 rounded-xl cursor-pointer transition-colors"
-                      [class.border-primary]="selectedCardId === card.id"
-                      [class.border-gray-200]="selectedCardId !== card.id">
-                      <input type="radio" name="card" [value]="card.id" [(ngModel)]="selectedCardId" class="text-primary" />
-                      <div class="flex items-center gap-3 flex-1">
-                        <span class="text-xl">💳</span>
-                        <div class="text-sm">
-                          <p class="font-semibold text-gray-900">{{ card.cardBrand }} •••• {{ card.last4 }}</p>
-                          <p class="text-gray-500">Expire {{ card.expMonth }}/{{ card.expYear }}</p>
-                        </div>
-                      </div>
-                    </label>
-                  }
-                  <label class="flex items-center gap-3 p-4 border-2 rounded-xl cursor-pointer transition-colors"
-                    [class.border-primary]="selectedCardId === 'new'"
-                    [class.border-gray-200]="selectedCardId !== 'new'">
-                    <input type="radio" name="card" value="new" [(ngModel)]="selectedCardId" class="text-primary" />
-                    <span class="text-sm font-semibold text-gray-900">+ Nouvelle carte</span>
-                  </label>
-                </div>
-              }
-
-              <!-- Stripe card element -->
-              @if (savedCards().length === 0 || selectedCardId === 'new') {
-                <div class="space-y-4">
-                  <div>
-                    <label class="block text-xs font-medium text-gray-700 mb-1">Nom sur la carte *</label>
-                    <input [(ngModel)]="cardholderName" type="text" class="input-field" placeholder="Jean Dupont" />
-                  </div>
-                  <div>
-                    <label class="block text-xs font-medium text-gray-700 mb-1.5">Numéro de carte *</label>
-                    <div #stripeCard class="input-field py-3 bg-white min-h-[44px]">
-                      <!-- Stripe CardElement mounts here -->
-                    </div>
-                    @if (stripeError()) {
-                      <p class="text-red-500 text-xs mt-1">{{ stripeError() }}</p>
-                    }
-                  </div>
-                  <label class="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" [(ngModel)]="saveCard" class="text-primary rounded" />
-                    <span class="text-sm text-gray-700">Enregistrer cette carte pour mes prochains achats</span>
-                  </label>
-                  <div class="flex items-center gap-2 text-xs text-gray-500">
-                    <svg class="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                    </svg>
-                    Paiement sécurisé par Stripe (PCI-DSS)
-                  </div>
-                </div>
-              }
-
-              <div class="flex gap-3 mt-6">
-                <button (click)="currentStep.set('address')" class="btn-ghost">
-                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-                  Retour
-                </button>
-                <button (click)="nextStep()" class="btn-primary flex-1 justify-center py-3 text-base">
-                  Vérifier la commande
-                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                </button>
-              </div>
-            </div>
-          }
+          </div>
 
           <!-- ── Step 3: Confirmation ─────────────────────────── -->
-          @if (currentStep() === 'confirm') {
-            <div class="card p-6">
-              <h2 class="font-bold text-navy text-lg mb-5">Vérifier et confirmer</h2>
+          <div [hidden]="currentStep() !== 'confirm'" class="card p-6">
+            <h2 class="font-bold text-navy text-lg mb-5">Vérifier et confirmer</h2>
 
               <!-- Recap address -->
               <div class="mb-5">
@@ -284,8 +276,7 @@ type Step = 'address' | 'payment' | 'confirm';
                   }
                 </button>
               </div>
-            </div>
-          }
+          </div>
         </div>
 
         <!-- Right: Order summary -->
@@ -427,8 +418,6 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
         this.addressForm.markAllAsTouched(); return;
       }
       this.currentStep.set('payment');
-      // Mount Stripe when payment step is shown
-      setTimeout(() => this.mountStripe(), 200);
     } else if (this.currentStep() === 'payment') {
       this.currentStep.set('confirm');
     }

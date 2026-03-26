@@ -1,6 +1,7 @@
 namespace Web.Controllers;
 
 using Application.DTOs;
+using Application.Interfaces;
 using Application.Services;
 using Project.Domain.Exceptions;
 using Microsoft.AspNetCore.Authorization;
@@ -57,7 +58,7 @@ public class OrdersController : ControllerBase
     /// Liste les commandes de l'utilisateur.
     /// </summary>
     [HttpGet]
-    [ProducesResponseType(typeof(dynamic), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> ListOrders([FromQuery] string? status, [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
@@ -187,7 +188,9 @@ public class OrdersController : ControllerBase
 
     private Guid GetUserIdFromClaims()
     {
-        var userIdClaim = User.FindFirst("sub") ?? User.FindFirst("userId");
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)
+                       ?? User.FindFirst("sub")
+                       ?? User.FindFirst("userId");
         if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out var userId))
             return userId;
 

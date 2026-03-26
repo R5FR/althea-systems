@@ -6,59 +6,6 @@ import { ProductService } from '../../core/services/product.service';
 import { CategoryService } from '../../core/services/category.service';
 import { CarouselSlide, Category, ProductListItem } from '../../core/models';
 
-// ── Example / fallback data ────────────────────────────────────────────────
-const EXAMPLE_SLIDES: CarouselSlide[] = [
-  {
-    id: 'ex-1',
-    title: 'Imagerie médicale\nde nouvelle génération',
-    subtitle: 'Échographes, scanners et IRM portables pour des diagnostics précis au cabinet.',
-    imageUrl: '',
-    linkUrl: '/recherche',
-    isActive: true,
-    displayOrder: 1,
-  },
-  {
-    id: 'ex-2',
-    title: 'Monitoring continu\nde vos patients',
-    subtitle: 'Moniteurs multiparamétriques et défibrillateurs de haute fiabilité clinique.',
-    imageUrl: '',
-    linkUrl: '/recherche',
-    isActive: true,
-    displayOrder: 2,
-  },
-  {
-    id: 'ex-3',
-    title: 'Stérilisation &\nhygiène hospitalière',
-    subtitle: 'Autoclaves, laveurs-désinfecteurs et consommables certifiés EN 13060.',
-    imageUrl: '',
-    linkUrl: '/recherche',
-    isActive: true,
-    displayOrder: 3,
-  },
-];
-
-const EXAMPLE_CATEGORIES: (Category & { gradient: string })[] = [
-  { id: 'c1', name: 'Imagerie médicale',         slug: 'imagerie-medicale',  description: '', imageUrl: 'https://picsum.photos/seed/cat-imagerie/600/400',  status: 'Active', displayOrder: 1, gradient: 'linear-gradient(135deg,#0094A0,#33BFC9)' },
-  { id: 'c2', name: 'Monitoring & Surveillance', slug: 'monitoring',         description: '', imageUrl: 'https://picsum.photos/seed/cat-monitor/600/400',   status: 'Active', displayOrder: 2, gradient: 'linear-gradient(135deg,#003D5C,#004D74)' },
-  { id: 'c3', name: 'Chirurgie & Blocs',         slug: 'chirurgie',          description: '', imageUrl: 'https://picsum.photos/seed/cat-chirurgie/600/400', status: 'Active', displayOrder: 3, gradient: 'linear-gradient(135deg,#003D5C,#003D5C)' },
-  { id: 'c4', name: 'Diagnostic clinique',       slug: 'diagnostic',         description: '', imageUrl: 'https://picsum.photos/seed/cat-diagno/600/400',    status: 'Active', displayOrder: 4, gradient: 'linear-gradient(135deg,#0094A0,#00A8B5)' },
-  { id: 'c5', name: 'Cardiologie',               slug: 'cardiologie',        description: '', imageUrl: 'https://picsum.photos/seed/cat-cardio/600/400',    status: 'Active', displayOrder: 5, gradient: 'linear-gradient(135deg,#003D5C,#004D74)' },
-  { id: 'c6', name: 'Ophtalmologie',             slug: 'ophtalmologie',      description: '', imageUrl: 'https://picsum.photos/seed/cat-ophtalmo/600/400',  status: 'Active', displayOrder: 6, gradient: 'linear-gradient(135deg,#006D77,#48CAE4)' },
-  { id: 'c7', name: 'Stérilisation',             slug: 'sterilisation',      description: '', imageUrl: 'https://picsum.photos/seed/cat-steril/600/400',    status: 'Active', displayOrder: 7, gradient: 'linear-gradient(135deg,#2D3A3A,#4A7C7E)' },
-  { id: 'c8', name: 'Mobilier médical',          slug: 'mobilier-medical',   description: '', imageUrl: 'https://picsum.photos/seed/cat-mobilier/600/400',  status: 'Active', displayOrder: 8, gradient: 'linear-gradient(135deg,#3D3D3D,#5C6B7A)' },
-];
-
-const EXAMPLE_PRODUCTS: ProductListItem[] = [
-  { id: 'p1', name: 'Échographe portable SonoMax Pro X7',            slug: 'echographe-sonomax-pro-x7',    priceTtc: 15990, priceHt: 13325, tvaRate: 20, stockQuantity: 3,  imageUrl: 'https://picsum.photos/seed/med101/400/400', badges: [{ type: 'new',   label: 'Nouveau' }],     categoryId: 'c1', priority: 1 },
-  { id: 'p2', name: 'Moniteur multiparamétrique CardioCare X5',      slug: 'moniteur-cardiocare-x5',       priceTtc: 8750,  priceHt: 7292,  tvaRate: 20, stockQuantity: 7,  imageUrl: 'https://picsum.photos/seed/med102/400/400', badges: [],                                           categoryId: 'c2', priority: 2 },
-  { id: 'p3', name: 'Défibrillateur HeartSave AED Pro 3000',         slug: 'defibrillateur-heartsave-aed', priceTtc: 2290,  priceHt: 1908,  tvaRate: 20, stockQuantity: 12, imageUrl: 'https://picsum.photos/seed/med103/400/400', badges: [{ type: 'promo', label: 'Best-seller' }],    categoryId: 'c5', priority: 3 },
-  { id: 'p4', name: 'Électrocardiographe 12 dérivations ECG Expert', slug: 'ecg-expert-12-derivations',    priceTtc: 5490,  priceHt: 4575,  tvaRate: 20, stockQuantity: 5,  imageUrl: 'https://picsum.photos/seed/med104/400/400', badges: [],                                           categoryId: 'c5', priority: 4 },
-  { id: 'p5', name: 'Table d\'examen électrique MedLine Elite',      slug: 'table-examen-medline-elite',   priceTtc: 3450,  priceHt: 2875,  tvaRate: 20, stockQuantity: 2,  imageUrl: 'https://picsum.photos/seed/med105/400/400', badges: [],                                           categoryId: 'c8', priority: 5 },
-  { id: 'p6', name: 'Autoclave de stérilisation SterilPro 22L',      slug: 'autoclave-sterilpro-22l',      priceTtc: 4190,  priceHt: 3492,  tvaRate: 20, stockQuantity: 4,  imageUrl: 'https://picsum.photos/seed/med106/400/400', badges: [{ type: 'custom', label: 'Certifié CE' }],   categoryId: 'c7', priority: 6 },
-  { id: 'p7', name: 'Otoscope numérique DiagnosticPro HD',            slug: 'otoscope-diagnosticpro-hd',   priceTtc: 890,   priceHt: 742,   tvaRate: 20, stockQuantity: 18, imageUrl: 'https://picsum.photos/seed/med107/400/400', badges: [],                                           categoryId: 'c4', priority: 7 },
-  { id: 'p8', name: 'Oxymètre de pouls professionnel OxyCheck',      slug: 'oxycheck-pro',                 priceTtc: 490,   priceHt: 408,   tvaRate: 20, stockQuantity: 30, imageUrl: 'https://picsum.photos/seed/med108/400/400', badges: [{ type: 'promo',  label: 'Promo' }],          categoryId: 'c2', priority: 8 },
-];
-
 // ── Hero gradient palette by slide index ──────────────────────────────────
 const HERO_GRADIENTS = [
   'linear-gradient(135deg, #003D5C 0%, #0094A0 60%, #002323 100%)',
@@ -523,12 +470,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.adminSvc.getHomepageConfig().subscribe({
       next: cfg => {
         const slides = cfg.carousel?.filter((s: CarouselSlide) => s.isActive) ?? [];
-        this.slides.set(slides.length > 0 ? slides : EXAMPLE_SLIDES);
+        this.slides.set(slides);
         this.featuredText.set(cfg.featuredText ?? '');
         this.startAutoplay();
       },
       error: () => {
-        this.slides.set(EXAMPLE_SLIDES);
         this.startAutoplay();
       }
     });
@@ -537,19 +483,18 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.categorySvc.getAll().subscribe({
       next: (cats: Category[]) => {
         const active = cats.filter((c: Category) => c.status === 'Active').sort((a: Category, b: Category) => a.displayOrder - b.displayOrder);
-        this.categories.set(active.length > 0 ? active : EXAMPLE_CATEGORIES);
+        this.categories.set(active);
       },
-      error: () => this.categories.set(EXAMPLE_CATEGORIES)
+      error: () => {}
     });
 
     // Top products
     this.productSvc.getTop(8).subscribe({
       next: (products: ProductListItem[]) => {
-        this.topProducts.set(products.length > 0 ? products : EXAMPLE_PRODUCTS);
+        this.topProducts.set(products);
         this.loadingProducts.set(false);
       },
       error: () => {
-        this.topProducts.set(EXAMPLE_PRODUCTS);
         this.loadingProducts.set(false);
       }
     });

@@ -14,6 +14,8 @@ namespace Project.Domain.Entities
         private readonly List<CartItem> _items = new();
         public IReadOnlyCollection<CartItem> Items => _items.AsReadOnly();
 
+        private Cart() { } // For EF Core
+
         public Cart(Guid id, User? user = null, string? sessionId = null)
         {
             if (id == Guid.Empty) throw new ValidationException("Id cannot be empty");

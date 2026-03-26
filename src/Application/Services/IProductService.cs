@@ -19,6 +19,12 @@ public interface IProductService
     Task<ProductDto> GetByIdAsync(Guid id);
 
     /// <summary>
+    /// Récupère un produit par son slug.
+    /// </summary>
+    /// <exception cref="NotFoundException">Si le produit n'existe pas</exception>
+    Task<ProductDto> GetBySlugAsync(string slug);
+
+    /// <summary>
     /// Recherche les produits selon les critères.
     /// </summary>
     /// <exception cref="ValidationException">Si les paramètres sont invalides</exception>

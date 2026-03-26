@@ -8,4 +8,5 @@ public class ProductListItemDto
     public string Slug { get; set; } = string.Empty;
     public Guid CategoryId { get; set; }
     public int StockQuantity { get; set; }
+    public string? ImageUrl { get; set; }
 }

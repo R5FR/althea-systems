@@ -1,6 +1,7 @@
 namespace Web.Controllers;
 
 using Application.DTOs;
+using Application.Interfaces;
 using Application.Services;
 using Project.Domain.Exceptions;
 using Microsoft.AspNetCore.Authorization;
@@ -29,16 +30,8 @@ public class CartController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetCart(Guid cartId)
     {
-        try
-        {
-            var cart = await _cartService.GetCartAsync(cartId, null);
-            return Ok(cart);
-        }
-        catch (NotFoundException ex)
-        {
-            _logger.LogWarning("Cart not found: {CartId}", cartId);
-            return NotFound(new { error = ex.Message });
-        }
+        var cart = await _cartService.GetOrCreateCartAsync(cartId);
+        return Ok(cart);
     }
 
     /// <summary>
@@ -158,7 +151,7 @@ public class CartController : ControllerBase
     /// </summary>
     [HttpPost("checkout")]
     [Authorize]
-    [ProducesResponseType(typeof(dynamic), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -189,7 +182,9 @@ public class CartController : ControllerBase
 
     private Guid GetUserIdFromClaims()
     {
-        var userIdClaim = User.FindFirst("sub") ?? User.FindFirst("userId");
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)
+                       ?? User.FindFirst("sub")
+                       ?? User.FindFirst("userId");
         if (userIdClaim != null && Guid.TryParse(userIdClaim.Value, out var userId))
             return userId;
 

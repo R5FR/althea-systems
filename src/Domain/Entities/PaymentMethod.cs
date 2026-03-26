@@ -16,6 +16,8 @@ namespace Project.Domain.Entities
         public DateTime CreatedAt { get; private set; }
         public DateTime UpdatedAt { get; private set; }
 
+        private PaymentMethod() { } // For EF Core
+
         public PaymentMethod(Guid id, string provider, string cardBrand, string last4, int expMonth, int expYear, string token, bool isDefault = false)
         {
             if (id == Guid.Empty) throw new ValidationException("Id cannot be empty");
@@ -34,9 +36,9 @@ namespace Project.Domain.Entities
             UpdatedAt = CreatedAt;
         }
 
-        public void SetDefault(bool isDefault)
+        public void SetDefault(bool value)
         {
-            IsDefault = isDefault;
+            IsDefault = value;
             UpdatedAt = DateTime.UtcNow;
         }
     }

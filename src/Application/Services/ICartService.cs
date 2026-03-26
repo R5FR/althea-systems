@@ -19,6 +19,11 @@ public interface ICartService
     Task<CartDto> GetCartAsync(Guid? userId, string? sessionId);
 
     /// <summary>
+    /// Récupère ou crée un panier par son ID (pour les paniers invités via localStorage).
+    /// </summary>
+    Task<CartDto> GetOrCreateCartAsync(Guid cartId);
+
+    /// <summary>
     /// Ajoute un article au panier.
     /// </summary>
     /// <exception cref="NotFoundException">Si le produit n'existe pas</exception>

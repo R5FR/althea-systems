@@ -138,6 +138,7 @@ export interface Product {
   category?: Category;
   images?: ProductImage[];
   imageUrls?: string[];
+  mainImageUrl?: string;
   badges?: Badge[];
   isLargeProduct?: boolean;
   priority?: number;

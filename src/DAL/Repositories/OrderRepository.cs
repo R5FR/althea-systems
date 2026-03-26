@@ -28,7 +28,7 @@ public class OrderRepository : IOrderRepository
         if (take < 1) take = 100;
 
         return await _context.Orders
-            .Where(o => o.UserId == userId)
+            .Where(o => EF.Property<Guid>(o, "UserId") == userId)
             .Skip(skip)
             .Take(take)
             .Include(o => o.Items)
@@ -38,7 +38,7 @@ public class OrderRepository : IOrderRepository
 
     public async Task<int> CountByUserIdAsync(Guid userId)
     {
-        return await _context.Orders.CountAsync(o => o.UserId == userId);
+        return await _context.Orders.CountAsync(o => EF.Property<Guid>(o, "UserId") == userId);
     }
 
     public async Task<List<Order>> SearchAsync(string? status, DateTime? startDate, DateTime? endDate, int skip, int take)
@@ -89,12 +89,13 @@ public class OrderRepository : IOrderRepository
         await _context.Orders.AddAsync(order);
     }
 
-    public void Update(Order order)
+    public Task UpdateAsync(Order order)
     {
         if (order == null)
             throw new ValidationException("Order cannot be null");
 
         _context.Orders.Update(order);
+        return Task.CompletedTask;
     }
 
     public async Task DeleteAsync(Guid id)

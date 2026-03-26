@@ -7,6 +7,9 @@ public interface IUnitOfWork : IAsyncDisposable
     ICartRepository CartRepository { get; }
     IOrderRepository OrderRepository { get; }
     IInvoiceRepository InvoiceRepository { get; }
+    ICategoryRepository CategoryRepository { get; }
+    IContactMessageRepository ContactRepository { get; }
+    IProductImageRepository ProductImageRepository { get; }
 
     Task<int> SaveChangesAsync();
     Task BeginTransactionAsync();

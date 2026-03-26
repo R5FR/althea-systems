@@ -15,6 +15,8 @@ namespace Project.Domain.Entities
         public decimal TotalLineTtc => UnitPriceTtc * Quantity;
         public DateTime CreatedAt { get; private set; }
 
+        private OrderItem() { } // For EF Core
+
         public OrderItem(Guid id, Product product, string productNameSnapshot, decimal unitPriceHt, decimal unitTvaRate, int quantity)
         {
             if (id == Guid.Empty) throw new ValidationException("Id cannot be empty");

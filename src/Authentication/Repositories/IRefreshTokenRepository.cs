@@ -1,7 +1,7 @@
 namespace Authentication.Repositories;
 
 using Authentication.Models;
-using Domain.Exceptions;
+using Project.Domain.Exceptions;
 
 /// <summary>
 /// Repository pour la gestion des refresh tokens.

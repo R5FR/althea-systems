@@ -3,6 +3,7 @@ namespace Authentication.Services;
 using Authentication.Models;
 using Authentication.Settings;
 using Project.Domain.Exceptions;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -77,12 +78,12 @@ public class JwtService : IJwtService
         catch (SecurityTokenException ex)
         {
             _logger.LogWarning(ex, "Token validation failed");
-            throw new UnauthorizedException("Invalid or expired token", ex);
+            throw new UnauthorizedException("Invalid or expired token");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unexpected error validating token");
-            throw new UnauthorizedException("Token validation error", ex);
+            throw new UnauthorizedException("Token validation error");
         }
     }
 

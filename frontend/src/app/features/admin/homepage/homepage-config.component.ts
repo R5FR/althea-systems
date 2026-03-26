@@ -18,7 +18,14 @@ import { HomepageConfig } from '../../../core/models';
         </button>
       </div>
 
-      @if (saveSuccess()) { <p class="text-sm text-green-600 bg-green-50 border border-green-200 rounded-lg px-4 py-2">✓ Configuration sauvegardée</p> }
+      @if (saveSuccess()) {
+        <p class="text-sm text-green-600 bg-green-50 border border-green-200 rounded-lg px-4 py-2 flex items-center gap-2">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+          Configuration sauvegardée
+        </p>
+      }
       @if (error()) { <p class="text-sm text-red-500">{{ error() }}</p> }
 
       @if (loading()) {

@@ -71,7 +71,11 @@ import { Category } from '../../../core/models';
                       @if (cat.imageUrl) {
                         <img [src]="cat.imageUrl" [alt]="cat.name" class="w-10 h-10 rounded-lg object-cover" />
                       } @else {
-                        <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400">🗂️</div>
+                        <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400">
+                          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/>
+                          </svg>
+                        </div>
                       }
                       <div>
                         <p class="font-medium text-gray-900">{{ cat.name }}</p>

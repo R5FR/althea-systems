@@ -1,6 +1,6 @@
 namespace DAL.Context;
 
-using Domain.Entities;
+using Project.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using DAL.EntityTypeConfigurations;
 

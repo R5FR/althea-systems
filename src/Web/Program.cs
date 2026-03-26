@@ -42,7 +42,12 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IContactService, ContactService>();
 builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
+builder.Services.AddScoped<Project.Domain.Services.IPasswordHasher, PasswordHasher>();
+builder.Services.AddScoped<Application.Interfaces.IBlobStorageService, Web.Services.BlobStorageService>();
+builder.Services.AddSingleton<Application.Interfaces.IRefreshTokenService, Web.Services.InMemoryRefreshTokenService>();
 
 // ========================================
 // 4. CONFIGURATION AUTHENTICATION & AUTHORIZATION
@@ -125,6 +130,13 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+// Auto-create database schema on startup (remplace les migrations)
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.EnsureCreated();
+}
 
 // ========================================
 // 8. MIDDLEWARE PIPELINE CONFIGURATION

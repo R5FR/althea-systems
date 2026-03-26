@@ -1,6 +1,7 @@
 import { Component, OnInit, signal, inject, AfterViewInit, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { AdminService } from '../../../core/services/admin.service';
 import { Chart, registerables } from 'chart.js';
 
@@ -39,7 +40,8 @@ Chart.register(...registerables);
           @for (kpi of kpis(); track kpi.label) {
             <div class="card p-5">
               <div class="flex items-center justify-between mb-3">
-                <span class="text-2xl">{{ kpi.icon }}</span>
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                  [class]="kpi.iconBg" [innerHTML]="kpi.icon"></div>
                 <span [class]="kpi.trend >= 0 ? 'text-green-600 bg-green-50' : 'text-red-500 bg-red-50'"
                   class="text-xs font-medium px-2 py-0.5 rounded-full">
                   {{ kpi.trend >= 0 ? '+' : '' }}{{ kpi.trend }}%
@@ -161,6 +163,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   @ViewChildren('categoryChart') categoryChartRef!: QueryList<ElementRef>;
 
   private adminSvc = inject(AdminService);
+  private sanitizer = inject(DomSanitizer);
 
   loading = signal(true);
   period = signal<'week' | 'month' | 'year'>('month');
@@ -180,6 +183,13 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     { value: 'year' as const, label: '12 mois' },
   ];
 
+  private icon(path: string, extraPath?: string): SafeHtml {
+    const p2 = extraPath ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${extraPath}"/>` : '';
+    return this.sanitizer.bypassSecurityTrustHtml(
+      `<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${path}"/>${p2}</svg>`
+    );
+  }
+
   ngOnInit() { this.loadData(); }
 
   ngAfterViewInit() {
@@ -198,10 +208,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
     this.adminSvc.getSalesStats(this.period()).subscribe({
       next: (stats: any) => {
         this.kpis.set([
-          { icon: '💰', label: 'CA TTC', value: `${(stats.totalRevenue ?? 0).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €`, trend: stats.revenueTrend ?? 0 },
-          { icon: '🛒', label: 'Commandes', value: stats.totalOrders ?? 0, trend: stats.ordersTrend ?? 0 },
-          { icon: '👥', label: 'Nouveaux clients', value: stats.newCustomers ?? 0, trend: stats.customersTrend ?? 0 },
-          { icon: '📦', label: 'Produits vendus', value: stats.unitsSold ?? 0, trend: stats.unitsTrend ?? 0 },
+          { icon: this.icon('M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z'), iconBg: 'bg-emerald-50 text-emerald-600', label: 'CA TTC', value: `${(stats.totalRevenue ?? 0).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €`, trend: stats.revenueTrend ?? 0 },
+          { icon: this.icon('M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z'), iconBg: 'bg-blue-50 text-blue-600', label: 'Commandes', value: stats.totalOrders ?? 0, trend: stats.ordersTrend ?? 0 },
+          { icon: this.icon('M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z'), iconBg: 'bg-violet-50 text-violet-600', label: 'Nouveaux clients', value: stats.newCustomers ?? 0, trend: stats.customersTrend ?? 0 },
+          { icon: this.icon('M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4'), iconBg: 'bg-amber-50 text-amber-600', label: 'Produits vendus', value: stats.unitsSold ?? 0, trend: stats.unitsTrend ?? 0 },
         ]);
         this.topProducts.set(stats.topProducts ?? []);
         this.recentOrders.set(stats.recentOrders ?? []);
@@ -215,10 +225,10 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       error: () => {
         // Mock data for display
         this.kpis.set([
-          { icon: '💰', label: 'CA TTC', value: '12 450,00 €', trend: 8.2 },
-          { icon: '🛒', label: 'Commandes', value: 47, trend: 3.5 },
-          { icon: '👥', label: 'Nouveaux clients', value: 12, trend: -2.1 },
-          { icon: '📦', label: 'Produits vendus', value: 134, trend: 11.4 },
+          { icon: this.icon('M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z'), iconBg: 'bg-emerald-50 text-emerald-600', label: 'CA TTC', value: '12 450,00 €', trend: 8.2 },
+          { icon: this.icon('M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z'), iconBg: 'bg-blue-50 text-blue-600', label: 'Commandes', value: 47, trend: 3.5 },
+          { icon: this.icon('M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z'), iconBg: 'bg-violet-50 text-violet-600', label: 'Nouveaux clients', value: 12, trend: -2.1 },
+          { icon: this.icon('M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4'), iconBg: 'bg-amber-50 text-amber-600', label: 'Produits vendus', value: 134, trend: 11.4 },
         ]);
         this.topProducts.set([
           { name: 'ECG 12 dérivations CardioScan Pro', sales: 23, revenue: 34500 },

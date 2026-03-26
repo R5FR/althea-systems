@@ -18,15 +18,22 @@ public class CartRepository : ICartRepository
     public async Task<Cart?> GetByIdAsync(Guid id)
     {
         return await _context.Carts
-            .Include(c => c.Items)
+            .Include(c => c.Items).ThenInclude(i => i.Product).ThenInclude(p => p.Images)
             .FirstOrDefaultAsync(c => c.Id == id);
+    }
+
+    public async Task<Cart?> GetByItemIdAsync(Guid itemId)
+    {
+        return await _context.Carts
+            .Include(c => c.Items).ThenInclude(i => i.Product).ThenInclude(p => p.Images)
+            .FirstOrDefaultAsync(c => c.Items.Any(i => i.Id == itemId));
     }
 
     public async Task<Cart?> GetByUserIdAsync(Guid userId)
     {
         return await _context.Carts
             .Include(c => c.Items)
-            .FirstOrDefaultAsync(c => c.UserId == userId);
+            .FirstOrDefaultAsync(c => c.User != null && c.User.Id == userId);
     }
 
     public async Task<Cart?> GetBySessionIdAsync(string sessionId)
@@ -47,12 +54,13 @@ public class CartRepository : ICartRepository
         await _context.Carts.AddAsync(cart);
     }
 
-    public void UpdateAsync(Cart cart)
+    public Task UpdateAsync(Cart cart)
     {
         if (cart == null)
             throw new ValidationException("Cart cannot be null");
 
         _context.Carts.Update(cart);
+        return Task.CompletedTask;
     }
 
     public async Task DeleteAsync(Guid id)

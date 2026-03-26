@@ -43,14 +43,14 @@ import { Product, ProductListItem } from '../../core/models';
               }
             </div>
             <!-- Thumbnails -->
-            @if (product()!.images && product()!.images!.length > 1) {
+            @if (product()!.imageUrls && product()!.imageUrls!.length > 1) {
               <div class="flex gap-2 overflow-x-auto pb-1">
-                @for (img of product()!.images; track img.id) {
-                  <button (click)="selectedImage.set(img.imageUrl)"
+                @for (url of product()!.imageUrls!; track url) {
+                  <button (click)="selectedImage.set(url)"
                     class="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-colors"
-                    [class.border-primary]="selectedImage() === img.imageUrl"
-                    [class.border-transparent]="selectedImage() !== img.imageUrl">
-                    <img [src]="img.imageUrl" [alt]="product()!.name" class="w-full h-full object-contain p-1" />
+                    [class.border-primary]="selectedImage() === url"
+                    [class.border-transparent]="selectedImage() !== url">
+                    <img [src]="url" [alt]="product()!.name" class="w-full h-full object-contain p-1" />
                   </button>
                 }
               </div>
@@ -225,7 +225,7 @@ export class ProductComponent implements OnInit {
       this.productSvc.getBySlug(params['slug']).subscribe({
         next: p => {
           this.product.set(p);
-          this.selectedImage.set(p.images?.find(i => i.isMain)?.imageUrl || p.images?.[0]?.imageUrl || '');
+          this.selectedImage.set(p.mainImageUrl || p.imageUrls?.[0] || '');
           this.loading.set(false);
           this.loadSimilar(p.categoryId, p.id);
         },

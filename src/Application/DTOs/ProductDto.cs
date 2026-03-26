@@ -14,4 +14,6 @@ public class ProductDto
     public Guid CategoryId { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
+    public List<string> ImageUrls { get; set; } = new();
+    public string? MainImageUrl { get; set; }
 }

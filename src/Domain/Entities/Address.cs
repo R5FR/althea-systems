@@ -18,6 +18,8 @@ namespace Project.Domain.Entities
         public DateTime CreatedAt { get; private set; }
         public DateTime UpdatedAt { get; private set; }
 
+        private Address() { } // For EF Core
+
         public Address(Guid id, string firstName, string lastName, string addressLine1, string city, string region, string postalCode, string country, string phone, string? addressLine2 = null)
         {
             if (id == Guid.Empty) throw new ValidationException("Id cannot be empty");

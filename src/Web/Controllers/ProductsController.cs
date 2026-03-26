@@ -26,7 +26,7 @@ public class ProductsController : ControllerBase
     /// Recherche les produits avec filtres et pagination.
     /// </summary>
     [HttpGet]
-    [ProducesResponseType(typeof(dynamic), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Search([FromQuery] string? searchTerm, [FromQuery] Guid? categoryId, [FromQuery] decimal? minPrice, [FromQuery] decimal? maxPrice, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
@@ -86,11 +86,31 @@ public class ProductsController : ControllerBase
     }
 
     /// <summary>
+    /// Récupère un produit par son slug.
+    /// </summary>
+    [HttpGet("slug/{slug}")]
+    [ProducesResponseType(typeof(ProductDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetBySlug(string slug)
+    {
+        try
+        {
+            var product = await _productService.GetBySlugAsync(slug);
+            return Ok(product);
+        }
+        catch (NotFoundException ex)
+        {
+            _logger.LogWarning("Product not found by slug: {Slug}", slug);
+            return NotFound(new { error = ex.Message });
+        }
+    }
+
+    /// <summary>
     /// Crée un nouveau produit (Admin seulement).
     /// </summary>
     [HttpPost]
     [Authorize(Roles = "admin")]
-    [ProducesResponseType(typeof(dynamic), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(object), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
