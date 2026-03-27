@@ -1,0 +1,3 @@
+C:\Users\ArthurL'AFFETER\Documents\Work\Projet etude\b3\src\ErrorHandling\obj\Debug\net7.0\ErrorHandling.csproj.AssemblyReference.cache
+C:\Users\ArthurL'AFFETER\Documents\Work\Projet etude\b3\src\ErrorHandling\obj\Debug\net7.0\ErrorHandling.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ArthurL'AFFETER\Documents\Work\Projet etude\b3\src\ErrorHandling\obj\Debug\net7.0\ErrorHandling.csproj.CoreCompileInputs.cache
