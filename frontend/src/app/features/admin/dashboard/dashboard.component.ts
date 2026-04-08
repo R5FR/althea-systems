@@ -3,9 +3,20 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { AdminService } from '../../../core/services/admin.service';
-import { Chart, registerables } from 'chart.js';
+import {
+  Chart,
+  BarController, BarElement,
+  DoughnutController, ArcElement,
+  CategoryScale, LinearScale,
+  Tooltip, Legend,
+} from 'chart.js';
 
-Chart.register(...registerables);
+Chart.register(
+  BarController, BarElement,
+  DoughnutController, ArcElement,
+  CategoryScale, LinearScale,
+  Tooltip, Legend,
+);
 
 @Component({
   selector: 'app-dashboard',
@@ -22,6 +33,7 @@ Chart.register(...registerables);
         <div class="flex gap-2">
           @for (p of periods; track p.value) {
             <button (click)="setPeriod(p.value)"
+              [attr.aria-pressed]="period() === p.value"
               [class]="period() === p.value ? 'bg-primary text-white' : 'bg-white text-gray-600 border border-gray-200'"
               class="px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:shadow-sm">
               {{ p.label }}

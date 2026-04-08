@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../../core/services/admin.service';
@@ -114,7 +114,7 @@ export class AdminMessagesComponent implements OnInit {
   selected = signal<any | null>(null);
   statusFilter = '';
 
-  unread = () => this.messages().filter(m => m.status === 'unread').length;
+  unread = computed(() => this.messages().filter(m => m.status === 'unread').length);
 
   ngOnInit() { this.load(); }
 

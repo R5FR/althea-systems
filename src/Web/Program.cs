@@ -17,7 +17,9 @@ var builder = WebApplication.CreateBuilder(args);
 // ========================================
 // 1. CONFIGURATION DES CONTRÔLEURS & VALIDATION
 // ========================================
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(opts =>
+        opts.JsonSerializerOptions.Converters.Add(new Web.Converters.DateTimeMillisConverter()));
 
 // Fluent Validation
 builder.Services.AddFluentValidationAutoValidation();

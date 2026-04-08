@@ -61,8 +61,7 @@ import { CartService } from '../../../core/services/cart.service';
     </div>
 
     <!-- Main nav bar -->
-    <header class="sticky top-0 z-50 bg-white border-b border-gray-100"
-      style="box-shadow: 0 1px 0 rgba(0,0,0,0.06);">
+    <header class="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-nav">
       <div class="page-container">
         <div class="flex items-center gap-6 h-[68px]">
 

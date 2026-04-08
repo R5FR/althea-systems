@@ -44,13 +44,16 @@ import { Product, ProductListItem } from '../../core/models';
             </div>
             <!-- Thumbnails -->
             @if (product()!.imageUrls && product()!.imageUrls!.length > 1) {
-              <div class="flex gap-2 overflow-x-auto pb-1">
-                @for (url of product()!.imageUrls!; track url) {
+              <div class="flex gap-2 overflow-x-auto pb-1" role="listbox" aria-label="Images du produit">
+                @for (url of product()!.imageUrls!; track url; let i = $index) {
                   <button (click)="selectedImage.set(url)"
+                    role="option"
+                    [attr.aria-selected]="selectedImage() === url"
+                    [attr.aria-label]="'Image ' + (i + 1) + ' de ' + product()!.imageUrls!.length"
                     class="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-colors"
                     [class.border-primary]="selectedImage() === url"
                     [class.border-transparent]="selectedImage() !== url">
-                    <img [src]="url" [alt]="product()!.name" class="w-full h-full object-contain p-1" />
+                    <img [src]="url" [alt]="" loading="lazy" class="w-full h-full object-contain p-1" />
                   </button>
                 }
               </div>
@@ -60,18 +63,18 @@ import { Product, ProductListItem } from '../../core/models';
           <!-- ── Product info ────────────────────────────────────────── -->
           <div class="flex flex-col gap-5">
             <!-- Breadcrumb -->
-            <nav class="flex items-center gap-1 text-sm text-gray-500">
+            <nav class="flex items-center gap-1 text-sm text-gray-500" aria-label="Fil d'Ariane">
               <a routerLink="/" class="hover:text-primary">Accueil</a>
-              <span>/</span>
+              <span aria-hidden="true">/</span>
               @if (product()!.category) {
                 <a [routerLink]="['/categories', product()!.category!.slug]" class="hover:text-primary">{{ product()!.category!.name }}</a>
-                <span>/</span>
+                <span aria-hidden="true">/</span>
               }
-              <span class="text-gray-800 font-medium truncate">{{ product()!.name }}</span>
+              <span class="text-gray-800 font-medium truncate" aria-current="page">{{ product()!.name }}</span>
             </nav>
 
             <div>
-              <h1 class="text-2xl md:text-3xl font-bold text-navy mb-3">{{ product()!.name }}</h1>
+              <h1 class="text-2xl md:text-3xl font-display font-semibold text-navy mb-3 leading-tight">{{ product()!.name }}</h1>
 
               <!-- Availability -->
               @if (product()!.stockQuantity > 0) {

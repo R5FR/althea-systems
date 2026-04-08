@@ -10,6 +10,7 @@ public class OrderItemDto
     public decimal UnitTvaRate { get; set; }
     public decimal UnitPriceTtc { get; set; }
     public decimal TotalLineHt => UnitPriceHt * Quantity;
+    public decimal TotalHt => UnitPriceHt * Quantity;
     public decimal TotalLineTtc => UnitPriceTtc * Quantity;
     public decimal TotalLineTva => (UnitPriceTtc - UnitPriceHt) * Quantity;
 }

@@ -59,7 +59,9 @@ import { Order } from '../../core/models';
                     </div>
                     <div class="flex-1 min-w-0">
                       <p class="font-medium text-gray-900 truncate">{{ item.productNameSnapshot }}</p>
-                      <p class="text-sm text-gray-500 mt-0.5">Réf. {{ item.productReferenceSnapshot }}</p>
+                      @if (item.productReferenceSnapshot) {
+                        <p class="text-sm text-gray-500 mt-0.5">Réf. {{ item.productReferenceSnapshot }}</p>
+                      }
                       <div class="flex items-center gap-4 mt-1">
                         <span class="text-sm text-gray-600">Qté : {{ item.quantity }}</span>
                         <span class="text-sm text-gray-500">{{ item.unitPriceHt | number:'1.2-2' }} € HT / unité</span>

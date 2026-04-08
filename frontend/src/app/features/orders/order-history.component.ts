@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink as RL } from '@angular/router';
@@ -20,16 +20,18 @@ import { Order } from '../../core/models';
 
       <!-- Year filter -->
       @if (years().length > 0) {
-        <div class="flex gap-2 flex-wrap">
+        <div class="flex gap-2 flex-wrap" role="group" aria-label="Filtrer par année">
           <button (click)="selectedYear.set(null); filterOrders()"
+            [attr.aria-pressed]="!selectedYear()"
             [class.bg-primary]="!selectedYear()" [class.text-white]="!selectedYear()"
-            class="px-4 py-1.5 rounded-full text-sm border border-gray-200 transition-colors hover:bg-gray-100">
+            class="px-4 min-h-[44px] rounded-full text-sm border border-gray-200 transition-colors hover:bg-gray-100">
             Toutes
           </button>
           @for (y of years(); track y) {
             <button (click)="selectedYear.set(y); filterOrders()"
+              [attr.aria-pressed]="selectedYear() === y"
               [class.bg-primary]="selectedYear() === y" [class.text-white]="selectedYear() === y"
-              class="px-4 py-1.5 rounded-full text-sm border border-gray-200 transition-colors hover:bg-gray-100">
+              class="px-4 min-h-[44px] rounded-full text-sm border border-gray-200 transition-colors hover:bg-gray-100">
               {{ y }}
             </button>
           }
@@ -48,7 +50,7 @@ import { Order } from '../../core/models';
           <div>
             <h2 class="font-bold text-gray-700 text-sm uppercase tracking-wide mb-3">{{ year }}</h2>
             <div class="space-y-3">
-              @for (order of getByYear(year); track order.id) {
+              @for (order of (groupedOrders().get(year) ?? []); track order.id) {
                 <a [routerLink]="['/mon-compte/commandes', order.id]"
                   class="card p-4 flex items-center gap-4 hover:shadow-md transition-shadow group">
                   <div class="w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -88,7 +90,20 @@ export class OrderHistoryComponent implements OnInit {
   search = '';
   selectedYear = signal<number | null>(null);
   years = signal<number[]>([]);
-  groupedYears = () => [...new Set(this.filtered().map(o => new Date(o.createdAt).getFullYear()))].sort((a, b) => b - a).map(String);
+
+  // Derived computation avoids reading filtered() inside a method during template rendering
+  groupedOrders = computed(() => {
+    const map = new Map<string, Order[]>();
+    for (const order of this.filtered()) {
+      const year = new Date(order.createdAt).getFullYear().toString();
+      if (!map.has(year)) map.set(year, []);
+      map.get(year)!.push(order);
+    }
+    return map;
+  });
+  groupedYears = computed(() =>
+    [...this.groupedOrders().keys()].sort((a, b) => Number(b) - Number(a))
+  );
 
   ngOnInit() {
     this.orderSvc.list({ pageSize: 100 }).subscribe({
@@ -111,10 +126,6 @@ export class OrderHistoryComponent implements OnInit {
       list = list.filter(o => o.orderNumber.toLowerCase().includes(q) || o.items.some(i => i.productNameSnapshot.toLowerCase().includes(q)));
     }
     this.filtered.set(list);
-  }
-
-  getByYear(y: string) {
-    return this.filtered().filter(o => new Date(o.createdAt).getFullYear().toString() === y);
   }
 
   statusLabel(s: string) {

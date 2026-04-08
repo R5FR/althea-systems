@@ -1,12 +1,13 @@
-import { Component, OnInit, signal, inject, Input } from '@angular/core';
+import { Component, OnInit, signal, computed, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../core/services/product.service';
 import { CategoryService } from '../../core/services/category.service';
 import { Category, ProductListItem } from '../../core/models';
 
-// ── Example products per category slug ────────────────────────────────────
-const P = (seed: string) => `https://picsum.photos/seed/${seed}/400/400`;
+// ── Example products per category slug (fallback when API returns no data) ─
+// Images intentionally empty — gradient placeholders will render instead
+const P = (_seed: string) => '';
 
 const EXAMPLE_PRODUCTS_BY_SLUG: Record<string, ProductListItem[]> = {
   'imagerie-medicale': [
@@ -118,6 +119,7 @@ const PRODUCT_GRADIENTS = [
       <div class="relative overflow-hidden rounded-t-xl bg-gray-50" style="aspect-ratio:1;">
         @if (product.imageUrl) {
           <img [src]="product.imageUrl" [alt]="product.name"
+            loading="lazy"
             class="w-full h-full object-contain p-5 transition-transform duration-300 group-hover:scale-105" />
         } @else {
           <!-- Gradient placeholder with medical cross -->
@@ -165,7 +167,7 @@ const PRODUCT_GRADIENTS = [
           <!-- Quick-view arrow -->
           <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0
                       opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0"
-            style="background:rgba(0,122,124,0.1);">
+            class="bg-primary/10">
             <svg class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
@@ -202,16 +204,16 @@ export class ProductCardComponent {
             <div class="absolute inset-0" style="background: linear-gradient(90deg, rgba(17,30,53,0.85) 0%, rgba(17,30,53,0.35) 70%, transparent 100%);"></div>
           } @else {
             <!-- Gradient banner -->
-            <div class="absolute inset-0" style="background: linear-gradient(135deg, #003D5C 0%, #00A8B5 100%);">
+            <div class="absolute inset-0 gradient-brand">
               <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Crect x=%2227%22 y=%225%22 width=%226%22 height=%2250%22 rx=%223%22 fill=%22white%22 opacity=%22.05%22/%3E%3Crect x=%225%22 y=%2227%22 width=%2250%22 height=%226%22 rx=%223%22 fill=%22white%22 opacity=%22.05%22/%3E%3C/svg%3E'); background-size: 60px 60px;"></div>
             </div>
           }
           <div class="absolute inset-0 flex flex-col justify-center px-8 md:px-12">
             <!-- Breadcrumb -->
-            <nav class="flex items-center gap-1.5 text-xs text-white/50 mb-3">
+            <nav class="flex items-center gap-1.5 text-xs text-white/50 mb-3" aria-label="Fil d'Ariane">
               <a routerLink="/" class="hover:text-white/80 transition-colors">Accueil</a>
-              <span>/</span>
-              <span class="text-white/80">{{ category()!.name }}</span>
+              <span aria-hidden="true">/</span>
+              <span class="text-white/80" aria-current="page">{{ category()!.name }}</span>
             </nav>
             <h1 class="font-display font-semibold text-3xl md:text-4xl text-white mb-2">
               {{ category()!.name }}
@@ -258,7 +260,7 @@ export class ProductCardComponent {
         </div>
       } @else if (products().length === 0) {
         <div class="text-center py-24">
-          <div class="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center" style="background:rgba(0,122,124,0.08);">
+          <div class="w-16 h-16 rounded-2xl mx-auto mb-5 flex items-center justify-center bg-primary-50">
             <svg class="w-8 h-8 text-primary/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
             </svg>
@@ -283,6 +285,7 @@ export class ProductCardComponent {
                 [style.background]="product.imageUrl ? '' : getGradient(i)">
                 @if (product.imageUrl) {
                   <img [src]="product.imageUrl" [alt]="product.name"
+                    loading="lazy"
                     class="w-full h-full object-contain p-2" />
                 } @else {
                   <div class="w-full h-full flex items-center justify-center">
@@ -316,6 +319,7 @@ export class ProductCardComponent {
       @if (totalPages() > 1) {
         <div class="flex items-center justify-center gap-1.5 mt-12">
           <button [disabled]="page() === 1" (click)="changePage(page() - 1)"
+            aria-label="Page précédente"
             class="w-9 h-9 rounded-lg flex items-center justify-center btn-ghost disabled:opacity-40">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
@@ -323,15 +327,17 @@ export class ProductCardComponent {
           </button>
           @for (p of pageNumbers(); track p) {
             <button (click)="changePage(p)"
+              [attr.aria-current]="p === page() ? 'page' : null"
               class="w-9 h-9 rounded-lg text-sm font-medium transition-all"
+              [class.bg-primary]="p === page()"
               [class.text-white]="p === page()"
-              [style.background]="p === page() ? '#00A8B5' : 'transparent'"
               [class.text-gray-700]="p !== page()"
               [class.hover:bg-gray-100]="p !== page()">
               {{ p }}
             </button>
           }
           <button [disabled]="page() === totalPages()" (click)="changePage(page() + 1)"
+            aria-label="Page suivante"
             class="w-9 h-9 rounded-lg flex items-center justify-center btn-ghost disabled:opacity-40">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -355,9 +361,13 @@ export class CatalogComponent implements OnInit {
   totalCount    = signal(0);
   categorySlug  = '';
 
-  totalPages  = () => Math.ceil(this.totalCount() / this.pageSize);
-  pageNumbers = () => Array.from({ length: this.totalPages() }, (_, i) => i + 1)
-    .slice(Math.max(0, this.page() - 3), Math.min(this.totalPages(), this.page() + 2));
+  totalPages  = computed(() => Math.ceil(this.totalCount() / this.pageSize));
+  pageNumbers = computed(() => {
+    const total = this.totalPages();
+    const current = this.page();
+    return Array.from({ length: total }, (_, i) => i + 1)
+      .slice(Math.max(0, current - 3), Math.min(total, current + 2));
+  });
 
   sortBy:  string = 'priority';
   sortDir: 'asc' | 'desc' = 'asc';

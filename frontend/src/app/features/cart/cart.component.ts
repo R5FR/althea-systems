@@ -58,7 +58,7 @@ import { Cart } from '../../core/models';
                         <span class="badge-danger badge text-xs mt-1">Indisponible</span>
                       }
                     </div>
-                    <button (click)="removeItem(item.id)" class="text-gray-400 hover:text-red-500 flex-shrink-0 p-1 -mt-1 transition-colors">
+                    <button (click)="removeItem(item.id)" class="text-gray-400 hover:text-red-500 flex-shrink-0 p-2.5 -m-2.5 -mt-1 transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-red-200">
                       <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                       </svg>
@@ -69,11 +69,11 @@ import { Cart } from '../../core/models';
                     <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
                       <button (click)="updateQty(item.id, item.quantity - 1)"
                         [disabled]="item.quantity <= 1"
-                        class="px-3 py-1.5 text-gray-500 hover:bg-gray-50 disabled:opacity-40 transition-colors text-sm">−</button>
-                      <span class="px-3 text-sm font-semibold">{{ item.quantity }}</span>
+                        class="min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-500 hover:bg-gray-50 disabled:opacity-40 transition-colors text-sm">−</button>
+                      <span class="px-3 text-sm font-semibold min-w-[2rem] text-center">{{ item.quantity }}</span>
                       <button (click)="updateQty(item.id, item.quantity + 1)"
                         [disabled]="item.quantity >= item.stockQuantity"
-                        class="px-3 py-1.5 text-gray-500 hover:bg-gray-50 disabled:opacity-40 transition-colors text-sm">+</button>
+                        class="min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-500 hover:bg-gray-50 disabled:opacity-40 transition-colors text-sm">+</button>
                     </div>
                     <!-- Price -->
                     <div class="text-right">

@@ -2,16 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
-
 @layer base {
   * { @apply box-border; }
 
   html { @apply scroll-smooth; }
 
   body {
-    @apply font-sans text-gray-800 antialiased;
-    background-color: #D4F4F7;
+    @apply font-sans text-gray-800 antialiased bg-primary-100;
   }
 
   h1, h2, h3 { @apply tracking-tight; }
@@ -102,6 +99,8 @@
   .badge-danger  { @apply badge bg-red-50 text-red-600 ring-1 ring-red-200/60; }
   .badge-gray    { @apply badge bg-gray-100 text-gray-600; }
   .badge-promo   { @apply badge bg-primary-100 text-primary-600 font-bold; }
+  .badge-new     { @apply badge bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200/60; }
+  .badge-custom  { @apply badge bg-navy/10 text-navy; }
   .badge-navy    { @apply badge bg-navy/10 text-navy; }
 
   /* ── Typography ──────────────────────────────────────────────────────── */
@@ -122,12 +121,17 @@
   .skeleton {
     background: linear-gradient(
       90deg,
-      #c8eef1 25%,
-      #d4f4f7 50%,
-      #c8eef1 75%
+      theme('colors.primary.200') 25%,
+      theme('colors.primary.100') 50%,
+      theme('colors.primary.200') 75%
     );
     background-size: 400% 100%;
     @apply animate-shimmer rounded;
+  }
+
+  /* ── Brand gradient ──────────────────────────────────────────────────── */
+  .gradient-brand {
+    @apply bg-gradient-to-br from-navy to-primary;
   }
 
   /* ── Divider ─────────────────────────────────────────────────────────── */
@@ -143,6 +147,16 @@
 
 /* ── Custom scrollbar ───────────────────────────────────────────────────── */
 ::-webkit-scrollbar       { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: #D4F4F7; }
-::-webkit-scrollbar-thumb { background: #33BFC9; border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: #00A8B5; }
+::-webkit-scrollbar-track { background: theme('colors.primary.100'); }
+::-webkit-scrollbar-thumb { background: theme('colors.primary.300'); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: theme('colors.primary.DEFAULT'); }
+
+/* ── Reduced motion ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

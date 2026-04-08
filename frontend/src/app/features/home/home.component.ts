@@ -13,8 +13,6 @@ const HERO_GRADIENTS = [
   'linear-gradient(135deg, #002323 0%, #003D5C 60%, #003D5C 100%)',
 ];
 
-// Icon paths for hero decorative background
-const HERO_PATTERN = `<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60"><rect x="27" y="5" width="6" height="50" rx="3" fill="white" opacity=".07"/><rect x="5" y="27" width="50" height="6" rx="3" fill="white" opacity=".07"/></svg>`;
 
 @Component({
   selector: 'app-home',
@@ -22,7 +20,7 @@ const HERO_PATTERN = `<svg xmlns="http://www.w3.org/2000/svg" width="60" height=
   imports: [CommonModule, RouterLink],
   template: `
     <!-- ── Hero Carousel ─────────────────────────────────────────────────── -->
-    <section class="relative overflow-hidden" style="height: 520px;">
+    <section class="relative overflow-hidden" style="height: calc(100vh - 104px);" role="region" aria-label="Diaporama produits">
       @for (slide of displaySlides(); track slide.id; let i = $index) {
         <div class="absolute inset-0 transition-opacity duration-700"
           [class.opacity-100]="currentSlide() === i"
@@ -52,7 +50,7 @@ const HERO_PATTERN = `<svg xmlns="http://www.w3.org/2000/svg" width="60" height=
             <div class="max-w-xl animate-fade-up" style="animation-delay: 0.1s;">
               <!-- Slide label -->
               <div class="flex items-center gap-2 mb-4">
-                <div class="w-6 h-0.5" style="background:#00A8B5;"></div>
+                <div class="w-6 h-0.5 bg-primary"></div>
                 <span class="text-xs font-semibold tracking-widest uppercase text-white/60">Althea Systems</span>
               </div>
               <!-- Title — supports line breaks via whitespace-pre-line -->
@@ -81,26 +79,29 @@ const HERO_PATTERN = `<svg xmlns="http://www.w3.org/2000/svg" width="60" height=
 
       <!-- Dots -->
       @if (displaySlides().length > 1) {
-        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2" role="tablist" aria-label="Diapositives">
           @for (slide of displaySlides(); track slide.id; let i = $index) {
             <button (click)="goToSlide(i)"
+              role="tab"
+              [attr.aria-selected]="currentSlide() === i"
+              [attr.aria-label]="'Diapositive ' + (i + 1)"
               class="transition-all duration-300 rounded-full"
-              [style.width]="currentSlide() === i ? '24px' : '8px'"
-              [style.height]="'8px'"
-              [style.background]="currentSlide() === i ? '#00A8B5' : 'rgba(255,255,255,0.35)'">
+              [class.w-6]="currentSlide() === i"
+              [class.w-2]="currentSlide() !== i"
+              class="h-2"
+              [class.bg-primary]="currentSlide() === i"
+              [class.bg-white/35]="currentSlide() !== i">
             </button>
           }
         </div>
         <button (click)="prevSlide()"
-          class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center text-white transition-all"
-          style="background:rgba(255,255,255,0.1);"
-          onmouseenter="this.style.background='rgba(255,255,255,0.2)'" onmouseleave="this.style.background='rgba(255,255,255,0.1)'">
+          aria-label="Diapositive précédente"
+          class="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full flex items-center justify-center text-white transition-all bg-white/10 hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
         </button>
         <button (click)="nextSlide()"
-          class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center text-white transition-all"
-          style="background:rgba(255,255,255,0.1);"
-          onmouseenter="this.style.background='rgba(255,255,255,0.2)'" onmouseleave="this.style.background='rgba(255,255,255,0.1)'">
+          aria-label="Diapositive suivante"
+          class="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full flex items-center justify-center text-white transition-all bg-white/10 hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
         </button>
       }
@@ -152,6 +153,7 @@ const HERO_PATTERN = `<svg xmlns="http://www.w3.org/2000/svg" width="60" height=
               style="aspect-ratio: 4/3;">
               @if (cat.imageUrl) {
                 <img [src]="cat.imageUrl" [alt]="cat.name"
+                  loading="lazy"
                   class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                 <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
               } @else {
@@ -217,6 +219,7 @@ const HERO_PATTERN = `<svg xmlns="http://www.w3.org/2000/svg" width="60" height=
                 <div class="relative overflow-hidden rounded-t-xl bg-gray-50" style="aspect-ratio:1;">
                   @if (product.imageUrl) {
                     <img [src]="product.imageUrl" [alt]="product.name"
+                      loading="lazy"
                       class="w-full h-full object-contain p-4 transition-transform duration-300 group-hover:scale-105" />
                   } @else {
                     <!-- Styled placeholder -->
@@ -248,7 +251,7 @@ const HERO_PATTERN = `<svg xmlns="http://www.w3.org/2000/svg" width="60" height=
                   <p class="font-semibold text-gray-900 text-sm leading-snug mb-auto line-clamp-2 group-hover:text-primary transition-colors">
                     {{ product.name }}
                   </p>
-                  <div class="mt-3 pt-3 border-t border-gray-50">
+                  <div class="mt-3 pt-3 border-t border-gray-100">
                     <p class="text-primary font-bold text-base">{{ product.priceTtc | number:'1.2-2' }} €
                       <span class="text-xs font-normal text-gray-400">TTC</span>
                     </p>
@@ -272,7 +275,7 @@ const HERO_PATTERN = `<svg xmlns="http://www.w3.org/2000/svg" width="60" height=
     </section>
 
     <!-- ── Why Althea ────────────────────────────────────────────────────── -->
-    <section class="py-16 md:py-24" style="background-color:#D4F4F7;">
+    <section class="py-16 md:py-24 bg-primary-100">
       <div class="page-container">
         <div class="grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
           <!-- Left: text -->
@@ -280,7 +283,7 @@ const HERO_PATTERN = `<svg xmlns="http://www.w3.org/2000/svg" width="60" height=
             <p class="section-label">Pourquoi nous choisir</p>
             <h2 class="font-display font-semibold text-3xl md:text-4xl text-navy leading-tight mb-6">
               L'excellence médicale,<br/>
-              <span style="color:#00A8B5;">à votre service</span>
+              <span class="text-primary">à votre service</span>
             </h2>
             <p class="text-gray-600 leading-relaxed mb-8">
               Depuis plus de 15 ans, Althea Systems accompagne les professionnels de santé avec
@@ -290,7 +293,7 @@ const HERO_PATTERN = `<svg xmlns="http://www.w3.org/2000/svg" width="60" height=
             <div class="space-y-4">
               @for (point of whyPoints; track point.title) {
                 <div class="flex items-start gap-4">
-                  <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5" style="background:rgba(0,122,124,0.1);">
+                  <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 bg-primary/10">
                     <div [innerHTML]="point.icon" class="text-primary w-5 h-5"></div>
                   </div>
                   <div>
@@ -323,7 +326,7 @@ const HERO_PATTERN = `<svg xmlns="http://www.w3.org/2000/svg" width="60" height=
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
           @for (item of trustItems; track item.title) {
             <div class="flex items-center gap-4">
-              <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(0,122,124,0.08);">
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-primary-50">
                 <div [innerHTML]="item.icon" class="w-6 h-6 text-primary"></div>
               </div>
               <div>
@@ -337,7 +340,7 @@ const HERO_PATTERN = `<svg xmlns="http://www.w3.org/2000/svg" width="60" height=
     </section>
 
     <!-- ── CTA banner ─────────────────────────────────────────────────────── -->
-    <section class="py-16" style="background: linear-gradient(135deg, #003D5C 0%, #00A8B5 100%);">
+    <section class="py-16 gradient-brand">
       <div class="page-container text-center">
         <h2 class="font-display font-semibold text-3xl md:text-4xl text-white mb-4">
           Besoin d'un devis personnalisé ?
@@ -475,6 +478,11 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.startAutoplay();
       },
       error: () => {
+        this.slides.set([
+          { id: '1', title: 'Matériel médical\nde haute précision', subtitle: 'Équipements certifiés CE pour cabinets, cliniques et hôpitaux. Livraison EU sous 48h.', imageUrl: '', linkUrl: '/recherche', displayOrder: 0, isActive: true },
+          { id: '2', title: 'Technologie au service\nde la santé', subtitle: 'Plus de 2 400 références disponibles, sélectionnées par nos ingénieurs biomédicaux.', imageUrl: '', linkUrl: '/recherche', displayOrder: 1, isActive: true },
+          { id: '3', title: 'Support technique\ndédié 5j/7', subtitle: 'Installation, maintenance et SAV assurés par notre équipe d\'experts certifiés.', imageUrl: '', linkUrl: '/contact', displayOrder: 2, isActive: true },
+        ]);
         this.startAutoplay();
       }
     });
