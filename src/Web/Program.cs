@@ -138,6 +138,12 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
+    // Add StripeCustomerId column to existing databases
+    db.Database.ExecuteSqlRaw(@"
+        IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+                       WHERE TABLE_NAME = 'Users' AND COLUMN_NAME = 'StripeCustomerId')
+            ALTER TABLE Users ADD StripeCustomerId NVARCHAR(255) NULL;
+    ");
 }
 
 // ========================================

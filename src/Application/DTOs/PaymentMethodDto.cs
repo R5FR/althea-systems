@@ -9,4 +9,5 @@ public class PaymentMethodDto
     public int ExpMonth { get; set; }
     public int ExpYear { get; set; }
     public bool IsDefault { get; set; }
+    public string StripePaymentMethodId { get; set; } = string.Empty;
 }

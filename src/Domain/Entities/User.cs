@@ -22,6 +22,7 @@ namespace Project.Domain.Entities
         public DateTime? PasswordResetTokenExpiry { get; private set; }
         public string? EmailConfirmationToken { get; private set; }
         public DateTime? EmailConfirmationTokenExpiry { get; private set; }
+        public string? StripeCustomerId { get; private set; }
         private readonly List<PaymentMethod> _paymentMethods = new();
         public IReadOnlyCollection<PaymentMethod> PaymentMethods => _paymentMethods.AsReadOnly();
         private readonly List<Address> _addresses = new();
@@ -126,6 +127,12 @@ namespace Project.Domain.Entities
             if (string.IsNullOrWhiteSpace(token)) throw new ValidationException("Email confirmation token cannot be empty");
             EmailConfirmationToken = token;
             EmailConfirmationTokenExpiry = expiry;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void SetStripeCustomerId(string customerId)
+        {
+            StripeCustomerId = customerId;
             UpdatedAt = DateTime.UtcNow;
         }
 

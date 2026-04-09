@@ -444,7 +444,12 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
       // 2. Confirm card payment
       let paymentResult;
       if (this.selectedCardId !== 'new') {
-        paymentResult = await this.stripeSvc.confirmSavedCard(intent.clientSecret, this.selectedCardId);
+        const stripepmId = this.selectedCard()?.stripePaymentMethodId;
+        if (!stripepmId) {
+          this.paymentError.set('Carte sauvegardée introuvable. Veuillez utiliser une nouvelle carte.');
+          this.processing.set(false); return;
+        }
+        paymentResult = await this.stripeSvc.confirmSavedCard(intent.clientSecret, stripepmId);
       } else {
         if (!this.cardElement || !this.cardholderName) {
           this.paymentError.set('Veuillez remplir les informations de carte.');

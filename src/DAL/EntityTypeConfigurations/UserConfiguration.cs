@@ -33,6 +33,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.PasswordResetTokenExpiry);
         builder.Property(u => u.EmailConfirmationToken).HasMaxLength(512);
         builder.Property(u => u.EmailConfirmationTokenExpiry);
+        builder.Property(u => u.StripeCustomerId).HasMaxLength(255);
 
         builder.HasIndex(u => u.Email).IsUnique();
 

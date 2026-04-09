@@ -56,7 +56,8 @@ public class MappingProfile : Profile
         CreateMap<Address, AddressDto>().ReverseMap();
 
         // PaymentMethod mappings
-        CreateMap<PaymentMethod, PaymentMethodDto>().ReverseMap();
+        CreateMap<PaymentMethod, PaymentMethodDto>()
+            .ForMember(dest => dest.StripePaymentMethodId, opt => opt.MapFrom(src => src.Token));
 
         // Invoice mappings
         CreateMap<Invoice, InvoiceDto>()

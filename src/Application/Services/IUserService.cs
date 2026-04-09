@@ -177,6 +177,7 @@ public class CreateAddressDto
 
 public class AddPaymentMethodDto
 {
+    public string StripePaymentMethodId { get; set; } = string.Empty;
     public string Provider { get; set; } = "stripe";
     public string CardBrand { get; set; } = string.Empty;
     public string Last4 { get; set; } = string.Empty;
