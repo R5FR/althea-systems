@@ -2,6 +2,7 @@ import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators, FormArray } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ProductService } from '../../../core/services/product.service';
 import { CategoryService } from '../../../core/services/category.service';
 import { Category } from '../../../core/models';
@@ -9,7 +10,7 @@ import { Category } from '../../../core/models';
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslatePipe],
   template: `
     <div class="space-y-6 max-w-4xl">
       <!-- Header -->
@@ -19,7 +20,7 @@ import { Category } from '../../../core/models';
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
           </svg>
         </a>
-        <h1 class="text-2xl font-bold text-gray-900">{{ isEdit() ? 'Modifier le produit' : 'Nouveau produit' }}</h1>
+        <h1 class="text-2xl font-bold text-gray-900">{{ isEdit() ? ('admin.product_form_edit' | translate) : ('admin.product_form_new' | translate) }}</h1>
       </div>
 
       @if (loading()) {
@@ -30,31 +31,31 @@ import { Category } from '../../../core/models';
         <form [formGroup]="form" (ngSubmit)="save()" class="space-y-6">
           <!-- Basic info -->
           <div class="card p-6 space-y-5">
-            <h2 class="font-semibold text-gray-900">Informations générales</h2>
+            <h2 class="font-semibold text-gray-900">{{ 'admin.product_form_general' | translate }}</h2>
             <div class="grid sm:grid-cols-2 gap-5">
               <div class="sm:col-span-2">
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Nom du produit *</label>
-                <input formControlName="name" class="input-field" placeholder="Nom complet du produit" />
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'admin.product_form_name' | translate }}</label>
+                <input formControlName="name" class="input-field" [placeholder]="'admin.product_form_name_placeholder' | translate" />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Référence *</label>
-                <input formControlName="reference" class="input-field font-mono" placeholder="REF-001" />
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'admin.product_form_ref' | translate }}</label>
+                <input formControlName="reference" class="input-field font-mono" [placeholder]="'admin.product_form_ref_placeholder' | translate" />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Catégorie *</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'admin.product_form_category' | translate }}</label>
                 <select formControlName="categoryId" class="input-field">
-                  <option value="">Choisir une catégorie...</option>
+                  <option value="">{{ 'admin.product_form_category_placeholder' | translate }}</option>
                   @for (cat of categories(); track cat.id) {
                     <option [value]="cat.id">{{ cat.name }}</option>
                   }
                 </select>
               </div>
               <div class="sm:col-span-2">
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Description courte *</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'admin.product_form_short_desc' | translate }}</label>
                 <textarea formControlName="shortDescription" rows="2" class="input-field resize-none"></textarea>
               </div>
               <div class="sm:col-span-2">
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Description complète</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'admin.product_form_full_desc' | translate }}</label>
                 <textarea formControlName="description" rows="5" class="input-field resize-none"></textarea>
               </div>
             </div>
@@ -62,38 +63,38 @@ import { Category } from '../../../core/models';
 
           <!-- Pricing & Stock -->
           <div class="card p-6 space-y-5">
-            <h2 class="font-semibold text-gray-900">Prix & Stock</h2>
+            <h2 class="font-semibold text-gray-900">{{ 'admin.product_form_pricing' | translate }}</h2>
             <div class="grid sm:grid-cols-3 gap-5">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Prix HT * (€)</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'admin.product_form_price_ht' | translate }}</label>
                 <input formControlName="priceHt" type="number" step="0.01" min="0" class="input-field" />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Taux TVA * (%)</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'admin.product_form_vat' | translate }}</label>
                 <select formControlName="vatRate" class="input-field">
-                  <option [value]="20">20% (standard)</option>
-                  <option [value]="10">10% (intermédiaire)</option>
-                  <option [value]="5.5">5,5% (réduit)</option>
-                  <option [value]="2.1">2,1% (super réduit)</option>
-                  <option [value]="0">0% (exonéré)</option>
+                  <option [value]="20">{{ 'admin.product_form_vat_standard' | translate }}</option>
+                  <option [value]="10">{{ 'admin.product_form_vat_intermediate' | translate }}</option>
+                  <option [value]="5.5">{{ 'admin.product_form_vat_reduced' | translate }}</option>
+                  <option [value]="2.1">{{ 'admin.product_form_vat_super_reduced' | translate }}</option>
+                  <option [value]="0">{{ 'admin.product_form_vat_exempt' | translate }}</option>
                 </select>
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Prix TTC (calculé)</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'admin.product_form_price_ttc' | translate }}</label>
                 <div class="input-field bg-gray-50 text-gray-600 font-medium">
                   {{ priceTtc() | number:'1.2-2' }} €
                 </div>
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Stock *</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'admin.product_form_stock' | translate }}</label>
                 <input formControlName="stock" type="number" min="0" class="input-field" />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Stock min. (alerte)</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'admin.product_form_min_stock' | translate }}</label>
                 <input formControlName="minStock" type="number" min="0" class="input-field" />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Priorité (0-99)</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'admin.product_form_priority' | translate }}</label>
                 <input formControlName="priority" type="number" min="0" max="99" class="input-field" />
               </div>
             </div>
@@ -101,20 +102,20 @@ import { Category } from '../../../core/models';
 
           <!-- Flags -->
           <div class="card p-6 space-y-4">
-            <h2 class="font-semibold text-gray-900">Options</h2>
+            <h2 class="font-semibold text-gray-900">{{ 'admin.product_form_options' | translate }}</h2>
             <div class="space-y-3">
               <label class="flex items-center gap-3 cursor-pointer">
                 <input formControlName="isActive" type="checkbox" class="w-4 h-4 rounded border-gray-300 text-primary" />
                 <div>
-                  <p class="text-sm font-medium text-gray-900">Produit actif</p>
-                  <p class="text-xs text-gray-500">Visible sur le site</p>
+                  <p class="text-sm font-medium text-gray-900">{{ 'admin.product_form_active' | translate }}</p>
+                  <p class="text-xs text-gray-500">{{ 'admin.product_form_active_desc' | translate }}</p>
                 </div>
               </label>
               <label class="flex items-center gap-3 cursor-pointer">
                 <input formControlName="isLargeProduct" type="checkbox" class="w-4 h-4 rounded border-gray-300 text-primary" />
                 <div>
-                  <p class="text-sm font-medium text-gray-900">Gros produit (devis)</p>
-                  <p class="text-xs text-gray-500">Déclenche un formulaire de contact à la place du panier</p>
+                  <p class="text-sm font-medium text-gray-900">{{ 'admin.product_form_large' | translate }}</p>
+                  <p class="text-xs text-gray-500">{{ 'admin.product_form_large_desc' | translate }}</p>
                 </div>
               </label>
             </div>
@@ -123,24 +124,24 @@ import { Category } from '../../../core/models';
           <!-- Badges -->
           <div class="card p-6 space-y-4">
             <div class="flex items-center justify-between">
-              <h2 class="font-semibold text-gray-900">Badges personnalisés</h2>
-              <button type="button" (click)="addBadge()" class="btn-ghost text-sm">+ Ajouter un badge</button>
+              <h2 class="font-semibold text-gray-900">{{ 'admin.product_form_badges' | translate }}</h2>
+              <button type="button" (click)="addBadge()" class="btn-ghost text-sm">{{ 'admin.product_form_add_badge' | translate }}</button>
             </div>
             <div formArrayName="badges" class="space-y-3">
               @for (badge of badgesArray.controls; track $index) {
                 <div [formGroupName]="$index" class="flex gap-3 items-end">
                   <div class="flex-1">
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Label</label>
-                    <input formControlName="label" class="input-field text-sm" placeholder="Nouveau !" />
+                    <label class="block text-xs font-medium text-gray-600 mb-1">{{ 'admin.product_form_badge_label' | translate }}</label>
+                    <input formControlName="label" class="input-field text-sm" [placeholder]="'admin.product_form_badge_label_placeholder' | translate" />
                   </div>
                   <div>
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Couleur</label>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">{{ 'admin.product_form_badge_color' | translate }}</label>
                     <select formControlName="color" class="input-field text-sm">
-                      <option value="promo">Promo (rouge)</option>
-                      <option value="primary">Bleu</option>
-                      <option value="success">Vert</option>
-                      <option value="warning">Orange</option>
-                      <option value="gray">Gris</option>
+                      <option value="promo">{{ 'admin.product_form_color_promo' | translate }}</option>
+                      <option value="primary">{{ 'admin.product_form_color_primary' | translate }}</option>
+                      <option value="success">{{ 'admin.product_form_color_success' | translate }}</option>
+                      <option value="warning">{{ 'admin.product_form_color_warning' | translate }}</option>
+                      <option value="gray">{{ 'admin.product_form_color_gray' | translate }}</option>
                     </select>
                   </div>
                   <button type="button" (click)="removeBadge($index)"
@@ -152,7 +153,7 @@ import { Category } from '../../../core/models';
                 </div>
               }
               @if (badgesArray.length === 0) {
-                <p class="text-sm text-gray-400">Aucun badge. Les badges de stock faible sont générés automatiquement.</p>
+                <p class="text-sm text-gray-400">{{ 'admin.product_form_no_badges' | translate }}</p>
               }
             </div>
           </div>
@@ -160,19 +161,19 @@ import { Category } from '../../../core/models';
           <!-- Tech specs -->
           <div class="card p-6 space-y-4">
             <div class="flex items-center justify-between">
-              <h2 class="font-semibold text-gray-900">Fiche technique</h2>
-              <button type="button" (click)="addSpec()" class="btn-ghost text-sm">+ Ajouter une spec.</button>
+              <h2 class="font-semibold text-gray-900">{{ 'admin.product_form_specs' | translate }}</h2>
+              <button type="button" (click)="addSpec()" class="btn-ghost text-sm">{{ 'admin.product_form_add_spec' | translate }}</button>
             </div>
             <div formArrayName="technicalSpecs" class="space-y-3">
               @for (spec of specsArray.controls; track $index) {
                 <div [formGroupName]="$index" class="flex gap-3 items-end">
                   <div class="flex-1">
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Caractéristique</label>
-                    <input formControlName="key" class="input-field text-sm" placeholder="Poids" />
+                    <label class="block text-xs font-medium text-gray-600 mb-1">{{ 'admin.product_form_spec_key' | translate }}</label>
+                    <input formControlName="key" class="input-field text-sm" [placeholder]="'admin.product_form_spec_key_placeholder' | translate" />
                   </div>
                   <div class="flex-1">
-                    <label class="block text-xs font-medium text-gray-600 mb-1">Valeur</label>
-                    <input formControlName="value" class="input-field text-sm" placeholder="2,5 kg" />
+                    <label class="block text-xs font-medium text-gray-600 mb-1">{{ 'admin.product_form_spec_value' | translate }}</label>
+                    <input formControlName="value" class="input-field text-sm" [placeholder]="'admin.product_form_spec_value_placeholder' | translate" />
                   </div>
                   <button type="button" (click)="removeSpec($index)"
                     class="text-red-400 hover:text-red-600 p-2 hover:bg-red-50 rounded-lg transition-colors mb-0.5">
@@ -188,8 +189,8 @@ import { Category } from '../../../core/models';
           <!-- Image URLs -->
           <div class="card p-6 space-y-4">
             <div class="flex items-center justify-between">
-              <h2 class="font-semibold text-gray-900">Images (URLs)</h2>
-              <button type="button" (click)="addImage()" class="btn-ghost text-sm">+ Ajouter une image</button>
+              <h2 class="font-semibold text-gray-900">{{ 'admin.product_form_images' | translate }}</h2>
+              <button type="button" (click)="addImage()" class="btn-ghost text-sm">{{ 'admin.product_form_add_image' | translate }}</button>
             </div>
             <div formArrayName="imageUrls" class="space-y-3">
               @for (ctrl of imagesArray.controls; track $index) {
@@ -212,9 +213,9 @@ import { Category } from '../../../core/models';
           <div class="flex gap-4">
             <button type="submit" [disabled]="saving() || form.invalid" class="btn-primary px-8">
               @if (saving()) { <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span> }
-              {{ isEdit() ? 'Mettre à jour' : 'Créer le produit' }}
+              {{ isEdit() ? ('admin.product_form_submit_update' | translate) : ('admin.product_form_submit_create' | translate) }}
             </button>
-            <a routerLink="/admin/produits" class="btn-ghost px-6">Annuler</a>
+            <a routerLink="/admin/produits" class="btn-ghost px-6">{{ 'admin.product_form_back' | translate }}</a>
           </div>
         </form>
       }

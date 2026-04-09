@@ -50,6 +50,7 @@ builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
 builder.Services.AddScoped<Project.Domain.Services.IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<Application.Interfaces.IBlobStorageService, Web.Services.BlobStorageService>();
 builder.Services.AddSingleton<Application.Interfaces.IRefreshTokenService, Web.Services.InMemoryRefreshTokenService>();
+builder.Services.AddSingleton<Application.Services.IHomepageConfigService, Web.Services.HomepageConfigService>();
 
 // ========================================
 // 4. CONFIGURATION AUTHENTICATION & AUTHORIZATION

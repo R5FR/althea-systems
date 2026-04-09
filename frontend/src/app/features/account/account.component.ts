@@ -1,12 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-account',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet, TranslatePipe],
   template: `
     <div class="page-container py-8">
       <div class="flex flex-col md:flex-row gap-8">
@@ -41,7 +42,7 @@ import { AuthService } from '../../core/services/auth.service';
                       }
                     }
                   </svg>
-                  {{ link.label }}
+                  {{ link.labelKey | translate }}
                 </a>
               }
             </nav>
@@ -65,9 +66,9 @@ export class AccountComponent {
   };
 
   navLinks = [
-    { path: '/mon-compte/profil',    icon: 'user',        label: 'Profil' },
-    { path: '/mon-compte/adresses',  icon: 'map-pin',     label: 'Adresses' },
-    { path: '/mon-compte/paiements', icon: 'credit-card', label: 'Paiements' },
-    { path: '/mon-compte/commandes', icon: 'package',     label: 'Mes commandes' },
+    { path: '/mon-compte/profil',    icon: 'user',        labelKey: 'account.nav_profile' },
+    { path: '/mon-compte/adresses',  icon: 'map-pin',     labelKey: 'account.nav_addresses' },
+    { path: '/mon-compte/paiements', icon: 'credit-card', labelKey: 'account.nav_payments' },
+    { path: '/mon-compte/commandes', icon: 'package',     labelKey: 'account.nav_orders' },
   ];
 }

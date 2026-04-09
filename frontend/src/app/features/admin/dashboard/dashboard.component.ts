@@ -2,6 +2,7 @@ import { Component, OnInit, signal, inject, AfterViewInit, ViewChildren, QueryLi
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AdminService } from '../../../core/services/admin.service';
 import {
   Chart,
@@ -21,14 +22,14 @@ Chart.register(
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TranslatePipe],
   template: `
     <div class="space-y-8">
       <!-- Header -->
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-2xl font-bold text-gray-900">Tableau de bord</h1>
-          <p class="text-sm text-gray-500 mt-1">Vue d'ensemble de votre activité</p>
+          <h1 class="text-2xl font-bold text-gray-900">{{ 'admin.dashboard_title' | translate }}</h1>
+          <p class="text-sm text-gray-500 mt-1">{{ 'admin.dashboard_subtitle' | translate }}</p>
         </div>
         <div class="flex gap-2">
           @for (p of periods; track p.value) {
@@ -36,7 +37,7 @@ Chart.register(
               [attr.aria-pressed]="period() === p.value"
               [class]="period() === p.value ? 'bg-primary text-white' : 'bg-white text-gray-600 border border-gray-200'"
               class="px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:shadow-sm">
-              {{ p.label }}
+              {{ p.labelKey | translate }}
             </button>
           }
         </div>
@@ -71,8 +72,8 @@ Chart.register(
         <!-- Revenue chart -->
         <div class="lg:col-span-2 card p-6">
           <div class="flex items-center justify-between mb-6">
-            <h2 class="font-semibold text-gray-900">Chiffre d'affaires</h2>
-            <span class="text-xs text-gray-400">TTC</span>
+            <h2 class="font-semibold text-gray-900">{{ 'admin.chart_revenue' | translate }}</h2>
+            <span class="text-xs text-gray-400">{{ 'admin.chart_revenue_ttc' | translate }}</span>
           </div>
           <div style="height: 240px; position: relative;">
             <canvas #revenueChart></canvas>
@@ -81,7 +82,7 @@ Chart.register(
 
         <!-- Orders by status -->
         <div class="card p-6">
-          <h2 class="font-semibold text-gray-900 mb-6">Commandes par statut</h2>
+          <h2 class="font-semibold text-gray-900 mb-6">{{ 'admin.chart_orders_status' | translate }}</h2>
           <div style="height: 200px; position: relative;" class="mb-4">
             <canvas #statusChart></canvas>
           </div>
@@ -103,7 +104,7 @@ Chart.register(
       <div class="grid lg:grid-cols-2 gap-6">
         <!-- Category sales -->
         <div class="card p-6">
-          <h2 class="font-semibold text-gray-900 mb-6">Ventes par catégorie</h2>
+          <h2 class="font-semibold text-gray-900 mb-6">{{ 'admin.chart_category_sales' | translate }}</h2>
           <div style="height: 240px; position: relative;">
             <canvas #categoryChart></canvas>
           </div>
@@ -112,8 +113,8 @@ Chart.register(
         <!-- Top products -->
         <div class="card p-6">
           <div class="flex items-center justify-between mb-5">
-            <h2 class="font-semibold text-gray-900">Top produits</h2>
-            <a routerLink="/admin/produits" class="text-xs text-primary hover:underline">Voir tout</a>
+            <h2 class="font-semibold text-gray-900">{{ 'admin.chart_top_products' | translate }}</h2>
+            <a routerLink="/admin/produits" class="text-xs text-primary hover:underline">{{ 'admin.chart_see_all' | translate }}</a>
           </div>
           <div class="space-y-3">
             @for (p of topProducts(); track p.name; let i = $index) {
@@ -124,7 +125,7 @@ Chart.register(
                 </span>
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-medium text-gray-900 truncate">{{ p.name }}</p>
-                  <p class="text-xs text-gray-400">{{ p.sales }} ventes</p>
+                  <p class="text-xs text-gray-400">{{ p.sales }} {{ 'admin.chart_sales_label' | translate }}</p>
                 </div>
                 <span class="text-sm font-semibold text-gray-900 flex-shrink-0">{{ p.revenue | number:'1.0-0' }} €</span>
               </div>
@@ -136,18 +137,18 @@ Chart.register(
       <!-- Recent orders -->
       <div class="card overflow-hidden">
         <div class="p-5 border-b border-gray-100 flex items-center justify-between">
-          <h2 class="font-semibold text-gray-900">Dernières commandes</h2>
-          <a routerLink="/admin/commandes" class="text-xs text-primary hover:underline">Voir tout</a>
+          <h2 class="font-semibold text-gray-900">{{ 'admin.recent_orders' | translate }}</h2>
+          <a routerLink="/admin/commandes" class="text-xs text-primary hover:underline">{{ 'admin.recent_see_all' | translate }}</a>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-sm">
             <thead>
               <tr class="bg-gray-50 text-left">
-                <th class="px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">N° commande</th>
-                <th class="px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Client</th>
-                <th class="px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Date</th>
-                <th class="px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Statut</th>
-                <th class="px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide text-right">Total TTC</th>
+                <th class="px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{{ 'admin.col_order_number' | translate }}</th>
+                <th class="px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{{ 'admin.col_customer' | translate }}</th>
+                <th class="px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{{ 'admin.col_date' | translate }}</th>
+                <th class="px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{{ 'admin.col_status' | translate }}</th>
+                <th class="px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide text-right">{{ 'admin.col_total_ttc' | translate }}</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
@@ -190,9 +191,9 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   private categoryChartInst: Chart | null = null;
 
   periods = [
-    { value: 'week' as const, label: '7 jours' },
-    { value: 'month' as const, label: '30 jours' },
-    { value: 'year' as const, label: '12 mois' },
+    { value: 'week' as const, labelKey: 'admin.period_week' },
+    { value: 'month' as const, labelKey: 'admin.period_month' },
+    { value: 'year' as const, labelKey: 'admin.period_year' },
   ];
 
   private icon(path: string, extraPath?: string): SafeHtml {
@@ -235,7 +236,6 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         }, 0);
       },
       error: () => {
-        // Mock data for display
         this.kpis.set([
           { icon: this.icon('M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z'), iconBg: 'bg-emerald-50 text-emerald-600', label: 'CA TTC', value: '12 450,00 €', trend: 8.2 },
           { icon: this.icon('M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z'), iconBg: 'bg-blue-50 text-blue-600', label: 'Commandes', value: 47, trend: 3.5 },

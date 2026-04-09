@@ -1,24 +1,25 @@
 import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AdminService } from '../../../core/services/admin.service';
 
 @Component({
   selector: 'app-admin-messages',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   template: `
     <div class="space-y-6">
       <div class="flex items-center justify-between">
         <div>
-          <h1 class="text-2xl font-bold text-gray-900">Messages de contact</h1>
-          <p class="text-sm text-gray-500 mt-1">{{ unread() }} non lu(s)</p>
+          <h1 class="text-2xl font-bold text-gray-900">{{ 'admin.messages_title' | translate }}</h1>
+          <p class="text-sm text-gray-500 mt-1">{{ unread() }} {{ 'admin.messages_unread' | translate }}</p>
         </div>
         <select [(ngModel)]="statusFilter" (ngModelChange)="load()" class="input-field text-sm w-auto">
-          <option value="">Tous</option>
-          <option value="unread">Non lus</option>
-          <option value="read">Lus</option>
-          <option value="replied">Répondus</option>
+          <option value="">{{ 'admin.messages_filter_all' | translate }}</option>
+          <option value="unread">{{ 'admin.messages_filter_unread' | translate }}</option>
+          <option value="read">{{ 'admin.messages_filter_read' | translate }}</option>
+          <option value="replied">{{ 'admin.messages_filter_replied' | translate }}</option>
         </select>
       </div>
 
@@ -26,7 +27,7 @@ import { AdminService } from '../../../core/services/admin.service';
         <div class="space-y-3">@for (_ of [1,2,3]; track $index) { <div class="card p-5 skeleton h-24"></div> }</div>
       } @else if (messages().length === 0) {
         <div class="card p-12 text-center text-gray-500">
-          <p class="text-lg">Aucun message.</p>
+          <p class="text-lg">{{ 'admin.messages_none' | translate }}</p>
         </div>
       } @else {
         <div class="space-y-3">
@@ -42,7 +43,7 @@ import { AdminService } from '../../../core/services/admin.service';
                   <div class="flex items-center gap-3 mb-1">
                     <p class="font-semibold text-gray-900">{{ msg.firstName }} {{ msg.lastName }}</p>
                     @if (msg.status === 'unread') {
-                      <span class="badge badge-primary text-xs">Nouveau</span>
+                      <span class="badge badge-primary text-xs">{{ 'admin.messages_new_badge' | translate }}</span>
                     }
                     @if (msg.subject) {
                       <span class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">{{ msg.subject }}</span>
@@ -76,28 +77,28 @@ import { AdminService } from '../../../core/services/admin.service';
             <div class="p-6 space-y-4">
               @if (selected()!.subject) {
                 <div>
-                  <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Sujet</p>
+                  <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{{ 'admin.messages_subject_label' | translate }}</p>
                   <p class="text-sm font-medium text-gray-900">{{ selected()!.subject }}</p>
                 </div>
               }
               @if (selected()!.phone) {
                 <div>
-                  <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Téléphone</p>
+                  <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{{ 'admin.messages_phone_label' | translate }}</p>
                   <p class="text-sm text-gray-700">{{ selected()!.phone }}</p>
                 </div>
               }
               <div>
-                <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Message</p>
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{{ 'admin.messages_message_label' | translate }}</p>
                 <p class="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{{ selected()!.message }}</p>
               </div>
-              <p class="text-xs text-gray-400">Reçu le {{ selected()!.createdAt | date:'d MMMM yyyy à HH:mm':'':'fr' }}</p>
+              <p class="text-xs text-gray-400">{{ 'admin.messages_received' | translate }} {{ selected()!.createdAt | date:'d MMMM yyyy à HH:mm':'':'fr' }}</p>
 
               <div class="border-t border-gray-100 pt-4 flex gap-3">
                 <a [href]="'mailto:' + selected()!.email + '?subject=Re: ' + (selected()!.subject ?? 'Votre message')"
                   class="btn-primary text-sm">
-                  Répondre par email
+                  {{ 'admin.messages_reply_email' | translate }}
                 </a>
-                <button (click)="markReplied(selected()!)" class="btn-ghost text-sm">Marquer comme répondu</button>
+                <button (click)="markReplied(selected()!)" class="btn-ghost text-sm">{{ 'admin.messages_mark_replied' | translate }}</button>
               </div>
             </div>
           </div>

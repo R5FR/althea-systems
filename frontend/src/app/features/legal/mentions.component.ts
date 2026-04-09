@@ -1,22 +1,23 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-mentions',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   template: `
     <div class="page-container py-12">
       <div class="max-w-3xl mx-auto">
-        <h1 class="text-3xl font-bold text-navy mb-8">Mentions Légales</h1>
+        <h1 class="text-3xl font-bold text-navy mb-8">{{ 'legal.mentions_title' | translate }}</h1>
 
         @for (section of sections; track section.title) {
           <div class="mb-8">
-            <h2 class="text-xl font-bold text-navy mb-3">{{ section.title }}</h2>
+            <h2 class="text-xl font-bold text-navy mb-3">{{ section.title | translate }}</h2>
             <div class="text-gray-600 text-sm leading-relaxed space-y-1">
               @for (line of section.lines; track line) {
                 @if (line === '') { <br /> }
-                @else { <p>{{ line }}</p> }
+                @else { <p>{{ line | translate }}</p> }
               }
             </div>
           </div>
@@ -28,65 +29,65 @@ import { CommonModule } from '@angular/common';
 export class MentionsComponent {
   sections = [
     {
-      title: 'Éditeur du site',
+      title: 'legal.section_editor',
       lines: [
-        'Althea Systems SAS',
-        'Capital social : 50 000 €',
-        'RCS Paris : 123 456 789',
-        'N° TVA intracommunautaire : FR 12 123456789',
+        'legal.mentions_editor_line1',
+        'legal.mentions_editor_line2',
+        'legal.mentions_editor_line3',
+        'legal.mentions_editor_line4',
         '',
-        'Siège social : 12 rue de la Paix, 75001 Paris, France',
-        'Téléphone : +33 1 23 45 67 89',
-        'Email : contact@althea-systems.fr',
+        'legal.mentions_editor_line5',
+        'legal.mentions_editor_line6',
+        'legal.mentions_editor_line7',
       ]
     },
     {
-      title: 'Directeur de la publication',
-      lines: ['Le directeur de la publication est le représentant légal d\'Althea Systems SAS.']
+      title: 'legal.section_director',
+      lines: ['legal.mentions_director_line1']
     },
     {
-      title: 'Hébergement',
+      title: 'legal.section_hosting',
       lines: [
-        'Le site est hébergé par :',
-        'Vercel Inc.',
-        '440 N Barranca Ave #4133, Covina, CA 91723, États-Unis',
-        'Site : https://vercel.com',
+        'legal.mentions_hosting_line1',
+        'legal.mentions_hosting_line2',
+        'legal.mentions_hosting_line3',
+        'legal.mentions_hosting_line4',
       ]
     },
     {
-      title: 'Propriété intellectuelle',
+      title: 'legal.section_ip',
       lines: [
-        'L\'ensemble des contenus présents sur ce site (textes, images, vidéos, logos, icônes) sont protégés par le droit d\'auteur et appartiennent à Althea Systems SAS ou à ses partenaires.',
-        'Toute reproduction, même partielle, est interdite sans autorisation préalable écrite.',
+        'legal.mentions_ip_line1',
+        'legal.mentions_ip_line2',
       ]
     },
     {
-      title: 'Protection des données personnelles',
+      title: 'legal.section_data',
       lines: [
-        'Conformément au Règlement Général sur la Protection des Données (RGPD) et à la loi Informatique et Libertés, vous disposez d\'un droit d\'accès, de rectification, de suppression et de portabilité de vos données.',
+        'legal.mentions_data_line1',
         '',
-        'Pour exercer vos droits, contactez-nous à : rgpd@althea-systems.fr',
+        'legal.mentions_data_line2',
         '',
-        'Délégué à la Protection des Données (DPO) : dpo@althea-systems.fr',
+        'legal.mentions_data_line3',
       ]
     },
     {
-      title: 'Cookies',
+      title: 'legal.section_cookies',
       lines: [
-        'Le site utilise des cookies strictement nécessaires à son fonctionnement (session, panier, authentification). Aucun cookie publicitaire n\'est déposé sans consentement.',
-        'Vous pouvez configurer votre navigateur pour refuser les cookies, mais certaines fonctionnalités pourraient être altérées.',
+        'legal.mentions_cookies_line1',
+        'legal.mentions_cookies_line2',
       ]
     },
     {
-      title: 'Paiement sécurisé',
+      title: 'legal.section_payment',
       lines: [
-        'Les paiements en ligne sont traités par Stripe, Inc. — certifié PCI-DSS niveau 1. Althea Systems ne stocke jamais vos données de carte bancaire complètes.',
+        'legal.mentions_payment_line1',
       ]
     },
     {
-      title: 'Médiation',
+      title: 'legal.section_mediation',
       lines: [
-        'En cas de litige, vous pouvez recourir gratuitement au médiateur de la consommation : CM2C, 14 rue Saint Jean, 75017 Paris — www.cm2c.net',
+        'legal.mentions_mediation_line1',
       ]
     },
   ];

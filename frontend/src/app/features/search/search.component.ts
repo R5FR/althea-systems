@@ -2,6 +2,7 @@ import { Component, OnInit, signal, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { ProductService } from '../../core/services/product.service';
 import { CategoryService } from '../../core/services/category.service';
@@ -49,12 +50,12 @@ const PRODUCT_GRADIENTS = [
 @Component({
   selector: 'app-search',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, TranslatePipe],
   template: `
     <div class="page-container py-8">
       <h1 class="text-2xl font-bold text-gray-900 mb-6">
-        @if (params.searchTerm) { Résultats pour « {{ params.searchTerm }} » }
-        @else { Catalogue produits }
+        @if (params.searchTerm) { {{ 'search.title_results' | translate }} {{ params.searchTerm }} » }
+        @else { {{ 'search.title_catalog' | translate }} }
       </h1>
 
       <div class="flex flex-col lg:flex-row gap-6">
@@ -62,20 +63,20 @@ const PRODUCT_GRADIENTS = [
         <!-- ── Filters sidebar ────────────────────────────────────── -->
         <aside class="lg:w-64 flex-shrink-0">
           <div class="card p-5 space-y-6">
-            <h2 class="font-semibold text-gray-900">Filtres</h2>
+            <h2 class="font-semibold text-gray-900">{{ 'search.filters_title' | translate }}</h2>
 
             <!-- Keyword -->
             <div>
-              <label class="block text-xs font-medium text-gray-600 mb-1.5">Recherche</label>
+              <label class="block text-xs font-medium text-gray-600 mb-1.5">{{ 'search.filter_search' | translate }}</label>
               <input [(ngModel)]="params.searchTerm" (ngModelChange)="onSearchChange($event)"
-                type="search" placeholder="Nom, description..." class="input-field text-sm" />
+                type="search" [placeholder]="'search.filter_search_placeholder' | translate" class="input-field text-sm" />
             </div>
 
             <!-- Categories -->
             <div>
-              <label class="block text-xs font-medium text-gray-600 mb-1.5">Catégorie</label>
+              <label class="block text-xs font-medium text-gray-600 mb-1.5">{{ 'search.filter_category' | translate }}</label>
               <select [(ngModel)]="params.categoryId" (ngModelChange)="applyFilters()" class="input-field text-sm">
-                <option value="">Toutes</option>
+                <option value="">{{ 'search.filter_category_all' | translate }}</option>
                 @for (cat of categories(); track cat.id) {
                   <option [value]="cat.id">{{ cat.name }}</option>
                 }
@@ -84,11 +85,11 @@ const PRODUCT_GRADIENTS = [
 
             <!-- Price range -->
             <div>
-              <label class="block text-xs font-medium text-gray-600 mb-1.5">Prix TTC (€)</label>
+              <label class="block text-xs font-medium text-gray-600 mb-1.5">{{ 'search.filter_price' | translate }}</label>
               <div class="flex gap-2 items-center">
-                <input [(ngModel)]="params.minPrice" (ngModelChange)="applyFilters()" type="number" min="0" placeholder="Min" class="input-field text-sm w-full" />
+                <input [(ngModel)]="params.minPrice" (ngModelChange)="applyFilters()" type="number" min="0" [placeholder]="'search.filter_price_min' | translate" class="input-field text-sm w-full" />
                 <span class="text-gray-400 flex-shrink-0">–</span>
-                <input [(ngModel)]="params.maxPrice" (ngModelChange)="applyFilters()" type="number" min="0" placeholder="Max" class="input-field text-sm w-full" />
+                <input [(ngModel)]="params.maxPrice" (ngModelChange)="applyFilters()" type="number" min="0" [placeholder]="'search.filter_price_max' | translate" class="input-field text-sm w-full" />
               </div>
             </div>
 
@@ -96,11 +97,11 @@ const PRODUCT_GRADIENTS = [
             <label class="flex items-center gap-2.5 cursor-pointer group">
               <input [(ngModel)]="params.onlyAvailable" (ngModelChange)="applyFilters()" type="checkbox"
                 class="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary" />
-              <span class="text-sm text-gray-700 group-hover:text-gray-900">Produits disponibles uniquement</span>
+              <span class="text-sm text-gray-700 group-hover:text-gray-900">{{ 'search.filter_available' | translate }}</span>
             </label>
 
             <button (click)="resetFilters()" class="w-full btn-ghost text-sm text-gray-500">
-              Réinitialiser les filtres
+              {{ 'search.reset_filters' | translate }}
             </button>
           </div>
         </aside>
@@ -110,17 +111,17 @@ const PRODUCT_GRADIENTS = [
           <!-- Sort + count bar -->
           <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5">
             <p class="text-sm text-gray-600">
-              @if (loading()) { Chargement... }
-              @else { <span class="font-semibold">{{ totalCount() }}</span> produit{{ totalCount() !== 1 ? 's' : '' }} }
+              @if (loading()) { {{ 'search.loading' | translate }} }
+              @else { <span class="font-semibold">{{ totalCount() }}</span> {{ totalCount() === 1 ? ('catalog.products_count_singular' | translate) : ('catalog.products_count_plural' | translate) }} }
             </p>
             <div class="flex items-center gap-3">
               <select (change)="changeSort($event)" [(ngModel)]="sortValue" class="input-field text-sm py-2 w-auto">
-                <option value="price-asc">Prix croissant</option>
-                <option value="price-desc">Prix décroissant</option>
-                <option value="name-asc">Nom A → Z</option>
-                <option value="name-desc">Nom Z → A</option>
-                <option value="createdAt-desc">Plus récent</option>
-                <option value="availability-desc">Disponibilité</option>
+                <option value="price-asc">{{ 'search.sort_price_asc' | translate }}</option>
+                <option value="price-desc">{{ 'search.sort_price_desc' | translate }}</option>
+                <option value="name-asc">{{ 'search.sort_name_asc' | translate }}</option>
+                <option value="name-desc">{{ 'search.sort_name_desc' | translate }}</option>
+                <option value="createdAt-desc">{{ 'search.sort_newest' | translate }}</option>
+                <option value="availability-desc">{{ 'search.sort_availability' | translate }}</option>
               </select>
               <!-- View toggle -->
               <div class="flex border border-gray-200 rounded-lg overflow-hidden">
@@ -148,9 +149,9 @@ const PRODUCT_GRADIENTS = [
               <svg class="w-16 h-16 mx-auto mb-4 text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
               </svg>
-              <p class="text-gray-500 text-lg font-medium mb-2">Aucun produit trouvé</p>
-              <p class="text-gray-400 text-sm">Essayez de modifier vos critères de recherche</p>
-              <button (click)="resetFilters()" class="btn-secondary mt-4">Réinitialiser</button>
+              <p class="text-gray-500 text-lg font-medium mb-2">{{ 'search.no_results' | translate }}</p>
+              <p class="text-gray-400 text-sm">{{ 'search.no_results_hint' | translate }}</p>
+              <button (click)="resetFilters()" class="btn-secondary mt-4">{{ 'search.reset' | translate }}</button>
             </div>
           } @else {
             <!-- Grid view -->
@@ -179,17 +180,17 @@ const PRODUCT_GRADIENTS = [
                       }
                       @if (p.stockQuantity === 0) {
                         <div class="absolute inset-0 bg-white/75 flex items-center justify-center">
-                          <span class="badge badge-danger">Rupture</span>
+                          <span class="badge badge-danger">{{ 'search.stock_out' | translate }}</span>
                         </div>
                       } @else if (p.stockQuantity <= 5) {
-                        <span class="absolute top-2 right-2 badge badge-warning">Stock limité</span>
+                        <span class="absolute top-2 right-2 badge badge-warning">{{ 'search.stock_limited' | translate }}</span>
                       }
                     </div>
                     <div class="p-4 flex-1 flex flex-col">
                       <p class="font-semibold text-gray-900 text-sm leading-snug line-clamp-2 mb-auto group-hover:text-primary transition-colors">{{ p.name }}</p>
                       <div class="mt-3 pt-3 border-t border-gray-50">
-                        <p class="text-primary font-bold">{{ p.priceTtc | number:'1.2-2' }} € <span class="text-xs font-normal text-gray-400">TTC</span></p>
-                        <p class="text-gray-400 text-xs">{{ p.priceHt | number:'1.2-2' }} € HT</p>
+                        <p class="text-primary font-bold">{{ p.priceTtc | number:'1.2-2' }} € <span class="text-xs font-normal text-gray-400">{{ 'product.price_ttc' | translate }}</span></p>
+                        <p class="text-gray-400 text-xs">{{ p.priceHt | number:'1.2-2' }} € {{ 'product.price_ht' | translate }}</p>
                       </div>
                     </div>
                   </a>
@@ -215,13 +216,13 @@ const PRODUCT_GRADIENTS = [
                       <h3 class="font-semibold text-gray-900 mb-1 line-clamp-1">{{ p.name }}</h3>
                       <div class="flex items-center gap-4">
                         <div>
-                          <span class="text-primary font-bold">{{ p.priceTtc | number:'1.2-2' }} € TTC</span>
-                          <span class="text-gray-400 text-sm ml-2">{{ p.priceHt | number:'1.2-2' }} € HT</span>
+                          <span class="text-primary font-bold">{{ p.priceTtc | number:'1.2-2' }} € {{ 'product.price_ttc' | translate }}</span>
+                          <span class="text-gray-400 text-sm ml-2">{{ p.priceHt | number:'1.2-2' }} € {{ 'product.price_ht' | translate }}</span>
                         </div>
                         @if (p.stockQuantity === 0) {
-                          <span class="badge-danger badge text-xs">Rupture</span>
+                          <span class="badge-danger badge text-xs">{{ 'search.stock_out' | translate }}</span>
                         } @else if (p.stockQuantity <= 5) {
-                          <span class="badge-warning badge text-xs">Stock limité</span>
+                          <span class="badge-warning badge text-xs">{{ 'search.stock_limited' | translate }}</span>
                         }
                       </div>
                     </div>

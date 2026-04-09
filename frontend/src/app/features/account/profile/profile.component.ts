@@ -1,67 +1,68 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 import { UserService } from '../../../core/services/user.service';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
   template: `
     <div class="space-y-6">
-      <h1 class="text-xl font-bold text-navy">Mon profil</h1>
+      <h1 class="text-xl font-bold text-navy">{{ 'account.profile_title' | translate }}</h1>
 
       <!-- Personal info -->
       <div class="card p-6">
-        <h2 class="font-semibold text-gray-900 mb-5">Informations personnelles</h2>
+        <h2 class="font-semibold text-gray-900 mb-5">{{ 'account.personal_info' | translate }}</h2>
         <form [formGroup]="infoForm" (ngSubmit)="saveInfo()" class="space-y-4 max-w-md">
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1.5">Prénom</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'account.first_name' | translate }}</label>
               <input formControlName="firstName" class="input-field" />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1.5">Nom</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'account.last_name' | translate }}</label>
               <input formControlName="lastName" class="input-field" />
             </div>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1.5">Adresse e-mail</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'account.email' | translate }}</label>
             <input formControlName="email" type="email" class="input-field" />
-            <p class="text-xs text-gray-500 mt-1">Un email de confirmation sera envoyé si vous modifiez cette adresse.</p>
+            <p class="text-xs text-gray-500 mt-1">{{ 'account.email_note' | translate }}</p>
           </div>
-          @if (infoSuccess()) { <p class="text-sm text-green-600">✓ Profil mis à jour</p> }
+          @if (infoSuccess()) { <p class="text-sm text-green-600">{{ 'account.profile_updated' | translate }}</p> }
           @if (infoError()) { <p class="text-sm text-red-500">{{ infoError() }}</p> }
           <button type="submit" [disabled]="savingInfo()" class="btn-primary">
             @if (savingInfo()) { <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span> }
-            Enregistrer
+            {{ 'account.save' | translate }}
           </button>
         </form>
       </div>
 
       <!-- Change password -->
       <div class="card p-6">
-        <h2 class="font-semibold text-gray-900 mb-5">Changer le mot de passe</h2>
+        <h2 class="font-semibold text-gray-900 mb-5">{{ 'account.change_password' | translate }}</h2>
         <form [formGroup]="pwdForm" (ngSubmit)="changePwd()" class="space-y-4 max-w-md">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1.5">Mot de passe actuel</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'account.current_password' | translate }}</label>
             <input formControlName="currentPassword" type="password" class="input-field" />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1.5">Nouveau mot de passe</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'account.new_password' | translate }}</label>
             <input formControlName="newPassword" type="password" class="input-field" />
-            <p class="text-xs text-gray-500 mt-1">Min. 8 car., majuscule, chiffre, symbole</p>
+            <p class="text-xs text-gray-500 mt-1">{{ 'account.password_hint' | translate }}</p>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1.5">Confirmer</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'account.confirm_password' | translate }}</label>
             <input formControlName="confirm" type="password" class="input-field" />
           </div>
-          @if (pwdSuccess()) { <p class="text-sm text-green-600">✓ Mot de passe mis à jour</p> }
+          @if (pwdSuccess()) { <p class="text-sm text-green-600">{{ 'account.password_updated' | translate }}</p> }
           @if (pwdError()) { <p class="text-sm text-red-500">{{ pwdError() }}</p> }
           <button type="submit" [disabled]="savingPwd()" class="btn-primary">
             @if (savingPwd()) { <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span> }
-            Mettre à jour
+            {{ 'account.update' | translate }}
           </button>
         </form>
       </div>

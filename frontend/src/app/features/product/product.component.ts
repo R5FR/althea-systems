@@ -2,6 +2,7 @@ import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ProductService } from '../../core/services/product.service';
 import { CartService } from '../../core/services/cart.service';
 import { ContactService } from '../../core/services/contact.service';
@@ -10,7 +11,7 @@ import { Product, ProductListItem } from '../../core/models';
 @Component({
   selector: 'app-product',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, TranslatePipe],
   template: `
     <div class="page-container py-8">
       @if (loading()) {
@@ -24,7 +25,7 @@ import { Product, ProductListItem } from '../../core/models';
           </div>
         </div>
       } @else if (!product()) {
-        <div class="text-center py-20 text-gray-500">Produit introuvable.</div>
+        <div class="text-center py-20 text-gray-500">{{ 'product.not_found' | translate }}</div>
       } @else {
         <div class="grid md:grid-cols-2 gap-10 lg:gap-16">
 
@@ -44,12 +45,12 @@ import { Product, ProductListItem } from '../../core/models';
             </div>
             <!-- Thumbnails -->
             @if (product()!.imageUrls && product()!.imageUrls!.length > 1) {
-              <div class="flex gap-2 overflow-x-auto pb-1" role="listbox" aria-label="Images du produit">
+              <div class="flex gap-2 overflow-x-auto pb-1" role="listbox" [attr.aria-label]="'product.image_gallery' | translate">
                 @for (url of product()!.imageUrls!; track url; let i = $index) {
                   <button (click)="selectedImage.set(url)"
                     role="option"
                     [attr.aria-selected]="selectedImage() === url"
-                    [attr.aria-label]="'Image ' + (i + 1) + ' de ' + product()!.imageUrls!.length"
+                    [attr.aria-label]="('product.image_label' | translate:{ num: i + 1, total: product()!.imageUrls!.length })"
                     class="flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-colors"
                     [class.border-primary]="selectedImage() === url"
                     [class.border-transparent]="selectedImage() !== url">
@@ -63,8 +64,8 @@ import { Product, ProductListItem } from '../../core/models';
           <!-- ── Product info ────────────────────────────────────────── -->
           <div class="flex flex-col gap-5">
             <!-- Breadcrumb -->
-            <nav class="flex items-center gap-1 text-sm text-gray-500" aria-label="Fil d'Ariane">
-              <a routerLink="/" class="hover:text-primary">Accueil</a>
+            <nav class="flex items-center gap-1 text-sm text-gray-500" [attr.aria-label]="'product.breadcrumb_home' | translate">
+              <a routerLink="/" class="hover:text-primary">{{ 'product.breadcrumb_home' | translate }}</a>
               <span aria-hidden="true">/</span>
               @if (product()!.category) {
                 <a [routerLink]="['/categories', product()!.category!.slug]" class="hover:text-primary">{{ product()!.category!.name }}</a>
@@ -80,10 +81,10 @@ import { Product, ProductListItem } from '../../core/models';
               @if (product()!.stockQuantity > 0) {
                 <span class="badge-success badge">
                   <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
-                  En stock ({{ product()!.stockQuantity }} disponible{{ product()!.stockQuantity > 1 ? 's' : '' }})
+                  {{ 'product.in_stock' | translate }} ({{ product()!.stockQuantity }} {{ 'product.available' | translate }}{{ product()!.stockQuantity > 1 ? 's' : '' }})
                 </span>
               } @else {
-                <span class="badge-danger badge">Rupture de stock</span>
+                <span class="badge-danger badge">{{ 'product.out_of_stock' | translate }}</span>
               }
             </div>
 
@@ -91,15 +92,15 @@ import { Product, ProductListItem } from '../../core/models';
             <div class="bg-gray-50 rounded-xl p-4">
               <div class="text-3xl font-bold text-primary">{{ product()!.priceTtc | number:'1.2-2' }} €</div>
               <div class="text-sm text-gray-500 mt-1">
-                <span class="font-medium">{{ product()!.priceHt | number:'1.2-2' }} € HT</span>
+                <span class="font-medium">{{ product()!.priceHt | number:'1.2-2' }} € {{ 'product.price_ht' | translate }}</span>
                 <span class="mx-2">·</span>
-                TVA {{ product()!.tvaRate }}%
+                {{ 'product.vat_rate' | translate }} {{ product()!.tvaRate }}%
               </div>
             </div>
 
             <!-- Description -->
             <div>
-              <h2 class="font-semibold text-gray-900 mb-2">Description</h2>
+              <h2 class="font-semibold text-gray-900 mb-2">{{ 'product.description' | translate }}</h2>
               <p class="text-gray-600 leading-relaxed text-sm">{{ product()!.description }}</p>
             </div>
 
@@ -107,17 +108,17 @@ import { Product, ProductListItem } from '../../core/models';
             @if (product()!.isLargeProduct) {
               <!-- Large product: contact/quote flow -->
               <div class="card p-5 bg-primary-50 border-primary-100">
-                <h3 class="font-semibold text-primary-800 mb-2">Produit sur devis</h3>
-                <p class="text-sm text-primary-700 mb-4">Ce produit nécessite une prise de contact. Notre équipe vous répondra sous 24h avec une offre personnalisée.</p>
+                <h3 class="font-semibold text-primary-800 mb-2">{{ 'product.quote_title' | translate }}</h3>
+                <p class="text-sm text-primary-700 mb-4">{{ 'product.quote_subtitle' | translate }}</p>
                 <div class="flex flex-col gap-3">
-                  <input [(ngModel)]="quoteEmail" type="email" placeholder="Votre email" class="input-field" />
-                  <textarea [(ngModel)]="quoteMessage" rows="3" placeholder="Décrivez vos besoins..." class="input-field resize-none"></textarea>
+                  <input [(ngModel)]="quoteEmail" type="email" [placeholder]="'product.quote_email_placeholder' | translate" class="input-field" />
+                  <textarea [(ngModel)]="quoteMessage" rows="3" [placeholder]="'product.quote_message_placeholder' | translate" class="input-field resize-none"></textarea>
                   <button (click)="requestQuote()" [disabled]="requestingQuote()" class="btn-primary">
                     @if (requestingQuote()) { <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span> }
-                    Demander un devis
+                    {{ 'product.quote_send' | translate }}
                   </button>
                   @if (quoteSent()) {
-                    <p class="text-sm text-green-600 font-medium">✓ Votre demande a été envoyée ! Nous vous contacterons bientôt.</p>
+                    <p class="text-sm text-green-600 font-medium">✓ {{ 'product.quote_success' | translate }}</p>
                   }
                 </div>
               </div>
@@ -136,19 +137,19 @@ import { Product, ProductListItem } from '../../core/models';
                   @if (addingToCart()) {
                     <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
                   } @else if (product()!.stockQuantity === 0) {
-                    En rupture de stock
+                    {{ 'product.out_of_stock' | translate }}
                   } @else {
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                     </svg>
-                    Ajouter au panier
+                    {{ 'product.add_to_cart' | translate }}
                   }
                 </button>
               </div>
               @if (addedSuccess()) {
                 <p class="text-sm text-green-600 font-medium flex items-center gap-1">
                   <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/></svg>
-                  Ajouté au panier !
+                  {{ 'product.added_to_cart' | translate }}
                 </p>
               }
             }
@@ -156,20 +157,20 @@ import { Product, ProductListItem } from '../../core/models';
             <!-- Technical specs -->
             @if (product()!.description) {
               <div class="border-t pt-5">
-                <h2 class="font-semibold text-gray-900 mb-3">Caractéristiques techniques</h2>
+                <h2 class="font-semibold text-gray-900 mb-3">{{ 'product.specs' | translate }}</h2>
                 <div class="text-sm text-gray-600 space-y-1">
                   <div class="flex justify-between py-1 border-b border-gray-100">
-                    <span class="text-gray-500">Référence</span>
+                    <span class="text-gray-500">{{ 'product.reference' | translate }}</span>
                     <span class="font-medium">{{ product()!.slug }}</span>
                   </div>
                   <div class="flex justify-between py-1 border-b border-gray-100">
-                    <span class="text-gray-500">TVA</span>
+                    <span class="text-gray-500">{{ 'product.vat_rate' | translate }}</span>
                     <span class="font-medium">{{ product()!.tvaRate }}%</span>
                   </div>
                   <div class="flex justify-between py-1">
-                    <span class="text-gray-500">Disponibilité</span>
+                    <span class="text-gray-500">{{ 'product.availability' | translate }}</span>
                     <span class="font-medium" [class.text-green-600]="product()!.stockQuantity > 0" [class.text-red-500]="product()!.stockQuantity === 0">
-                      {{ product()!.stockQuantity > 0 ? 'En stock' : 'Rupture' }}
+                      {{ product()!.stockQuantity > 0 ? ('product.in_stock' | translate) : ('product.out_of_stock_short' | translate) }}
                     </span>
                   </div>
                 </div>
@@ -181,7 +182,7 @@ import { Product, ProductListItem } from '../../core/models';
         <!-- ── Similar products ──────────────────────────────────────── -->
         @if (similarProducts().length > 0) {
           <section class="mt-16">
-            <h2 class="section-title">Produits similaires</h2>
+            <h2 class="section-title">{{ 'product.similar' | translate }}</h2>
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
               @for (p of similarProducts(); track p.id) {
                 <a [routerLink]="['/produits', p.slug]" class="card-hover group">
@@ -208,6 +209,7 @@ export class ProductComponent implements OnInit {
   private productSvc = inject(ProductService);
   private cartSvc = inject(CartService);
   private contactSvc = inject(ContactService);
+  private translate = inject(TranslateService);
 
   Math = Math;
   product = signal<Product | null>(null);
@@ -265,8 +267,8 @@ export class ProductComponent implements OnInit {
     this.requestingQuote.set(true);
     this.contactSvc.sendMessage({
       email: this.quoteEmail,
-      subject: `Demande de devis : ${this.product()?.name}`,
-      message: this.quoteMessage || `Bonjour, je souhaite obtenir un devis pour le produit "${this.product()?.name}" (ref: ${this.product()?.slug}).`
+      subject: `${this.translate.instant('contact.subject_quote')} : ${this.product()?.name}`,
+      message: this.quoteMessage || this.translate.instant('product.quote_default_message', { name: this.product()?.name, ref: this.product()?.slug })
     }).subscribe({
       next: () => { this.quoteSent.set(true); this.requestingQuote.set(false); },
       error: () => this.requestingQuote.set(false)

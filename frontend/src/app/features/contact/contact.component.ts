@@ -2,6 +2,7 @@ import { Component, signal, inject, ElementRef, ViewChild, AfterViewChecked } fr
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ContactService } from '../../core/services/contact.service';
 import { AuthService } from '../../core/services/auth.service';
 
@@ -14,7 +15,7 @@ interface ChatMessage {
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, TranslatePipe],
   styles: [`
     @keyframes slideUp {
       from { opacity: 0; transform: translateY(16px); }
@@ -33,15 +34,15 @@ interface ChatMessage {
     <div class="page-container py-12">
       <div class="max-w-5xl mx-auto">
         <div class="text-center mb-10">
-          <h1 class="text-3xl font-bold text-navy mb-3">Contactez-nous</h1>
-          <p class="text-gray-500">Notre équipe est disponible pour répondre à toutes vos questions.</p>
+          <h1 class="text-3xl font-bold text-navy mb-3">{{ 'contact.title' | translate }}</h1>
+          <p class="text-gray-500">{{ 'contact.subtitle' | translate }}</p>
         </div>
 
         <div class="grid lg:grid-cols-3 gap-8">
           <!-- Contact info -->
           <div class="space-y-6">
             <div class="card p-6">
-              <h2 class="font-semibold text-gray-900 mb-5">Nos coordonnées</h2>
+              <h2 class="font-semibold text-gray-900 mb-5">{{ 'contact.info_title' | translate }}</h2>
               <div class="space-y-4">
                 @for (info of contactInfos; track info.label) {
                   <div class="flex items-start gap-3">
@@ -56,11 +57,11 @@ interface ChatMessage {
             </div>
 
             <div class="card p-6">
-              <h2 class="font-semibold text-gray-900 mb-3">Horaires</h2>
+              <h2 class="font-semibold text-gray-900 mb-3">{{ 'contact.hours_title' | translate }}</h2>
               <div class="space-y-2 text-sm text-gray-600">
-                <div class="flex justify-between"><span>Lun - Ven</span><span class="font-medium">8h00 – 18h00</span></div>
-                <div class="flex justify-between"><span>Samedi</span><span class="font-medium">9h00 – 13h00</span></div>
-                <div class="flex justify-between text-gray-400"><span>Dimanche</span><span>Fermé</span></div>
+                <div class="flex justify-between"><span>{{ 'contact.hours_weekday' | translate }}</span><span class="font-medium">{{ 'contact.hours_weekday_value' | translate }}</span></div>
+                <div class="flex justify-between"><span>{{ 'contact.hours_saturday' | translate }}</span><span class="font-medium">{{ 'contact.hours_saturday_value' | translate }}</span></div>
+                <div class="flex justify-between text-gray-400"><span>{{ 'contact.hours_sunday' | translate }}</span><span>{{ 'contact.hours_sunday_value' | translate }}</span></div>
               </div>
             </div>
 
@@ -73,8 +74,8 @@ interface ChatMessage {
                 </svg>
               </div>
               <div class="flex-1">
-                <p class="font-semibold text-gray-900">Assistant virtuel</p>
-                <p class="text-xs text-gray-500 mt-0.5">Réponse instantanée 24h/24</p>
+                <p class="font-semibold text-gray-900">{{ 'contact.chatbot_title' | translate }}</p>
+                <p class="text-xs text-gray-500 mt-0.5">{{ 'contact.chatbot_card_subtitle' | translate }}</p>
               </div>
               <svg class="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -84,7 +85,7 @@ interface ChatMessage {
 
           <!-- Contact form -->
           <div class="lg:col-span-2 card p-8">
-            <h2 class="font-semibold text-gray-900 mb-6">Envoyer un message</h2>
+            <h2 class="font-semibold text-gray-900 mb-6">{{ 'contact.send_title' | translate }}</h2>
 
             @if (sent()) {
               <div class="flex flex-col items-center justify-center py-12 text-center">
@@ -93,58 +94,58 @@ interface ChatMessage {
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                   </svg>
                 </div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-2">Message envoyé !</h3>
-                <p class="text-gray-500 text-sm">Nous vous répondrons dans les plus brefs délais, généralement sous 24 à 48 heures ouvrées.</p>
-                <button (click)="resetForm()" class="btn-ghost mt-6 text-sm">Envoyer un autre message</button>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ 'contact.success_title' | translate }}</h3>
+                <p class="text-gray-500 text-sm">{{ 'contact.success_msg' | translate }}</p>
+                <button (click)="resetForm()" class="btn-ghost mt-6 text-sm">{{ 'contact.send_another' | translate }}</button>
               </div>
             } @else {
               <form [formGroup]="form" (ngSubmit)="send()" class="space-y-5">
                 <div class="grid sm:grid-cols-2 gap-5">
                   <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Prénom *</label>
-                    <input formControlName="firstName" class="input-field" placeholder="Jean" />
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'contact.first_name' | translate }}</label>
+                    <input formControlName="firstName" class="input-field" [placeholder]="'contact.first_name_placeholder' | translate" />
                   </div>
                   <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Nom *</label>
-                    <input formControlName="lastName" class="input-field" placeholder="Dupont" />
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'contact.last_name' | translate }}</label>
+                    <input formControlName="lastName" class="input-field" [placeholder]="'contact.last_name_placeholder' | translate" />
                   </div>
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1.5">Adresse e-mail *</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'contact.email' | translate }}</label>
                   <input formControlName="email" type="email" class="input-field" placeholder="jean.dupont@example.com" />
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1.5">Téléphone</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'contact.phone' | translate }}</label>
                   <input formControlName="phone" type="tel" class="input-field" placeholder="+33 6 00 00 00 00" />
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1.5">Sujet *</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'contact.subject' | translate }}</label>
                   <select formControlName="subject" class="input-field">
-                    <option value="">Choisir un sujet...</option>
-                    <option value="Devis">Demande de devis</option>
-                    <option value="Information">Information produit</option>
-                    <option value="Commande">Suivi de commande</option>
-                    <option value="SAV">Service après-vente</option>
-                    <option value="Facturation">Facturation</option>
-                    <option value="Autre">Autre</option>
+                    <option value="">{{ 'contact.subject_placeholder' | translate }}</option>
+                    <option value="Devis">{{ 'contact.subject_quote' | translate }}</option>
+                    <option value="Information">{{ 'contact.subject_info' | translate }}</option>
+                    <option value="Commande">{{ 'contact.subject_order' | translate }}</option>
+                    <option value="SAV">{{ 'contact.subject_sav' | translate }}</option>
+                    <option value="Facturation">{{ 'contact.subject_billing' | translate }}</option>
+                    <option value="Autre">{{ 'contact.subject_other' | translate }}</option>
                   </select>
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1.5">Message *</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'contact.message' | translate }}</label>
                   <textarea formControlName="message" rows="5" class="input-field resize-none"
-                    placeholder="Décrivez votre demande en détail..."></textarea>
+                    [placeholder]="'contact.message_placeholder' | translate"></textarea>
                   <p class="text-xs text-gray-400 mt-1 text-right">{{ form.value.message?.length ?? 0 }} / 2000</p>
                 </div>
 
                 @if (error()) { <p class="text-sm text-red-500">{{ error() }}</p> }
 
                 <div class="flex items-center justify-between">
-                  <p class="text-xs text-gray-400">* Champs obligatoires</p>
+                  <p class="text-xs text-gray-400">{{ 'contact.required_fields' | translate }}</p>
                   <button type="submit" [disabled]="sending() || form.invalid" class="btn-primary px-8">
                     @if (sending()) {
                       <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
                     }
-                    Envoyer
+                    {{ 'contact.send' | translate }}
                   </button>
                 </div>
               </form>
@@ -169,16 +170,16 @@ interface ChatMessage {
               </svg>
             </div>
             <div>
-              <p class="font-semibold text-white text-sm leading-tight">Assistant Althea</p>
+              <p class="font-semibold text-white text-sm leading-tight">{{ 'contact.chatbot_title' | translate }}</p>
               <div class="flex items-center gap-1 mt-0.5">
                 <span class="w-1.5 h-1.5 bg-green-400 rounded-full"></span>
-                <span class="text-xs text-white/60">En ligne</span>
+                <span class="text-xs text-white/60">{{ 'contact.chatbot_online' | translate }}</span>
               </div>
             </div>
           </div>
           <button (click)="chatOpen.set(false)"
             class="text-white/60 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/10"
-            aria-label="Fermer le chat">
+            [attr.aria-label]="'contact.chatbot_close' | translate">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
@@ -239,7 +240,7 @@ interface ChatMessage {
               [value]="chatInput()"
               (input)="chatInput.set($any($event.target).value)"
               (keydown.enter)="sendMessage(chatInput())"
-              placeholder="Votre question..."
+              [placeholder]="'contact.chatbot_placeholder' | translate"
               class="flex-1 input-field text-sm py-2" />
             <button (click)="sendMessage(chatInput())"
               [disabled]="!chatInput().trim()"
@@ -256,7 +257,7 @@ interface ChatMessage {
     <!-- ─── Floating chat button ───────────────────────────────────────────── -->
     <button (click)="toggleChat()"
       class="fixed bottom-6 right-6 z-50 w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:bg-primary-200 transition-all hover:shadow-xl hover:scale-105"
-      [attr.aria-label]="chatOpen() ? 'Fermer le chat' : 'Ouvrir le chat'">
+      [attr.aria-label]="chatOpen() ? ('contact.chatbot_close' | translate) : ('contact.chatbot_open' | translate)">
       @if (chatOpen()) {
         <!-- X icon when open -->
         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -278,6 +279,7 @@ export class ContactComponent implements AfterViewChecked {
   private contactSvc  = inject(ContactService);
   private auth        = inject(AuthService);
   private sanitizer   = inject(DomSanitizer);
+  private translate   = inject(TranslateService);
 
   // ── Contact form state ────────────────────────────────────────────────────
   sent    = signal(false);
@@ -288,7 +290,7 @@ export class ContactComponent implements AfterViewChecked {
   chatOpen     = signal(false);
   chatMessages = signal<ChatMessage[]>([{
     from: 'bot',
-    text: 'Bonjour ! Je suis votre assistant Althea. Comment puis-je vous aider ?',
+    text: this.translate.instant('contact.chatbot_greeting'),
     time: new Date(),
   }]);
   chatInput  = signal('');
@@ -300,52 +302,52 @@ export class ContactComponent implements AfterViewChecked {
   private readonly faqMap: { keyword: string; response: string }[] = [
     {
       keyword: 'commande',
-      response: "Vous pouvez suivre vos commandes dans votre espace compte sous 'Mes commandes'.",
+      response: this.translate.instant('contact.faq_order'),
     },
     {
       keyword: 'livraison',
-      response: 'Nous livrons dans toute l\'Europe. Les délais sont de 3 à 5 jours ouvrables.',
+      response: this.translate.instant('contact.faq_delivery'),
     },
     {
       keyword: 'retour',
-      response: 'Vous avez 30 jours pour retourner un produit. Contactez notre support.',
+      response: this.translate.instant('contact.faq_return'),
     },
     {
       keyword: 'paiement',
-      response: 'Nous acceptons Visa, Mastercard, et virements bancaires via notre plateforme sécurisée Stripe.',
+      response: this.translate.instant('contact.faq_payment'),
     },
     {
       keyword: 'facture',
-      response: "Vos factures sont disponibles dans 'Mes commandes' → 'Détail de la commande'.",
+      response: this.translate.instant('contact.faq_invoice'),
     },
     {
       keyword: 'contact',
-      response: 'Vous pouvez nous joindre au +33 1 23 45 67 89 ou via ce formulaire de contact.',
+      response: this.translate.instant('contact.faq_contact'),
     },
   ];
 
   quickReplies = [
-    'Délai de livraison ?',
-    'Comment commander ?',
-    'Retour et remboursement',
-    'Paiement sécurisé',
+    this.translate.instant('contact.quick_reply_delivery'),
+    this.translate.instant('contact.quick_reply_order'),
+    this.translate.instant('contact.quick_reply_return'),
+    this.translate.instant('contact.quick_reply_payment'),
   ];
 
   // ── Contact info cards ────────────────────────────────────────────────────
   contactInfos: { icon: SafeHtml; label: string; value: string }[] = [
     {
       icon: this.sanitizer.bypassSecurityTrustHtml(`<svg class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>`),
-      label: 'Téléphone',
+      label: this.translate.instant('contact.info_phone'),
       value: '+33 1 23 45 67 89',
     },
     {
       icon: this.sanitizer.bypassSecurityTrustHtml(`<svg class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>`),
-      label: 'E-mail',
+      label: this.translate.instant('contact.info_email'),
       value: 'contact@althea-systems.fr',
     },
     {
       icon: this.sanitizer.bypassSecurityTrustHtml(`<svg class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>`),
-      label: 'Adresse',
+      label: this.translate.instant('contact.info_address'),
       value: '12 rue de la Paix, 75001 Paris',
     },
   ];
@@ -387,7 +389,7 @@ export class ContactComponent implements AfterViewChecked {
     this.error.set('');
     this.contactSvc.sendMessage(this.form.value as any).subscribe({
       next:  () => { this.sent.set(true);  this.sending.set(false); },
-      error: () => { this.error.set('Une erreur est survenue. Veuillez réessayer.'); this.sending.set(false); },
+      error: () => { this.error.set(this.translate.instant('contact.error_send')); this.sending.set(false); },
     });
   }
 
@@ -435,7 +437,7 @@ export class ContactComponent implements AfterViewChecked {
         setTimeout(() => {
           this.chatMessages.update(msgs => [
             ...msgs,
-            { from: 'bot', text: 'Un agent humain va vous recontacter.', time: new Date() },
+            { from: 'bot', text: this.translate.instant('contact.chatbot_human_agent'), time: new Date() },
           ]);
           this.shouldScroll = true;
         }, 600);
@@ -453,8 +455,9 @@ export class ContactComponent implements AfterViewChecked {
     }
 
     return {
-      primary: 'Je ne comprends pas encore cette question. Utilisez le formulaire ci-dessous ou appelez-nous au +33 1 23 45 67 89.',
+      primary: this.translate.instant('contact.chatbot_default_response'),
       isDefault: true,
     };
   }
 }
+

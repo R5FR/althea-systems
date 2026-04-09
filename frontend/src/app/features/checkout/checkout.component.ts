@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit, signal, inject, ElementRef, ViewChild
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CartService } from '../../core/services/cart.service';
 import { UserService } from '../../core/services/user.service';
 import { OrderService } from '../../core/services/order.service';
@@ -15,10 +16,10 @@ type Step = 'address' | 'payment' | 'confirm';
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink, TranslatePipe],
   template: `
     <div class="page-container py-8 max-w-5xl mx-auto">
-      <h1 class="text-2xl font-bold text-navy mb-8">Finaliser ma commande</h1>
+      <h1 class="text-2xl font-bold text-navy mb-8">{{ 'checkout.title' | translate }}</h1>
 
       <!-- Step indicator -->
       <div class="flex items-center mb-10">
@@ -37,7 +38,7 @@ type Step = 'address' | 'payment' | 'confirm';
               <span class="text-xs mt-1 font-medium hidden sm:block"
                 [class.text-primary]="currentStep() === s.key"
                 [class.text-gray-400]="currentStep() !== s.key && !isStepDone(s.key)"
-                [class.text-gray-600]="isStepDone(s.key)">{{ s.label }}</span>
+                [class.text-gray-600]="isStepDone(s.key)">{{ s.labelKey | translate }}</span>
             </div>
             @if (i < steps.length - 1) {
               <div class="flex-1 h-0.5 mx-3 transition-colors" [class.bg-primary]="isStepDone(s.key)" [class.bg-gray-200]="!isStepDone(s.key)"></div>
@@ -52,7 +53,7 @@ type Step = 'address' | 'payment' | 'confirm';
 
           <!-- ── Step 1: Address ──────────────────────────────── -->
           <div [hidden]="currentStep() !== 'address'" class="card p-6">
-            <h2 class="font-bold text-navy text-lg mb-5">Adresse de facturation</h2>
+            <h2 class="font-bold text-navy text-lg mb-5">{{ 'checkout.address_title' | translate }}</h2>
 
             <!-- Saved addresses -->
             @if (savedAddresses().length > 0) {
@@ -75,7 +76,7 @@ type Step = 'address' | 'payment' | 'confirm';
                   [class.border-primary]="selectedAddressId === 'new'"
                   [class.border-gray-200]="selectedAddressId !== 'new'">
                   <input type="radio" name="address" value="new" [(ngModel)]="selectedAddressId" class="mt-1 text-primary" />
-                  <span class="text-sm font-semibold text-gray-900">+ Nouvelle adresse</span>
+                  <span class="text-sm font-semibold text-gray-900">{{ 'checkout.new_address' | translate }}</span>
                 </label>
               </div>
             }
@@ -84,57 +85,57 @@ type Step = 'address' | 'payment' | 'confirm';
             @if (savedAddresses().length === 0 || selectedAddressId === 'new') {
               <form [formGroup]="addressForm" class="grid grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-xs font-medium text-gray-700 mb-1">Prénom *</label>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">{{ 'checkout.first_name' | translate }}</label>
                   <input formControlName="firstName" class="input-field" [class.input-error]="f['firstName'].invalid && f['firstName'].touched" />
                 </div>
                 <div>
-                  <label class="block text-xs font-medium text-gray-700 mb-1">Nom *</label>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">{{ 'checkout.last_name' | translate }}</label>
                   <input formControlName="lastName" class="input-field" [class.input-error]="f['lastName'].invalid && f['lastName'].touched" />
                 </div>
                 <div class="col-span-2">
-                  <label class="block text-xs font-medium text-gray-700 mb-1">Adresse *</label>
-                  <input formControlName="addressLine1" class="input-field" placeholder="Rue, numéro" />
+                  <label class="block text-xs font-medium text-gray-700 mb-1">{{ 'checkout.address_line1' | translate }}</label>
+                  <input formControlName="addressLine1" class="input-field" [placeholder]="'checkout.address_street_placeholder' | translate" />
                 </div>
                 <div class="col-span-2">
-                  <label class="block text-xs font-medium text-gray-700 mb-1">Complément d'adresse</label>
-                  <input formControlName="addressLine2" class="input-field" placeholder="Appartement, bâtiment..." />
+                  <label class="block text-xs font-medium text-gray-700 mb-1">{{ 'checkout.address_line2' | translate }}</label>
+                  <input formControlName="addressLine2" class="input-field" [placeholder]="'checkout.address_complement_placeholder' | translate" />
                 </div>
                 <div>
-                  <label class="block text-xs font-medium text-gray-700 mb-1">Code postal *</label>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">{{ 'checkout.postal_code' | translate }}</label>
                   <input formControlName="postalCode" class="input-field" />
                 </div>
                 <div>
-                  <label class="block text-xs font-medium text-gray-700 mb-1">Ville *</label>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">{{ 'checkout.city' | translate }}</label>
                   <input formControlName="city" class="input-field" />
                 </div>
                 <div>
-                  <label class="block text-xs font-medium text-gray-700 mb-1">Région</label>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">{{ 'checkout.region' | translate }}</label>
                   <input formControlName="region" class="input-field" />
                 </div>
                 <div>
-                  <label class="block text-xs font-medium text-gray-700 mb-1">Pays *</label>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">{{ 'checkout.country' | translate }}</label>
                   <select formControlName="country" class="input-field">
-                    <option value="FR">France</option>
-                    <option value="BE">Belgique</option>
-                    <option value="CH">Suisse</option>
-                    <option value="LU">Luxembourg</option>
+                    <option value="FR">{{ 'checkout.country_fr' | translate }}</option>
+                    <option value="BE">{{ 'checkout.country_be' | translate }}</option>
+                    <option value="CH">{{ 'checkout.country_ch' | translate }}</option>
+                    <option value="LU">{{ 'checkout.country_lu' | translate }}</option>
                   </select>
                 </div>
                 <div class="col-span-2">
-                  <label class="block text-xs font-medium text-gray-700 mb-1">Téléphone mobile *</label>
+                  <label class="block text-xs font-medium text-gray-700 mb-1">{{ 'checkout.phone' | translate }}</label>
                   <input formControlName="phone" type="tel" class="input-field" />
                 </div>
                 <div class="col-span-2">
                   <label class="flex items-center gap-2 cursor-pointer">
                     <input type="checkbox" [(ngModel)]="saveAddress" [ngModelOptions]="{standalone: true}" class="text-primary rounded" />
-                    <span class="text-sm text-gray-700">Enregistrer cette adresse</span>
+                    <span class="text-sm text-gray-700">{{ 'checkout.save_address' | translate }}</span>
                   </label>
                 </div>
               </form>
             }
 
             <button (click)="nextStep()" class="btn-primary mt-6 w-full justify-center py-3 text-base">
-              Continuer vers le paiement
+              {{ 'checkout.continue_payment' | translate }}
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
             </button>
           </div>
@@ -142,7 +143,7 @@ type Step = 'address' | 'payment' | 'confirm';
           <!-- ── Step 2: Payment ──────────────────────────────── -->
           <!-- [hidden] (not @if) so #stripeCard stays in DOM when moving to confirm step -->
           <div [hidden]="currentStep() !== 'payment'" class="card p-6">
-            <h2 class="font-bold text-navy text-lg mb-5">Informations de paiement</h2>
+            <h2 class="font-bold text-navy text-lg mb-5">{{ 'checkout.payment_title' | translate }}</h2>
 
             <!-- Saved cards -->
             @if (savedCards().length > 0) {
@@ -158,7 +159,7 @@ type Step = 'address' | 'payment' | 'confirm';
                       </svg>
                       <div class="text-sm">
                         <p class="font-semibold text-gray-900">{{ card.cardBrand }} •••• {{ card.last4 }}</p>
-                        <p class="text-gray-500">Expire {{ card.expMonth }}/{{ card.expYear }}</p>
+                        <p class="text-gray-500">{{ 'checkout.card_expires' | translate }} {{ card.expMonth }}/{{ card.expYear }}</p>
                       </div>
                     </div>
                   </label>
@@ -167,7 +168,7 @@ type Step = 'address' | 'payment' | 'confirm';
                   [class.border-primary]="selectedCardId === 'new'"
                   [class.border-gray-200]="selectedCardId !== 'new'">
                   <input type="radio" name="card" value="new" [(ngModel)]="selectedCardId" class="text-primary" />
-                  <span class="text-sm font-semibold text-gray-900">+ Nouvelle carte</span>
+                  <span class="text-sm font-semibold text-gray-900">{{ 'checkout.new_card' | translate }}</span>
                 </label>
               </div>
             }
@@ -175,11 +176,11 @@ type Step = 'address' | 'payment' | 'confirm';
             <!-- New card form — [hidden] keeps #stripeCard in DOM -->
             <div [hidden]="savedCards().length > 0 && selectedCardId !== 'new'" class="space-y-4">
               <div>
-                <label class="block text-xs font-medium text-gray-700 mb-1">Nom sur la carte *</label>
-                <input [(ngModel)]="cardholderName" type="text" class="input-field" placeholder="Jean Dupont" />
+                <label class="block text-xs font-medium text-gray-700 mb-1">{{ 'checkout.card_name' | translate }}</label>
+                <input [(ngModel)]="cardholderName" type="text" class="input-field" [placeholder]="'checkout.cardholder_placeholder' | translate" />
               </div>
               <div>
-                <label class="block text-xs font-medium text-gray-700 mb-1.5">Numéro de carte *</label>
+                <label class="block text-xs font-medium text-gray-700 mb-1.5">{{ 'checkout.card_number' | translate }}</label>
                 <div #stripeCard class="input-field py-3 bg-white min-h-[44px]"></div>
                 @if (stripeError()) {
                   <p class="text-red-500 text-xs mt-1">{{ stripeError() }}</p>
@@ -187,23 +188,23 @@ type Step = 'address' | 'payment' | 'confirm';
               </div>
               <label class="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" [(ngModel)]="saveCard" class="text-primary rounded" />
-                <span class="text-sm text-gray-700">Enregistrer cette carte pour mes prochains achats</span>
+                <span class="text-sm text-gray-700">{{ 'checkout.save_card' | translate }}</span>
               </label>
               <div class="flex items-center gap-2 text-xs text-gray-500">
                 <svg class="w-4 h-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                 </svg>
-                Paiement sécurisé par Stripe (PCI-DSS)
+                {{ 'checkout.secure_payment' | translate }}
               </div>
             </div>
 
             <div class="flex gap-3 mt-6">
               <button (click)="currentStep.set('address')" class="btn-ghost">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-                Retour
+                {{ 'checkout.back' | translate }}
               </button>
               <button (click)="nextStep()" class="btn-primary flex-1 justify-center py-3 text-base">
-                Vérifier la commande
+                {{ 'checkout.review_order' | translate }}
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
               </button>
             </div>
@@ -211,13 +212,13 @@ type Step = 'address' | 'payment' | 'confirm';
 
           <!-- ── Step 3: Confirmation ─────────────────────────── -->
           <div [hidden]="currentStep() !== 'confirm'" class="card p-6">
-            <h2 class="font-bold text-navy text-lg mb-5">Vérifier et confirmer</h2>
+            <h2 class="font-bold text-navy text-lg mb-5">{{ 'checkout.confirm_title' | translate }}</h2>
 
               <!-- Recap address -->
               <div class="mb-5">
                 <div class="flex items-center justify-between mb-2">
-                  <h3 class="font-semibold text-gray-800 text-sm">Adresse</h3>
-                  <button (click)="currentStep.set('address')" class="text-xs text-primary hover:underline">Modifier</button>
+                  <h3 class="font-semibold text-gray-800 text-sm">{{ 'checkout.address_label' | translate }}</h3>
+                  <button (click)="currentStep.set('address')" class="text-xs text-primary hover:underline">{{ 'checkout.modify' | translate }}</button>
                 </div>
                 @if (selectedAddress()) {
                   <div class="text-sm text-gray-600 bg-gray-50 rounded-lg p-3">
@@ -231,8 +232,8 @@ type Step = 'address' | 'payment' | 'confirm';
               <!-- Recap payment -->
               <div class="mb-6">
                 <div class="flex items-center justify-between mb-2">
-                  <h3 class="font-semibold text-gray-800 text-sm">Paiement</h3>
-                  <button (click)="currentStep.set('payment')" class="text-xs text-primary hover:underline">Modifier</button>
+                  <h3 class="font-semibold text-gray-800 text-sm">{{ 'checkout.payment_label' | translate }}</h3>
+                  <button (click)="currentStep.set('payment')" class="text-xs text-primary hover:underline">{{ 'checkout.modify' | translate }}</button>
                 </div>
                 <div class="text-sm text-gray-600 bg-gray-50 rounded-lg p-3 flex items-center gap-2">
                   <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -243,14 +244,14 @@ type Step = 'address' | 'payment' | 'confirm';
                       {{ selectedCard()!.cardBrand }} •••• {{ selectedCard()!.last4 }}
                     }
                   } @else {
-                    Nouvelle carte — {{ cardholderName }}
+                    {{ 'checkout.new_card_label' | translate }} {{ cardholderName }}
                   }
                 </div>
               </div>
 
               <!-- Items recap -->
               <div class="border-t pt-4 mb-6">
-                <h3 class="font-semibold text-gray-800 text-sm mb-3">Articles</h3>
+                <h3 class="font-semibold text-gray-800 text-sm mb-3">{{ 'checkout.items_label' | translate }}</h3>
                 @for (item of cart()?.items ?? []; track item.id) {
                   <div class="flex justify-between text-sm py-1.5 border-b border-gray-100 last:border-0">
                     <span class="text-gray-700">{{ item.productName }} × {{ item.quantity }}</span>
@@ -268,16 +269,16 @@ type Step = 'address' | 'payment' | 'confirm';
               <div class="flex gap-3">
                 <button (click)="currentStep.set('payment')" class="btn-ghost">
                   <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-                  Retour
+                  {{ 'checkout.back' | translate }}
                 </button>
                 <button (click)="confirmOrder()" [disabled]="processing()"
                   class="btn-primary flex-1 justify-center py-3 text-base">
                   @if (processing()) {
                     <span class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                    Traitement...
+                    {{ 'checkout.processing' | translate }}
                   } @else {
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    Confirmer et payer {{ cart()?.totalTtc | number:'1.2-2' }} €
+                    {{ 'checkout.place_order' | translate }} {{ cart()?.totalTtc | number:'1.2-2' }} €
                   }
                 </button>
               </div>
@@ -287,7 +288,7 @@ type Step = 'address' | 'payment' | 'confirm';
         <!-- Right: Order summary -->
         <div class="lg:col-span-1">
           <div class="card p-5 sticky top-24">
-            <h2 class="font-bold text-navy mb-4">Récapitulatif</h2>
+            <h2 class="font-bold text-navy mb-4">{{ 'checkout.order_summary' | translate }}</h2>
             <div class="space-y-2 text-sm text-gray-600 mb-4">
               @for (item of cart()?.items ?? []; track item.id) {
                 <div class="flex justify-between">
@@ -298,13 +299,13 @@ type Step = 'address' | 'payment' | 'confirm';
             </div>
             <div class="border-t pt-3 space-y-1 text-sm">
               <div class="flex justify-between text-gray-500">
-                <span>Sous-total HT</span><span>{{ cart()?.subtotalHt | number:'1.2-2' }} €</span>
+                <span>{{ 'checkout.total_ht' | translate }}</span><span>{{ cart()?.subtotalHt | number:'1.2-2' }} €</span>
               </div>
               <div class="flex justify-between text-gray-500">
-                <span>TVA</span><span>{{ cart()?.totalTva | number:'1.2-2' }} €</span>
+                <span>{{ 'checkout.total_tva' | translate }}</span><span>{{ cart()?.totalTva | number:'1.2-2' }} €</span>
               </div>
               <div class="flex justify-between font-bold text-navy text-base pt-2 border-t">
-                <span>Total TTC</span><span class="text-primary">{{ cart()?.totalTtc | number:'1.2-2' }} €</span>
+                <span>{{ 'checkout.total_ttc' | translate }}</span><span class="text-primary">{{ cart()?.totalTtc | number:'1.2-2' }} €</span>
               </div>
             </div>
           </div>
@@ -323,6 +324,7 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
   private stripeSvc = inject(StripeService);
   private auth = inject(AuthService);
   private router = inject(Router);
+  private translate = inject(TranslateService);
 
   cart = this.cartSvc.cart;
   currentStep = signal<Step>('address');
@@ -342,9 +344,9 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
   private cardElement: StripeCardElement | null = null;
 
   steps = [
-    { key: 'address' as Step, label: 'Adresse' },
-    { key: 'payment' as Step, label: 'Paiement' },
-    { key: 'confirm' as Step, label: 'Confirmation' },
+    { key: 'address' as Step, labelKey: 'checkout.step_address' },
+    { key: 'payment' as Step, labelKey: 'checkout.step_payment' },
+    { key: 'confirm' as Step, labelKey: 'checkout.step_confirm' },
   ];
 
   addressForm = this.fb.group({
@@ -439,20 +441,20 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
     try {
       // 1. Create PaymentIntent on backend
       const intent = await this.stripeSvc.createPaymentIntent(cart.totalTtc).toPromise();
-      if (!intent) throw new Error('Impossible de créer le paiement');
+      if (!intent) throw new Error(this.translate.instant('checkout.error_create_payment'));
 
       // 2. Confirm card payment
       let paymentResult;
       if (this.selectedCardId !== 'new') {
         const stripepmId = this.selectedCard()?.stripePaymentMethodId;
         if (!stripepmId) {
-          this.paymentError.set('Carte sauvegardée introuvable. Veuillez utiliser une nouvelle carte.');
+          this.paymentError.set(this.translate.instant('checkout.error_saved_card'));
           this.processing.set(false); return;
         }
         paymentResult = await this.stripeSvc.confirmSavedCard(intent.clientSecret, stripepmId);
       } else {
         if (!this.cardElement || !this.cardholderName) {
-          this.paymentError.set('Veuillez remplir les informations de carte.');
+          this.paymentError.set(this.translate.instant('checkout.error_fill_card'));
           this.processing.set(false); return;
         }
         paymentResult = await this.stripeSvc.confirmCardPayment(
@@ -464,7 +466,7 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
       }
 
       if (paymentResult.error) {
-        this.paymentError.set(paymentResult.error.message ?? 'Paiement refusé');
+        this.paymentError.set(paymentResult.error.message ?? this.translate.instant('checkout.error_payment_declined'));
         this.processing.set(false); return;
       }
 
@@ -490,7 +492,7 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
       localStorage.removeItem('cart_id');
       this.router.navigate(['/checkout/confirmation', orderId]);
     } catch (err: any) {
-      this.paymentError.set(err?.message || 'Une erreur est survenue. Veuillez réessayer.');
+      this.paymentError.set(err?.message || this.translate.instant('checkout.error_generic'));
     } finally {
       this.processing.set(false);
     }

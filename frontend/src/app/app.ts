@@ -12,10 +12,9 @@ export class App implements OnInit {
   private translate = inject(TranslateService);
 
   ngOnInit() {
-    this.translate.addLangs(['fr', 'en', 'ar']);
-    this.translate.setDefaultLang('fr');
     const saved = localStorage.getItem('lang') || 'fr';
     this.translate.use(saved);
-    document.documentElement.dir = saved === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = saved;
+    document.documentElement.dir  = saved === 'ar' ? 'rtl' : 'ltr';
   }
 }

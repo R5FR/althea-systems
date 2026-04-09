@@ -1,6 +1,7 @@
 import { Component, OnInit, signal, computed, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ProductService } from '../../core/services/product.service';
 import { CategoryService } from '../../core/services/category.service';
 import { Category, ProductListItem } from '../../core/models';
@@ -112,7 +113,7 @@ const PRODUCT_GRADIENTS = [
 @Component({
   selector: 'app-product-card',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TranslatePipe],
   template: `
     <a [routerLink]="['/produits', product.slug]" class="card-hover group flex flex-col h-full">
       <!-- Image area -->
@@ -143,10 +144,10 @@ const PRODUCT_GRADIENTS = [
         <!-- Stock overlay -->
         @if (product.stockQuantity === 0) {
           <div class="absolute inset-0 bg-white/80 flex items-center justify-center">
-            <span class="badge badge-danger">Rupture de stock</span>
+            <span class="badge badge-danger">{{ 'catalog.stock_out' | translate }}</span>
           </div>
         } @else if (product.stockQuantity <= 5) {
-          <span class="absolute top-2.5 right-2.5 badge badge-warning">Stock limité</span>
+          <span class="absolute top-2.5 right-2.5 badge badge-warning">{{ 'catalog.stock_limited' | translate }}</span>
         }
       </div>
 
@@ -190,7 +191,7 @@ export class ProductCardComponent {
 @Component({
   selector: 'app-catalog',
   standalone: true,
-  imports: [CommonModule, RouterLink, ProductCardComponent],
+  imports: [CommonModule, RouterLink, ProductCardComponent, TranslatePipe],
   template: `
     <div class="page-container py-8 md:py-12">
 
@@ -210,8 +211,8 @@ export class ProductCardComponent {
           }
           <div class="absolute inset-0 flex flex-col justify-center px-8 md:px-12">
             <!-- Breadcrumb -->
-            <nav class="flex items-center gap-1.5 text-xs text-white/50 mb-3" aria-label="Fil d'Ariane">
-              <a routerLink="/" class="hover:text-white/80 transition-colors">Accueil</a>
+            <nav class="flex items-center gap-1.5 text-xs text-white/50 mb-3" [attr.aria-label]="'catalog.breadcrumb_home' | translate">
+              <a routerLink="/" class="hover:text-white/80 transition-colors">{{ 'catalog.breadcrumb_home' | translate }}</a>
               <span aria-hidden="true">/</span>
               <span class="text-white/80" aria-current="page">{{ category()!.name }}</span>
             </nav>
@@ -229,17 +230,17 @@ export class ProductCardComponent {
       <div class="flex items-center justify-between mb-6 gap-4">
         <p class="text-sm text-gray-500">
           <span class="font-semibold text-gray-900">{{ totalCount() }}</span>
-          produit{{ totalCount() !== 1 ? 's' : '' }}
+          {{ totalCount() !== 1 ? ('catalog.products_count_plural' | translate) : ('catalog.products_count_singular' | translate) }}
         </p>
         <div class="flex items-center gap-2">
-          <label class="text-xs text-gray-500 hidden sm:block">Trier par</label>
+          <label class="text-xs text-gray-500 hidden sm:block">{{ 'catalog.sort_by' | translate }}</label>
           <select (change)="changeSort($event)"
             class="input-field w-auto py-2 text-sm bg-white cursor-pointer">
-            <option value="priority-asc">Par défaut</option>
-            <option value="price-asc">Prix croissant</option>
-            <option value="price-desc">Prix décroissant</option>
-            <option value="name-asc">Nom A → Z</option>
-            <option value="createdAt-desc">Plus récent</option>
+            <option value="priority-asc">{{ 'catalog.sort_default' | translate }}</option>
+            <option value="price-asc">{{ 'catalog.sort_price_asc' | translate }}</option>
+            <option value="price-desc">{{ 'catalog.sort_price_desc' | translate }}</option>
+            <option value="name-asc">{{ 'catalog.sort_name_asc' | translate }}</option>
+            <option value="createdAt-desc">{{ 'catalog.sort_newest' | translate }}</option>
           </select>
         </div>
       </div>
@@ -265,8 +266,8 @@ export class ProductCardComponent {
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
             </svg>
           </div>
-          <p class="font-semibold text-gray-700 mb-1">Aucun produit disponible</p>
-          <p class="text-sm text-gray-400">Cette catégorie sera bientôt alimentée.</p>
+          <p class="font-semibold text-gray-700 mb-1">{{ 'catalog.no_products' | translate }}</p>
+          <p class="text-sm text-gray-400">{{ 'catalog.no_products_desc' | translate }}</p>
         </div>
       } @else {
         <!-- Desktop grid -->
@@ -300,9 +301,9 @@ export class ProductCardComponent {
                 <p class="text-primary font-bold text-sm">{{ product.priceTtc | number:'1.2-2' }} € TTC</p>
                 <p class="text-gray-400 text-xs">{{ product.priceHt | number:'1.2-2' }} € HT</p>
                 @if (product.stockQuantity === 0) {
-                  <span class="badge badge-danger text-xs mt-1.5">Rupture</span>
+                  <span class="badge badge-danger text-xs mt-1.5">{{ 'catalog.stock_out' | translate }}</span>
                 } @else if (product.stockQuantity <= 5) {
-                  <span class="badge badge-warning text-xs mt-1.5">Stock limité</span>
+                  <span class="badge badge-warning text-xs mt-1.5">{{ 'catalog.stock_limited' | translate }}</span>
                 }
               </div>
               <div class="flex items-center self-center">
@@ -319,7 +320,7 @@ export class ProductCardComponent {
       @if (totalPages() > 1) {
         <div class="flex items-center justify-center gap-1.5 mt-12">
           <button [disabled]="page() === 1" (click)="changePage(page() - 1)"
-            aria-label="Page précédente"
+            [attr.aria-label]="'catalog.prev_page' | translate"
             class="w-9 h-9 rounded-lg flex items-center justify-center btn-ghost disabled:opacity-40">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
@@ -337,7 +338,7 @@ export class ProductCardComponent {
             </button>
           }
           <button [disabled]="page() === totalPages()" (click)="changePage(page() + 1)"
-            aria-label="Page suivante"
+            [attr.aria-label]="'catalog.next_page' | translate"
             class="w-9 h-9 rounded-lg flex items-center justify-center btn-ghost disabled:opacity-40">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>

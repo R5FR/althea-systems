@@ -1,6 +1,7 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { CartService } from '../../core/services/cart.service';
 import { AuthService } from '../../core/services/auth.service';
 import { Cart } from '../../core/models';
@@ -8,16 +9,16 @@ import { Cart } from '../../core/models';
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TranslatePipe],
   template: `
     <div class="page-container py-8 max-w-4xl mx-auto">
       <h1 class="text-2xl font-bold text-navy mb-6 flex items-center gap-3">
         <svg class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
         </svg>
-        Mon panier
+        {{ 'cart.title' | translate }}
         @if (cart()?.items?.length) {
-          <span class="text-sm font-normal text-gray-500">({{ cart()!.items.length }} article{{ cart()!.items.length > 1 ? 's' : '' }})</span>
+          <span class="text-sm font-normal text-gray-500">({{ cart()!.items.length }} {{ cart()!.items.length > 1 ? ('cart.items' | translate) : ('cart.item' | translate) }})</span>
         }
       </h1>
 
@@ -38,9 +39,9 @@ import { Cart } from '../../core/models';
           <svg class="w-24 h-24 mx-auto mb-6 text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
           </svg>
-          <h2 class="text-xl font-semibold text-gray-700 mb-2">Votre panier est vide</h2>
-          <p class="text-gray-500 mb-8">Parcourez notre catalogue pour trouver le matériel adapté à vos besoins</p>
-          <a routerLink="/recherche" class="btn-primary text-base px-8 py-3">Explorer le catalogue</a>
+          <h2 class="text-xl font-semibold text-gray-700 mb-2">{{ 'cart.empty' | translate }}</h2>
+          <p class="text-gray-500 mb-8">{{ 'cart.empty_desc' | translate }}</p>
+          <a routerLink="/recherche" class="btn-primary text-base px-8 py-3">{{ 'cart.empty_cta' | translate }}</a>
         </div>
       } @else {
         <div class="grid lg:grid-cols-3 gap-8">
@@ -55,7 +56,7 @@ import { Cart } from '../../core/models';
                     <div class="min-w-0">
                       <h3 class="font-semibold text-gray-900 text-sm line-clamp-2">{{ item.productName }}</h3>
                       @if (!item.isAvailable) {
-                        <span class="badge-danger badge text-xs mt-1">Indisponible</span>
+                        <span class="badge-danger badge text-xs mt-1">{{ 'cart.unavailable_badge' | translate }}</span>
                       }
                     </div>
                     <button (click)="removeItem(item.id)" class="text-gray-400 hover:text-red-500 flex-shrink-0 p-2.5 -m-2.5 -mt-1 transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-red-200">
@@ -78,7 +79,7 @@ import { Cart } from '../../core/models';
                     <!-- Price -->
                     <div class="text-right">
                       <p class="font-bold text-navy">{{ item.total | number:'1.2-2' }} €</p>
-                      <p class="text-gray-400 text-xs">{{ item.unitPriceTtc | number:'1.2-2' }} € / unité TTC</p>
+                      <p class="text-gray-400 text-xs">{{ item.unitPriceTtc | number:'1.2-2' }} {{ 'cart.unit_ttc' | translate }}</p>
                     </div>
                   </div>
                 </div>
@@ -92,11 +93,11 @@ import { Cart } from '../../core/models';
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
                 <div class="text-sm">
-                  <p class="font-medium text-amber-800">Connectez-vous pour sauvegarder votre panier</p>
+                  <p class="font-medium text-amber-800">{{ 'cart.login_save_cart' | translate }}</p>
                   <p class="text-amber-700 mt-0.5">
-                    <a routerLink="/login" class="underline font-medium">Se connecter</a>
-                    &nbsp;ou&nbsp;
-                    <a routerLink="/register" class="underline font-medium">Créer un compte</a>
+                    <a routerLink="/login" class="underline font-medium">{{ 'auth.login_cta' | translate }}</a>
+                    &nbsp;{{ 'cart.login_or' | translate }}&nbsp;
+                    <a routerLink="/register" class="underline font-medium">{{ 'auth.register_cta' | translate }}</a>
                   </p>
                 </div>
               </div>
@@ -106,18 +107,18 @@ import { Cart } from '../../core/models';
           <!-- Order summary -->
           <div class="lg:col-span-1">
             <div class="card p-5 sticky top-24">
-              <h2 class="font-bold text-navy text-lg mb-4">Récapitulatif</h2>
+              <h2 class="font-bold text-navy text-lg mb-4">{{ 'cart.summary' | translate }}</h2>
               <div class="space-y-2 text-sm">
                 <div class="flex justify-between text-gray-600">
-                  <span>Sous-total HT</span>
+                  <span>{{ 'cart.total_ht' | translate }}</span>
                   <span>{{ cart()!.subtotalHt | number:'1.2-2' }} €</span>
                 </div>
                 <div class="flex justify-between text-gray-600">
-                  <span>TVA</span>
+                  <span>{{ 'cart.total_tva' | translate }}</span>
                   <span>{{ cart()!.totalTva | number:'1.2-2' }} €</span>
                 </div>
                 <div class="border-t pt-3 mt-3 flex justify-between font-bold text-navy text-base">
-                  <span>Total TTC</span>
+                  <span>{{ 'cart.total_ttc' | translate }}</span>
                   <span class="text-primary text-lg">{{ cart()!.totalTtc | number:'1.2-2' }} €</span>
                 </div>
               </div>
@@ -127,7 +128,7 @@ import { Cart } from '../../core/models';
                   <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                   </svg>
-                  Certains articles sont indisponibles. Retirez-les pour continuer.
+                  {{ 'cart.unavailable_warning' | translate }}
                 </div>
               }
 
@@ -139,9 +140,9 @@ import { Cart } from '../../core/models';
                   <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
                   </svg>
-                  Passer à la caisse
+                  {{ 'cart.checkout' | translate }}
                 </a>
-                <a routerLink="/recherche" class="btn-ghost w-full justify-center text-sm">Continuer mes achats</a>
+                <a routerLink="/recherche" class="btn-ghost w-full justify-center text-sm">{{ 'cart.continue' | translate }}</a>
               </div>
             </div>
           </div>

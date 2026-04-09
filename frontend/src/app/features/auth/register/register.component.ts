@@ -2,6 +2,7 @@ import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 
 const passwordStrengthValidator = (ctrl: AbstractControl) => {
@@ -14,7 +15,7 @@ const passwordStrengthValidator = (ctrl: AbstractControl) => {
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslatePipe],
   template: `
     <div class="min-h-screen bg-primary-100 flex items-center justify-center px-4 py-12">
       <div class="w-full max-w-md">
@@ -30,8 +31,8 @@ const passwordStrengthValidator = (ctrl: AbstractControl) => {
               <span class="text-xs font-medium text-primary tracking-widest uppercase">Systems</span>
             </div>
           </a>
-          <h1 class="text-2xl font-bold text-navy">Créer un compte</h1>
-          <p class="text-gray-500 mt-1">Rejoignez Althea Systems en quelques secondes</p>
+          <h1 class="text-2xl font-bold text-navy">{{ 'auth.register_title' | translate }}</h1>
+          <p class="text-gray-500 mt-1">{{ 'auth.register_subtitle' | translate }}</p>
         </div>
 
         <div class="card p-8">
@@ -40,8 +41,8 @@ const passwordStrengthValidator = (ctrl: AbstractControl) => {
           }
           @if (success()) {
             <div class="mb-5 p-4 bg-green-50 border border-green-200 rounded-xl text-sm text-green-700">
-              <p class="font-semibold mb-1">✓ Inscription réussie !</p>
-              <p>Un email de confirmation a été envoyé à <strong>{{ registeredEmail }}</strong>. Cliquez sur le lien pour activer votre compte.</p>
+              <p class="font-semibold mb-1">✓ {{ 'auth.register_success_title' | translate }}</p>
+              <p>{{ 'auth.register_success_msg' | translate }} <strong>{{ registeredEmail }}</strong>. {{ 'auth.register_success_activate' | translate }}</p>
             </div>
           }
 
@@ -49,29 +50,29 @@ const passwordStrengthValidator = (ctrl: AbstractControl) => {
             <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1.5">Prénom *</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'auth.first_name' | translate }}</label>
                   <input formControlName="firstName" type="text" autocomplete="given-name"
                     class="input-field" [class.input-error]="f['firstName'].invalid && f['firstName'].touched" />
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1.5">Nom *</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'auth.last_name' | translate }}</label>
                   <input formControlName="lastName" type="text" autocomplete="family-name"
                     class="input-field" [class.input-error]="f['lastName'].invalid && f['lastName'].touched" />
                 </div>
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Adresse e-mail *</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'auth.email' | translate }}</label>
                 <input formControlName="email" type="email" autocomplete="email"
                   class="input-field" [class.input-error]="f['email'].invalid && f['email'].touched"
-                  placeholder="vous@exemple.com" />
+                  [placeholder]="'auth.email_placeholder' | translate" />
                 @if (f['email'].errors?.['email'] && f['email'].touched) {
-                  <p class="text-red-500 text-xs mt-1">Email invalide</p>
+                  <p class="text-red-500 text-xs mt-1">{{ 'auth.invalid_email' | translate }}</p>
                 }
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Mot de passe *</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'auth.password' | translate }}</label>
                 <input formControlName="password" type="password" autocomplete="new-password"
                   class="input-field" [class.input-error]="f['password'].invalid && f['password'].touched" />
                 <!-- Strength indicator -->
@@ -86,35 +87,35 @@ const passwordStrengthValidator = (ctrl: AbstractControl) => {
                           [class.bg-gray-200]="s > strength()"></div>
                       }
                     </div>
-                    <p class="text-xs text-gray-500">Min. 8 car. — majuscule, minuscule, chiffre, symbole</p>
+                    <p class="text-xs text-gray-500">{{ 'auth.password_hint' | translate }}</p>
                   </div>
                 }
                 @if (f['password'].errors?.['weakPassword'] && f['password'].touched) {
-                  <p class="text-red-500 text-xs mt-1">Mot de passe trop faible</p>
+                  <p class="text-red-500 text-xs mt-1">{{ 'auth.weak_password' | translate }}</p>
                 }
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Confirmer le mot de passe *</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'auth.confirm_password' | translate }}</label>
                 <input formControlName="confirmPassword" type="password"
                   class="input-field" [class.input-error]="form.errors?.['mismatch'] && f['confirmPassword'].touched" />
                 @if (form.errors?.['mismatch'] && f['confirmPassword'].touched) {
-                  <p class="text-red-500 text-xs mt-1">Les mots de passe ne correspondent pas</p>
+                  <p class="text-red-500 text-xs mt-1">{{ 'auth.password_mismatch' | translate }}</p>
                 }
               </div>
 
               <button type="submit" [disabled]="loading()" class="btn-primary w-full justify-center py-3 text-base">
                 @if (loading()) {
                   <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                  Création...
-                } @else { Créer mon compte }
+                  {{ 'auth.register_loading' | translate }}
+                } @else { {{ 'auth.register_cta' | translate }} }
               </button>
             </form>
           }
 
           <p class="text-center text-sm text-gray-600 mt-6">
-            Déjà un compte ?
-            <a routerLink="/login" class="text-primary font-semibold hover:underline ml-1">Se connecter</a>
+            {{ 'auth.has_account' | translate }}
+            <a routerLink="/login" class="text-primary font-semibold hover:underline ml-1">{{ 'auth.login_cta' | translate }}</a>
           </p>
         </div>
       </div>

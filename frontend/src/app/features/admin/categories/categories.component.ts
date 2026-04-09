@@ -1,47 +1,48 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 import { CategoryService } from '../../../core/services/category.service';
 import { Category } from '../../../core/models';
 
 @Component({
   selector: 'app-admin-categories',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
   template: `
     <div class="space-y-6">
       <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold text-gray-900">Catégories</h1>
-        <button (click)="startCreate()" class="btn-primary text-sm">+ Nouvelle catégorie</button>
+        <h1 class="text-2xl font-bold text-gray-900">{{ 'admin.categories_title' | translate }}</h1>
+        <button (click)="startCreate()" class="btn-primary text-sm">{{ 'admin.categories_new' | translate }}</button>
       </div>
 
       @if (showForm()) {
         <div class="card p-6 max-w-lg">
-          <h2 class="font-semibold text-gray-900 mb-4">{{ editId() ? 'Modifier la catégorie' : 'Nouvelle catégorie' }}</h2>
+          <h2 class="font-semibold text-gray-900 mb-4">{{ editId() ? ('admin.categories_edit' | translate) : ('admin.categories_create' | translate) }}</h2>
           <form [formGroup]="form" (ngSubmit)="save()" class="space-y-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1.5">Nom *</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'admin.cat_name' | translate }}</label>
               <input formControlName="name" class="input-field" placeholder="Cardiologie" />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1.5">Description</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'admin.cat_description' | translate }}</label>
               <textarea formControlName="description" rows="2" class="input-field resize-none"></textarea>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1.5">Image (URL)</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'admin.cat_image' | translate }}</label>
               <input formControlName="imageUrl" class="input-field font-mono text-sm" placeholder="https://..." />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1.5">Ordre d'affichage</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'admin.cat_display_order' | translate }}</label>
               <input formControlName="displayOrder" type="number" min="0" class="input-field w-32" />
             </div>
             @if (error()) { <p class="text-sm text-red-500">{{ error() }}</p> }
             <div class="flex gap-3">
               <button type="submit" [disabled]="saving() || form.invalid" class="btn-primary">
                 @if (saving()) { <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span> }
-                Enregistrer
+                {{ 'common.save' | translate }}
               </button>
-              <button type="button" (click)="cancelForm()" class="btn-ghost">Annuler</button>
+              <button type="button" (click)="cancelForm()" class="btn-ghost">{{ 'common.cancel' | translate }}</button>
             </div>
           </form>
         </div>
@@ -50,16 +51,16 @@ import { Category } from '../../../core/models';
       @if (loading()) {
         <div class="space-y-3">@for (_ of [1,2,3]; track $index) { <div class="card p-5 skeleton h-20"></div> }</div>
       } @else if (categories().length === 0) {
-        <div class="card p-12 text-center text-gray-500">Aucune catégorie créée.</div>
+        <div class="card p-12 text-center text-gray-500">{{ 'admin.categories_none' | translate }}</div>
       } @else {
         <div class="card overflow-hidden">
           <table class="w-full text-sm">
             <thead>
               <tr class="bg-gray-50 text-left">
-                <th class="px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Catégorie</th>
-                <th class="px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Slug</th>
-                <th class="px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide text-center">Ordre</th>
-                <th class="px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide text-center">Produits</th>
+                <th class="px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{{ 'admin.col_category' | translate }}</th>
+                <th class="px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{{ 'admin.col_slug' | translate }}</th>
+                <th class="px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide text-center">{{ 'admin.col_order' | translate }}</th>
+                <th class="px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide text-center">{{ 'admin.col_products' | translate }}</th>
                 <th class="px-5 py-3 w-24"></th>
               </tr>
             </thead>

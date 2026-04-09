@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AdminService } from '../../core/services/admin.service';
 import { ProductService } from '../../core/services/product.service';
 import { CategoryService } from '../../core/services/category.service';
@@ -17,7 +18,7 @@ const HERO_GRADIENTS = [
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TranslatePipe],
   template: `
     <!-- ── Hero Carousel ─────────────────────────────────────────────────── -->
     <section class="relative overflow-hidden" style="height: calc(100vh - 104px);" role="region" aria-label="Diaporama produits">
@@ -62,13 +63,13 @@ const HERO_GRADIENTS = [
               @if (slide.linkUrl) {
                 <div class="flex items-center gap-3">
                   <a [routerLink]="slide.linkUrl" class="btn-primary text-sm px-7 py-3">
-                    Explorer le catalogue
+                    {{ 'home.hero_cta' | translate }}
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                     </svg>
                   </a>
                   <a routerLink="/contact" class="text-sm font-medium text-white/70 hover:text-white transition-colors">
-                    Demander un devis →
+                    {{ 'home.hero_quote' | translate }} →
                   </a>
                 </div>
               }
@@ -123,7 +124,7 @@ const HERO_GRADIENTS = [
           @for (stat of stats; track stat.label) {
             <div>
               <p class="font-display font-semibold text-2xl md:text-3xl text-navy mb-0.5">{{ stat.value }}</p>
-              <p class="text-xs text-gray-500">{{ stat.label }}</p>
+              <p class="text-xs text-gray-500">{{ stat.label | translate }}</p>
             </div>
           }
         </div>
@@ -135,11 +136,11 @@ const HERO_GRADIENTS = [
       <div class="page-container">
         <div class="flex items-end justify-between mb-10">
           <div>
-            <p class="section-label">Parcourez par spécialité</p>
-            <h2 class="section-title mb-0">Nos catégories</h2>
+            <p class="section-label">{{ 'home.categories_label' | translate }}</p>
+            <h2 class="section-title mb-0">{{ 'home.categories_title' | translate }}</h2>
           </div>
           <a routerLink="/recherche" class="hidden md:flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary-700 transition-colors">
-            Tout voir
+            {{ 'home.see_all' | translate }}
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
@@ -172,7 +173,7 @@ const HERO_GRADIENTS = [
               <div class="absolute bottom-0 left-0 right-0 p-4">
                 <span class="text-white font-semibold text-sm md:text-base leading-tight drop-shadow block">{{ cat.name }}</span>
                 <div class="flex items-center gap-1 mt-1 text-white/60 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                  Voir les produits
+                  {{ 'home.see_products' | translate }}
                   <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                   </svg>
@@ -189,11 +190,11 @@ const HERO_GRADIENTS = [
       <div class="page-container">
         <div class="flex items-end justify-between mb-10">
           <div>
-            <p class="section-label">Sélection du moment</p>
-            <h2 class="section-title mb-0">Équipements phares</h2>
+            <p class="section-label">{{ 'home.products_label' | translate }}</p>
+            <h2 class="section-title mb-0">{{ 'home.products_title' | translate }}</h2>
           </div>
           <a routerLink="/recherche" class="hidden md:flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary-700 transition-colors">
-            Voir tout le catalogue
+            {{ 'home.see_catalog' | translate }}
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
@@ -240,10 +241,10 @@ const HERO_GRADIENTS = [
                   }
                   @if (product.stockQuantity === 0) {
                     <div class="absolute inset-0 bg-white/75 flex items-center justify-center">
-                      <span class="badge badge-danger">Rupture de stock</span>
+                      <span class="badge badge-danger">{{ 'product.out_of_stock' | translate }}</span>
                     </div>
                   } @else if (product.stockQuantity <= 5) {
-                    <span class="absolute top-2 right-2 badge badge-warning">Stock limité</span>
+                    <span class="absolute top-2 right-2 badge badge-warning">{{ 'product.low_stock' | translate }}</span>
                   }
                 </div>
                 <!-- Info -->
@@ -265,7 +266,7 @@ const HERO_GRADIENTS = [
 
         <div class="text-center mt-10">
           <a routerLink="/recherche" class="btn-secondary">
-            Voir tous les produits
+            {{ 'home.see_all_products' | translate }}
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
@@ -280,15 +281,12 @@ const HERO_GRADIENTS = [
         <div class="grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
           <!-- Left: text -->
           <div>
-            <p class="section-label">Pourquoi nous choisir</p>
+            <p class="section-label">{{ 'home.why_label' | translate }}</p>
             <h2 class="font-display font-semibold text-3xl md:text-4xl text-navy leading-tight mb-6">
-              L'excellence médicale,<br/>
-              <span class="text-primary">à votre service</span>
+              {{ 'home.why_title' | translate }}
             </h2>
             <p class="text-gray-600 leading-relaxed mb-8">
-              Depuis plus de 15 ans, Althea Systems accompagne les professionnels de santé avec
-              des équipements sélectionnés pour leur fiabilité, leur précision et leur conformité
-              aux standards européens les plus stricts.
+              {{ 'home.why_desc' | translate }}
             </p>
             <div class="space-y-4">
               @for (point of whyPoints; track point.title) {
@@ -297,8 +295,8 @@ const HERO_GRADIENTS = [
                     <div [innerHTML]="point.icon" class="text-primary w-5 h-5"></div>
                   </div>
                   <div>
-                    <p class="font-semibold text-gray-900 mb-0.5">{{ point.title }}</p>
-                    <p class="text-sm text-gray-500 leading-relaxed">{{ point.desc }}</p>
+                    <p class="font-semibold text-gray-900 mb-0.5">{{ point.title | translate }}</p>
+                    <p class="text-sm text-gray-500 leading-relaxed">{{ point.desc | translate }}</p>
                   </div>
                 </div>
               }
@@ -312,7 +310,7 @@ const HERO_GRADIENTS = [
                   <div [innerHTML]="card.icon" class="w-5 h-5 text-white"></div>
                 </div>
                 <p class="font-display font-semibold text-xl mb-1" [style.color]="card.textColor">{{ card.value }}</p>
-                <p class="text-xs" [style.color]="card.subColor">{{ card.title }}</p>
+                <p class="text-xs" [style.color]="card.subColor">{{ card.title | translate }}</p>
               </div>
             }
           </div>
@@ -330,8 +328,8 @@ const HERO_GRADIENTS = [
                 <div [innerHTML]="item.icon" class="w-6 h-6 text-primary"></div>
               </div>
               <div>
-                <p class="font-semibold text-gray-900 text-sm">{{ item.title }}</p>
-                <p class="text-gray-400 text-xs mt-0.5">{{ item.desc }}</p>
+                <p class="font-semibold text-gray-900 text-sm">{{ item.title | translate }}</p>
+                <p class="text-gray-400 text-xs mt-0.5">{{ item.desc | translate }}</p>
               </div>
             </div>
           }
@@ -343,17 +341,17 @@ const HERO_GRADIENTS = [
     <section class="py-16 gradient-brand">
       <div class="page-container text-center">
         <h2 class="font-display font-semibold text-3xl md:text-4xl text-white mb-4">
-          Besoin d'un devis personnalisé ?
+          {{ 'home.cta_title' | translate }}
         </h2>
         <p class="text-white/60 text-base mb-8 max-w-md mx-auto">
-          Notre équipe d'experts vous accompagne dans le choix des équipements adaptés à votre pratique.
+          {{ 'home.cta_desc' | translate }}
         </p>
         <div class="flex flex-col sm:flex-row gap-3 justify-center">
           <a routerLink="/contact" class="btn-primary bg-white !text-navy hover:bg-gray-50 px-8 py-3">
-            Contacter notre équipe
+            {{ 'home.cta_contact' | translate }}
           </a>
           <a routerLink="/recherche" class="btn-secondary !border-white/30 !text-white hover:!bg-white/10 px-8 py-3">
-            Parcourir le catalogue
+            {{ 'home.cta_catalog' | translate }}
           </a>
         </div>
       </div>
@@ -382,33 +380,33 @@ export class HomeComponent implements OnInit, OnDestroy {
   displayProducts   = this.topProducts;
 
   stats = [
-    { value: '2 400+', label: 'Équipements référencés' },
-    { value: '15 ans',  label: 'D\'expertise médicale' },
-    { value: '98 %',    label: 'Clients satisfaits' },
-    { value: '48 h',    label: 'Délai de livraison EU' },
+    { value: '2 400+', label: 'home.stat_products' },
+    { value: '15 ans',  label: 'home.stat_years' },
+    { value: '98 %',    label: 'home.stat_satisfaction' },
+    { value: '48 h',    label: 'home.stat_delivery' },
   ];
 
   whyPoints = [
     {
-      title: 'Dispositifs certifiés CE & ISO 13485',
-      desc: 'Tous nos produits sont conformes aux réglementations européennes sur les dispositifs médicaux.',
+      title: 'home.why_point1_title',
+      desc: 'home.why_point1_desc',
       icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>`,
     },
     {
-      title: 'Support technique dédié 5j/7',
-      desc: 'Une équipe d\'ingénieurs biomédicaux à votre écoute pour installation, maintenance et SAV.',
+      title: 'home.why_point2_title',
+      desc: 'home.why_point2_desc',
       icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>`,
     },
     {
-      title: 'Livraison express en Europe',
-      desc: 'Expédition sous 24h depuis nos entrepôts, avec suivi en temps réel et installation sur site.',
+      title: 'home.why_point3_title',
+      desc: 'home.why_point3_desc',
       icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>`,
     },
   ];
 
   highlightCards = [
     {
-      title: 'Références produits',
+      title: 'home.highlight_products',
       value: '2 400+',
       bg: 'linear-gradient(135deg, #0094A0, #00A8B5)',
       iconBg: 'rgba(255,255,255,0.15)',
@@ -417,7 +415,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>`,
     },
     {
-      title: 'Satisfaction client',
+      title: 'home.highlight_satisfaction',
       value: '98 %',
       bg: '#ffffff',
       iconBg: 'rgba(0,122,124,0.1)',
@@ -426,7 +424,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:#00A8B5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>`,
     },
     {
-      title: 'Années d\'expertise',
+      title: 'home.highlight_years',
       value: '15 ans',
       bg: '#ffffff',
       iconBg: 'rgba(0,122,124,0.1)',
@@ -435,7 +433,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:#00A8B5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>`,
     },
     {
-      title: 'Livraison garantie',
+      title: 'home.highlight_delivery',
       value: '48 h',
       bg: 'linear-gradient(135deg, #003D5C, #003D5C)',
       iconBg: 'rgba(255,255,255,0.12)',
@@ -447,23 +445,23 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   trustItems = [
     {
-      title: 'Livraison express EU',
-      desc: 'Partout en Europe sous 48h',
+      title: 'home.trust_delivery',
+      desc: 'home.trust_delivery_desc',
       icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>`,
     },
     {
-      title: 'Paiement sécurisé',
-      desc: 'SSL / PCI-DSS certifié',
+      title: 'home.trust_payment',
+      desc: 'home.trust_payment_desc',
       icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>`,
     },
     {
-      title: 'Qualité certifiée CE',
-      desc: 'Matériel médical agréé',
+      title: 'home.trust_quality',
+      desc: 'home.trust_quality_desc',
       icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>`,
     },
     {
-      title: 'Support technique 5j/7',
-      desc: 'Équipe biomédicale dédiée',
+      title: 'home.trust_support',
+      desc: 'home.trust_support_desc',
       icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>`,
     },
   ];

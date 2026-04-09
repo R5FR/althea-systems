@@ -1,13 +1,14 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { OrderService } from '../../core/services/order.service';
 import { Order } from '../../core/models';
 
 @Component({
   selector: 'app-order-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TranslatePipe],
   template: `
     <div class="space-y-6">
       <div class="flex items-center gap-3">
@@ -17,8 +18,8 @@ import { Order } from '../../core/models';
           </svg>
         </a>
         <h1 class="text-xl font-bold text-navy">
-          @if (order()) { Commande N° {{ order()!.orderNumber }} }
-          @else { Détail de la commande }
+          @if (order()) { {{ 'orders.detail_order_label' | translate }} {{ order()!.orderNumber }} }
+          @else { {{ 'orders.detail_title' | translate }} }
         </h1>
         @if (order()) {
           <span [class]="statusClass(order()!.status)" class="badge text-xs">{{ statusLabel(order()!.status) }}</span>
@@ -31,7 +32,7 @@ import { Order } from '../../core/models';
         </div>
       } @else if (!order()) {
         <div class="card p-10 text-center text-gray-500">
-          <p>Commande introuvable.</p>
+          <p>{{ 'orders.not_found' | translate }}</p>
         </div>
       } @else {
         <div class="grid lg:grid-cols-3 gap-6">
@@ -40,8 +41,8 @@ import { Order } from '../../core/models';
             <!-- Items -->
             <div class="card overflow-hidden">
               <div class="p-4 border-b border-gray-100 flex items-center justify-between">
-                <h2 class="font-semibold text-gray-900">Articles commandés</h2>
-                <span class="text-sm text-gray-500">{{ order()!.items.length }} article(s)</span>
+                <h2 class="font-semibold text-gray-900">{{ 'orders.items_ordered' | translate }}</h2>
+                <span class="text-sm text-gray-500">{{ order()!.items.length }} {{ 'orders.items_count' | translate }}</span>
               </div>
               <div class="divide-y divide-gray-100">
                 @for (item of order()!.items; track item.id) {
@@ -60,11 +61,11 @@ import { Order } from '../../core/models';
                     <div class="flex-1 min-w-0">
                       <p class="font-medium text-gray-900 truncate">{{ item.productNameSnapshot }}</p>
                       @if (item.productReferenceSnapshot) {
-                        <p class="text-sm text-gray-500 mt-0.5">Réf. {{ item.productReferenceSnapshot }}</p>
+                        <p class="text-sm text-gray-500 mt-0.5">{{ 'orders.reference_label' | translate }} {{ item.productReferenceSnapshot }}</p>
                       }
                       <div class="flex items-center gap-4 mt-1">
-                        <span class="text-sm text-gray-600">Qté : {{ item.quantity }}</span>
-                        <span class="text-sm text-gray-500">{{ item.unitPriceHt | number:'1.2-2' }} € HT / unité</span>
+                        <span class="text-sm text-gray-600">{{ 'orders.qty_label' | translate }} {{ item.quantity }}</span>
+                        <span class="text-sm text-gray-500">{{ item.unitPriceHt | number:'1.2-2' }} {{ 'orders.unit_price_label' | translate }}</span>
                       </div>
                     </div>
                     <div class="text-right flex-shrink-0">
@@ -79,7 +80,7 @@ import { Order } from '../../core/models';
             <!-- Shipping address -->
             @if (order()!.shippingAddress) {
               <div class="card p-6">
-                <h2 class="font-semibold text-gray-900 mb-4">Adresse de livraison</h2>
+                <h2 class="font-semibold text-gray-900 mb-4">{{ 'orders.shipping_address' | translate }}</h2>
                 <div class="text-sm text-gray-600 space-y-1">
                   <p class="font-medium text-gray-900">{{ order()!.shippingAddress!.firstName }} {{ order()!.shippingAddress!.lastName }}</p>
                   <p>{{ order()!.shippingAddress!.addressLine1 }}</p>
@@ -97,7 +98,7 @@ import { Order } from '../../core/models';
 
             <!-- Timeline -->
             <div class="card p-6">
-              <h2 class="font-semibold text-gray-900 mb-4">Suivi de commande</h2>
+              <h2 class="font-semibold text-gray-900 mb-4">{{ 'orders.tracking_title' | translate }}</h2>
               <div class="space-y-3">
                 @for (step of timeline(); track step.label) {
                   <div class="flex items-start gap-3">
@@ -125,24 +126,24 @@ import { Order } from '../../core/models';
           <div class="space-y-6">
             <!-- Summary -->
             <div class="card p-6">
-              <h2 class="font-semibold text-gray-900 mb-4">Récapitulatif</h2>
+              <h2 class="font-semibold text-gray-900 mb-4">{{ 'orders.summary' | translate }}</h2>
               <div class="space-y-2 text-sm">
                 <div class="flex justify-between text-gray-600">
-                  <span>Total HT</span>
+                  <span>{{ 'orders.total_ht' | translate }}</span>
                   <span>{{ order()!.totalHt | number:'1.2-2' }} €</span>
                 </div>
                 <div class="flex justify-between text-gray-600">
-                  <span>TVA</span>
+                  <span>{{ 'orders.total_tva' | translate }}</span>
                   <span>{{ (order()!.totalTtc - order()!.totalHt) | number:'1.2-2' }} €</span>
                 </div>
                 @if (order()!.shippingCost !== undefined) {
                   <div class="flex justify-between text-gray-600">
-                    <span>Livraison</span>
-                    <span>{{ order()!.shippingCost === 0 ? 'Offerte' : ((order()!.shippingCost | number:'1.2-2') + ' €') }}</span>
+                    <span>{{ 'orders.shipping' | translate }}</span>
+                    <span>{{ order()!.shippingCost === 0 ? ('orders.shipping_free' | translate) : ((order()!.shippingCost | number:'1.2-2') + ' €') }}</span>
                   </div>
                 }
                 <div class="border-t border-gray-100 pt-2 flex justify-between font-bold text-navy">
-                  <span>Total TTC</span>
+                  <span>{{ 'orders.total_ttc' | translate }}</span>
                   <span>{{ order()!.totalTtc | number:'1.2-2' }} €</span>
                 </div>
               </div>
@@ -152,14 +153,14 @@ import { Order } from '../../core/models';
                   <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                   </svg>
-                  Télécharger la facture
+                  {{ 'orders.download_invoice' | translate }}
                 </button>
               }
             </div>
 
             <!-- Payment info -->
             <div class="card p-6">
-              <h2 class="font-semibold text-gray-900 mb-4">Paiement</h2>
+              <h2 class="font-semibold text-gray-900 mb-4">{{ 'orders.payment_section' | translate }}</h2>
               <div class="flex items-center gap-3 text-sm text-gray-600">
                 <div class="w-8 h-8 text-gray-400 flex-shrink-0">
                   <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -170,9 +171,9 @@ import { Order } from '../../core/models';
                   @if (order()!.paymentLast4) {
                     <p class="font-medium text-gray-900">•••• •••• •••• {{ order()!.paymentLast4 }}</p>
                   } @else {
-                    <p class="font-medium text-gray-900">Carte bancaire</p>
+                    <p class="font-medium text-gray-900">{{ 'orders.payment_card' | translate }}</p>
                   }
-                  <p class="text-xs text-gray-400">Paiement sécurisé Stripe</p>
+                  <p class="text-xs text-gray-400">{{ 'orders.payment_secure' | translate }}</p>
                 </div>
               </div>
             </div>
@@ -180,20 +181,20 @@ import { Order } from '../../core/models';
             <!-- Actions -->
             @if (order()!.status === 'Pending' || order()!.status === 'Paid') {
               <div class="card p-6 space-y-3">
-                <h2 class="font-semibold text-gray-900 mb-1">Actions</h2>
+                <h2 class="font-semibold text-gray-900 mb-1">{{ 'orders.actions' | translate }}</h2>
                 @if (order()!.status === 'Pending') {
                   <button (click)="cancelOrder()" class="btn-ghost w-full text-sm text-red-500 hover:bg-red-50">
-                    Annuler la commande
+                    {{ 'orders.cancel_order' | translate }}
                   </button>
                 }
                 <a routerLink="/contact" class="btn-ghost w-full text-sm text-center block">
-                  Contacter le support
+                  {{ 'orders.contact_support' | translate }}
                 </a>
               </div>
             }
 
             <div class="text-center">
-              <p class="text-xs text-gray-400">Commande passée le</p>
+              <p class="text-xs text-gray-400">{{ 'orders.placed_on' | translate }}</p>
               <p class="text-sm text-gray-600">{{ order()!.createdAt | date:'d MMMM yyyy':'':'fr' }}</p>
             </div>
           </div>
@@ -205,6 +206,7 @@ import { Order } from '../../core/models';
 export class OrderDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private orderSvc = inject(OrderService);
+  private translate = inject(TranslateService);
 
   order = signal<Order | null>(null);
   loading = signal(true);
@@ -221,7 +223,12 @@ export class OrderDetailComponent implements OnInit {
     const o = this.order();
     if (!o) return [];
     const statuses = ['Pending', 'Paid', 'Shipped', 'Completed'];
-    const labels: Record<string, string> = { Pending: 'Commande reçue', Paid: 'Paiement confirmé', Shipped: 'Expédiée', Completed: 'Livrée' };
+    const labels: Record<string, string> = {
+      Pending: this.translate.instant('orders.tracking_placed'),
+      Paid: this.translate.instant('orders.tracking_paid'),
+      Shipped: this.translate.instant('orders.tracking_shipped'),
+      Completed: this.translate.instant('orders.tracking_delivered')
+    };
     const idx = statuses.indexOf(o.status);
     return statuses.map((s, i) => ({
       label: labels[s],
@@ -243,14 +250,21 @@ export class OrderDetailComponent implements OnInit {
 
   cancelOrder() {
     const o = this.order();
-    if (!o || !confirm('Annuler cette commande ?')) return;
+    if (!o || !confirm(this.translate.instant('orders.cancel_confirm'))) return;
     this.orderSvc.cancel(o.id).subscribe({
       next: updated => this.order.set(updated)
     });
   }
 
   statusLabel(s: string) {
-    const map: Record<string, string> = { Pending: 'En attente', Paid: 'Payée', Shipped: 'Expédiée', Completed: 'Terminée', Cancelled: 'Annulée', Refunded: 'Remboursée' };
+    const map: Record<string, string> = {
+      Pending: this.translate.instant('orders.status_pending'),
+      Paid: this.translate.instant('orders.status_paid'),
+      Shipped: this.translate.instant('orders.status_shipped'),
+      Completed: this.translate.instant('orders.status_completed'),
+      Cancelled: this.translate.instant('orders.status_cancelled'),
+      Refunded: this.translate.instant('orders.status_refunded')
+    };
     return map[s] ?? s;
   }
 

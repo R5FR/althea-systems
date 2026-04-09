@@ -2,12 +2,13 @@ import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink, TranslatePipe],
   template: `
     <div class="min-h-screen bg-primary-100 flex items-center justify-center px-4 py-12">
       <div class="w-full max-w-md">
@@ -23,8 +24,8 @@ import { AuthService } from '../../../core/services/auth.service';
               <span class="text-xs font-medium text-primary tracking-widest uppercase">Systems</span>
             </div>
           </a>
-          <h1 class="text-2xl font-display font-semibold text-navy">Connexion</h1>
-          <p class="text-gray-500 mt-1">Bienvenue ! Connectez-vous à votre espace.</p>
+          <h1 class="text-2xl font-display font-semibold text-navy">{{ 'auth.login_title' | translate }}</h1>
+          <p class="text-gray-500 mt-1">{{ 'auth.login_welcome' | translate }}</p>
         </div>
 
         <div class="card p-8">
@@ -37,25 +38,25 @@ import { AuthService } from '../../../core/services/auth.service';
 
           <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1.5">Adresse e-mail</label>
+              <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'auth.email' | translate }}</label>
               <input formControlName="email" type="email" autocomplete="email"
                 class="input-field" [class.input-error]="f['email'].invalid && f['email'].touched"
-                placeholder="vous@exemple.com" />
+                [placeholder]="'auth.email_placeholder' | translate" />
               @if (f['email'].invalid && f['email'].touched) {
-                <p class="text-red-500 text-xs mt-1">Email invalide</p>
+                <p class="text-red-500 text-xs mt-1">{{ 'auth.invalid_email' | translate }}</p>
               }
             </div>
 
             <div>
               <div class="flex justify-between mb-1.5">
-                <label class="text-sm font-medium text-gray-700">Mot de passe</label>
-                <a routerLink="/forgot-password" class="text-xs text-primary hover:underline">Mot de passe oublié ?</a>
+                <label class="text-sm font-medium text-gray-700">{{ 'auth.password' | translate }}</label>
+                <a routerLink="/forgot-password" class="text-xs text-primary hover:underline">{{ 'auth.forgot_password' | translate }}</a>
               </div>
               <div class="relative">
                 <input formControlName="password" [type]="showPwd() ? 'text' : 'password'" autocomplete="current-password"
                   class="input-field pr-10" [class.input-error]="f['password'].invalid && f['password'].touched" />
                 <button type="button" (click)="showPwd.set(!showPwd())"
-                  [attr.aria-label]="showPwd() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'"
+                  [attr.aria-label]="showPwd() ? ('auth.hide_password' | translate) : ('auth.show_password' | translate)"
                   [attr.aria-pressed]="showPwd()"
                   class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                   @if (showPwd()) {
@@ -69,22 +70,22 @@ import { AuthService } from '../../../core/services/auth.service';
 
             <label class="flex items-center gap-2 cursor-pointer">
               <input formControlName="rememberMe" type="checkbox" class="rounded text-primary" />
-              <span class="text-sm text-gray-700">Se souvenir de moi</span>
+              <span class="text-sm text-gray-700">{{ 'auth.remember_me' | translate }}</span>
             </label>
 
             <button type="submit" [disabled]="loading()" class="btn-primary w-full justify-center py-3 text-base">
               @if (loading()) {
                 <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                Connexion...
+                {{ 'auth.login_loading' | translate }}
               } @else {
-                Se connecter
+                {{ 'auth.login_cta' | translate }}
               }
             </button>
           </form>
 
           <p class="text-center text-sm text-gray-600 mt-6">
-            Pas encore de compte ?
-            <a routerLink="/register" class="text-primary font-semibold hover:underline ml-1">S'inscrire</a>
+            {{ 'auth.no_account' | translate }}
+            <a routerLink="/register" class="text-primary font-semibold hover:underline ml-1">{{ 'nav.register' | translate }}</a>
           </p>
         </div>
       </div>

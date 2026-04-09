@@ -2,12 +2,13 @@ import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-reset-password',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslatePipe],
   template: `
     <div class="min-h-screen bg-primary-100 flex items-center justify-center px-4">
       <div class="w-full max-w-md">
@@ -23,28 +24,28 @@ import { AuthService } from '../../../core/services/auth.service';
               <span class="text-xs font-medium text-primary tracking-widest uppercase">Systems</span>
             </div>
           </a>
-          <h1 class="text-2xl font-bold text-navy">Nouveau mot de passe</h1>
+          <h1 class="text-2xl font-bold text-navy">{{ 'auth.reset_title' | translate }}</h1>
         </div>
         <div class="card p-8">
           @if (done()) {
             <div class="text-center">
-              <p class="font-semibold text-green-600 mb-4">✓ Mot de passe mis à jour !</p>
-              <a routerLink="/login" class="btn-primary inline-flex">Se connecter</a>
+              <p class="font-semibold text-green-600 mb-4">✓ {{ 'auth.reset_success' | translate }}</p>
+              <a routerLink="/login" class="btn-primary inline-flex">{{ 'auth.confirm_email_cta' | translate }}</a>
             </div>
           } @else {
             <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Nouveau mot de passe</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'auth.new_password' | translate }}</label>
                 <input formControlName="password" type="password" class="input-field" />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Confirmer</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'auth.reset_confirm' | translate }}</label>
                 <input formControlName="confirm" type="password" class="input-field" />
               </div>
-              @if (error()) { <p class="text-red-500 text-sm">{{ error() }}</p> }
+              @if (error()) { <p class="text-red-500 text-sm">{{ error() | translate }}</p> }
               <button type="submit" [disabled]="loading()" class="btn-primary w-full justify-center py-3">
                 @if (loading()) { <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span> }
-                Réinitialiser
+                {{ 'auth.reset_submit' | translate }}
               </button>
             </form>
           }
@@ -63,12 +64,12 @@ export class ResetPasswordComponent {
   form = this.fb.group({ password: ['', [Validators.required, Validators.minLength(8)]], confirm: ['', Validators.required] });
 
   onSubmit() {
-    if (this.form.value.password !== this.form.value.confirm) { this.error.set('Les mots de passe ne correspondent pas.'); return; }
+    if (this.form.value.password !== this.form.value.confirm) { this.error.set('auth.password_mismatch'); return; }
     const token = this.route.snapshot.queryParams['token'];
     this.loading.set(true);
     this.auth.resetPassword(token, this.form.value.password!).subscribe({
       next: () => { this.done.set(true); this.loading.set(false); },
-      error: () => { this.error.set('Lien invalide ou expiré.'); this.loading.set(false); }
+      error: () => { this.error.set('auth.reset_error_expired'); this.loading.set(false); }
     });
   }
 }

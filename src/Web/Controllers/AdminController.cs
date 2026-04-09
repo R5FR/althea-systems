@@ -18,8 +18,9 @@ public class AdminController : ControllerBase
     private readonly IUnitOfWork _unitOfWork;
     private readonly IBlobStorageService _blobStorage;
     private readonly ILogger<AdminController> _logger;
+    private readonly Application.Services.IHomepageConfigService _homepageConfig;
 
-    public AdminController(IAdminService adminService, ICategoryService categoryService, IContactService contactService, IUnitOfWork unitOfWork, IBlobStorageService blobStorage, ILogger<AdminController> logger)
+    public AdminController(IAdminService adminService, ICategoryService categoryService, IContactService contactService, IUnitOfWork unitOfWork, IBlobStorageService blobStorage, ILogger<AdminController> logger, Application.Services.IHomepageConfigService homepageConfig)
     {
         _adminService = adminService;
         _categoryService = categoryService;
@@ -27,6 +28,7 @@ public class AdminController : ControllerBase
         _unitOfWork = unitOfWork;
         _blobStorage = blobStorage;
         _logger = logger;
+        _homepageConfig = homepageConfig;
     }
 
     /// <summary>
@@ -483,6 +485,24 @@ public class AdminController : ControllerBase
     {
         var images = await _unitOfWork.ProductImageRepository.GetByProductIdAsync(productId);
         return Ok(images.Select(i => new { i.Id, i.ImageUrl, i.IsMain, i.DisplayOrder }));
+    }
+
+    // ─── Homepage configuration ──────────────────────────────────────────────────
+
+    [HttpGet("homepage")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(HomepageConfigDto), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetHomepageConfig()
+    {
+        return Ok(await _homepageConfig.GetAsync());
+    }
+
+    [HttpPut("homepage")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> UpdateHomepageConfig([FromBody] HomepageConfigDto dto)
+    {
+        await _homepageConfig.SaveAsync(dto);
+        return NoContent();
     }
 }
 

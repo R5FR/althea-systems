@@ -1,20 +1,21 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormArray, Validators } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AdminService } from '../../../core/services/admin.service';
 import { HomepageConfig } from '../../../core/models';
 
 @Component({
   selector: 'app-homepage-config',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
   template: `
     <div class="space-y-6 max-w-4xl">
       <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-bold text-gray-900">Page d'accueil</h1>
+        <h1 class="text-2xl font-bold text-gray-900">{{ 'admin.homepage_title' | translate }}</h1>
         <button (click)="save()" [disabled]="saving()" class="btn-primary">
           @if (saving()) { <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span> }
-          Enregistrer
+          {{ 'admin.save' | translate }}
         </button>
       </div>
 
@@ -23,7 +24,7 @@ import { HomepageConfig } from '../../../core/models';
           <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
           </svg>
-          Configuration sauvegardée
+          {{ 'admin.homepage_save_success' | translate }}
         </p>
       }
       @if (error()) { <p class="text-sm text-red-500">{{ error() }}</p> }
@@ -35,37 +36,37 @@ import { HomepageConfig } from '../../../core/models';
           <!-- Carousel slides -->
           <div class="card p-6 space-y-5">
             <div class="flex items-center justify-between">
-              <h2 class="font-semibold text-gray-900">Diaporama (carousel)</h2>
-              <button type="button" (click)="addSlide()" class="btn-ghost text-sm">+ Ajouter une slide</button>
+              <h2 class="font-semibold text-gray-900">{{ 'admin.homepage_carousel_title' | translate }}</h2>
+              <button type="button" (click)="addSlide()" class="btn-ghost text-sm">{{ 'admin.homepage_add_slide' | translate }}</button>
             </div>
             <div formArrayName="carouselSlides" class="space-y-4">
               @for (slide of slidesArray.controls; track $index) {
                 <div [formGroupName]="$index" class="border border-gray-200 rounded-xl p-4 space-y-3 bg-gray-50">
                   <div class="flex items-center justify-between">
-                    <p class="text-sm font-medium text-gray-700">Slide {{ $index + 1 }}</p>
+                    <p class="text-sm font-medium text-gray-700">{{ 'admin.homepage_slide_label' | translate }} {{ $index + 1 }}</p>
                     <button type="button" (click)="removeSlide($index)"
-                      class="text-red-400 hover:text-red-600 text-xs btn-ghost px-2 py-1">Supprimer</button>
+                      class="text-red-400 hover:text-red-600 text-xs btn-ghost px-2 py-1">{{ 'admin.homepage_slide_delete' | translate }}</button>
                   </div>
                   <div class="grid sm:grid-cols-2 gap-3">
                     <div>
-                      <label class="block text-xs font-medium text-gray-600 mb-1">Titre *</label>
+                      <label class="block text-xs font-medium text-gray-600 mb-1">{{ 'admin.homepage_slide_title' | translate }}</label>
                       <input formControlName="title" class="input-field text-sm" />
                     </div>
                     <div>
-                      <label class="block text-xs font-medium text-gray-600 mb-1">Sous-titre</label>
+                      <label class="block text-xs font-medium text-gray-600 mb-1">{{ 'admin.homepage_slide_subtitle' | translate }}</label>
                       <input formControlName="subtitle" class="input-field text-sm" />
                     </div>
                     <div class="sm:col-span-2">
-                      <label class="block text-xs font-medium text-gray-600 mb-1">Image (URL) *</label>
+                      <label class="block text-xs font-medium text-gray-600 mb-1">{{ 'admin.homepage_slide_image' | translate }}</label>
                       <input formControlName="imageUrl" class="input-field text-sm font-mono" placeholder="https://..." />
                     </div>
                     <div>
-                      <label class="block text-xs font-medium text-gray-600 mb-1">Lien CTA</label>
-                      <input formControlName="ctaLink" class="input-field text-sm" placeholder="/catalogue/cardiologie" />
+                      <label class="block text-xs font-medium text-gray-600 mb-1">{{ 'admin.homepage_slide_cta_link' | translate }}</label>
+                      <input formControlName="ctaLink" class="input-field text-sm" [placeholder]="'admin.homepage_slide_cta_link_placeholder' | translate" />
                     </div>
                     <div>
-                      <label class="block text-xs font-medium text-gray-600 mb-1">Texte du bouton</label>
-                      <input formControlName="ctaText" class="input-field text-sm" placeholder="Découvrir" />
+                      <label class="block text-xs font-medium text-gray-600 mb-1">{{ 'admin.homepage_slide_cta_text' | translate }}</label>
+                      <input formControlName="ctaText" class="input-field text-sm" [placeholder]="'admin.homepage_slide_cta_text_placeholder' | translate" />
                     </div>
                   </div>
                   @if (slide.value.imageUrl) {
@@ -76,21 +77,21 @@ import { HomepageConfig } from '../../../core/models';
                 </div>
               }
               @if (slidesArray.length === 0) {
-                <p class="text-sm text-gray-400 text-center py-4">Aucune slide. Cliquez sur "+ Ajouter une slide".</p>
+                <p class="text-sm text-gray-400 text-center py-4">{{ 'admin.homepage_no_slides' | translate }}</p>
               }
             </div>
           </div>
 
           <!-- Featured text -->
           <div class="card p-6 space-y-4">
-            <h2 class="font-semibold text-gray-900">Section texte mis en avant</h2>
+            <h2 class="font-semibold text-gray-900">{{ 'admin.homepage_featured_text_title' | translate }}</h2>
             <div class="space-y-3">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Titre</label>
-                <input formControlName="featuredTitle" class="input-field" placeholder="Notre expertise à votre service" />
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'admin.homepage_featured_title_label' | translate }}</label>
+                <input formControlName="featuredTitle" class="input-field" [placeholder]="'admin.homepage_featured_title_placeholder' | translate" />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1.5">Texte</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'admin.homepage_featured_text_label' | translate }}</label>
                 <textarea formControlName="featuredText" rows="3" class="input-field resize-none"></textarea>
               </div>
             </div>
@@ -98,18 +99,18 @@ import { HomepageConfig } from '../../../core/models';
 
           <!-- Top products -->
           <div class="card p-6 space-y-4">
-            <h2 class="font-semibold text-gray-900">Produits mis en avant (IDs)</h2>
-            <p class="text-xs text-gray-500">Saisissez les IDs des produits à afficher en page d'accueil, séparés par des virgules.</p>
+            <h2 class="font-semibold text-gray-900">{{ 'admin.homepage_featured_products_title' | translate }}</h2>
+            <p class="text-xs text-gray-500">{{ 'admin.homepage_featured_products_desc' | translate }}</p>
             <input formControlName="featuredProductIds" class="input-field font-mono text-sm"
-              placeholder="uuid-1, uuid-2, uuid-3" />
+              [placeholder]="'admin.homepage_featured_products_placeholder' | translate" />
           </div>
 
           <!-- Category order -->
           <div class="card p-6 space-y-4">
-            <h2 class="font-semibold text-gray-900">Ordre des catégories (IDs)</h2>
-            <p class="text-xs text-gray-500">Définissez l'ordre d'affichage des catégories sur la page d'accueil.</p>
+            <h2 class="font-semibold text-gray-900">{{ 'admin.homepage_category_order_title' | translate }}</h2>
+            <p class="text-xs text-gray-500">{{ 'admin.homepage_category_order_desc' | translate }}</p>
             <input formControlName="featuredCategoryIds" class="input-field font-mono text-sm"
-              placeholder="cat-uuid-1, cat-uuid-2" />
+              [placeholder]="'admin.homepage_category_order_placeholder' | translate" />
           </div>
         </form>
       }

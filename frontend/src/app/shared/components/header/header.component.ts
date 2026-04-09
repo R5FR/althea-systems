@@ -2,14 +2,14 @@ import { Component, OnInit, signal, inject, HostListener } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { CartService } from '../../../core/services/cart.service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, FormsModule, TranslateModule],
+  imports: [CommonModule, RouterLink, RouterLinkActive, FormsModule, TranslatePipe],
   template: `
     <!-- Top utility bar -->
     <div class="bg-navy text-white hidden md:block">
@@ -34,25 +34,25 @@ import { CartService } from '../../../core/services/cart.service';
             <span class="text-white/20">|</span>
 
             <!-- Language selector -->
-            <div class="relative">
-              <select (change)="changeLang($event)" [value]="currentLang"
-                class="appearance-none bg-transparent text-white/70 text-xs pr-5 cursor-pointer border-none outline-none hover:text-white transition-colors">
-                <option value="fr" class="text-gray-900">FR</option>
-                <option value="en" class="text-gray-900">EN</option>
-                <option value="ar" class="text-gray-900">عر</option>
-              </select>
-              <svg class="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 text-white/40 pointer-events-none" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/>
-              </svg>
+            <div class="flex items-center gap-1">
+              @for (lang of langs; track lang.code) {
+                <button (click)="setLang(lang.code)"
+                  class="px-1.5 py-0.5 rounded text-xs font-medium transition-colors"
+                  [class.text-white]="currentLang === lang.code"
+                  [class.text-white-40]="currentLang !== lang.code"
+                  [style.opacity]="currentLang === lang.code ? '1' : '0.45'">
+                  {{ lang.label }}
+                </button>
+              }
             </div>
 
             @if (!isLoggedIn()) {
-              <a routerLink="/login" class="text-white/70 hover:text-white transition-colors">Connexion</a>
-              <a routerLink="/register" class="text-white/70 hover:text-white transition-colors">Créer un compte</a>
+              <a routerLink="/login" class="text-white/70 hover:text-white transition-colors">{{ 'nav.login' | translate }}</a>
+              <a routerLink="/register" class="text-white/70 hover:text-white transition-colors">{{ 'nav.register' | translate }}</a>
             } @else {
-              <a routerLink="/mon-compte/profil" class="text-white/70 hover:text-white transition-colors">Mon compte</a>
+              <a routerLink="/mon-compte/profil" class="text-white/70 hover:text-white transition-colors">{{ 'nav.account' | translate }}</a>
               @if (isAdmin()) {
-                <a routerLink="/admin" class="text-primary-300 hover:text-primary-200 transition-colors">Backoffice</a>
+                <a routerLink="/admin" class="text-primary-300 hover:text-primary-200 transition-colors">{{ 'nav.admin' | translate }}</a>
               }
             }
           </div>
@@ -83,15 +83,15 @@ import { CartService } from '../../../core/services/cart.service';
           <nav class="hidden lg:flex items-center gap-1 flex-1">
             <a routerLink="/" routerLinkActive="text-primary" [routerLinkActiveOptions]="{exact:true}"
               class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
-              Accueil
+              {{ 'nav.home' | translate }}
             </a>
             <a routerLink="/recherche" routerLinkActive="text-primary"
               class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
-              Catalogue
+              {{ 'nav.catalog' | translate }}
             </a>
             <a routerLink="/contact" routerLinkActive="text-primary"
               class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
-              Contact
+              {{ 'nav.contact' | translate }}
             </a>
           </nav>
 
@@ -121,7 +121,7 @@ import { CartService } from '../../../core/services/cart.service';
                   {{ cartCount() }}
                 </span>
               }
-              <span class="hidden sm:inline text-sm font-medium">Panier</span>
+              <span class="hidden sm:inline text-sm font-medium">{{ 'nav.cart' | translate }}</span>
             </a>
 
             <!-- Burger menu -->
@@ -181,21 +181,21 @@ import { CartService } from '../../../core/services/cart.service';
                 <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                 </svg>
-                Accueil
+                {{ 'nav.home' | translate }}
               </a>
               <a routerLink="/recherche" (click)="menuOpen.set(false)"
                 class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 text-gray-700 font-medium text-sm transition-colors">
                 <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                 </svg>
-                Catalogue
+                {{ 'nav.catalog' | translate }}
               </a>
               <a routerLink="/contact" (click)="menuOpen.set(false)"
                 class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 text-gray-700 font-medium text-sm transition-colors">
                 <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                 </svg>
-                Contact
+                {{ 'nav.contact' | translate }}
               </a>
             </div>
 
@@ -210,14 +210,14 @@ import { CartService } from '../../../core/services/cart.service';
                   <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                   </svg>
-                  Mon profil
+                  {{ 'nav.profile' | translate }}
                 </a>
                 <a routerLink="/mon-compte/commandes" (click)="menuOpen.set(false)"
                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 text-gray-700 font-medium text-sm transition-colors">
                   <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                   </svg>
-                  Mes commandes
+                  {{ 'nav.orders' | translate }}
                 </a>
                 @if (isAdmin()) {
                   <a routerLink="/admin" (click)="menuOpen.set(false)"
@@ -226,7 +226,7 @@ import { CartService } from '../../../core/services/cart.service';
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                     </svg>
-                    Backoffice
+                    {{ 'nav.admin' | translate }}
                   </a>
                 }
               } @else {
@@ -235,14 +235,14 @@ import { CartService } from '../../../core/services/cart.service';
                   <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
                   </svg>
-                  Se connecter
+                  {{ 'nav.login' | translate }}
                 </a>
                 <a routerLink="/register" (click)="menuOpen.set(false)"
                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 text-gray-700 font-medium text-sm transition-colors">
                   <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
                   </svg>
-                  Créer un compte
+                  {{ 'nav.register' | translate }}
                 </a>
               }
             </div>
@@ -275,7 +275,7 @@ import { CartService } from '../../../core/services/cart.service';
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                 </svg>
-                Se déconnecter
+                {{ 'nav.logout' | translate }}
               </button>
             </div>
           }
@@ -315,6 +315,7 @@ export class HeaderComponent implements OnInit {
 
   setLang(lang: string) {
     this.currentLang = lang;
+    localStorage.setItem('lang', lang);
     this.translate.use(lang);
     document.documentElement.lang = lang;
     document.documentElement.dir  = lang === 'ar' ? 'rtl' : 'ltr';

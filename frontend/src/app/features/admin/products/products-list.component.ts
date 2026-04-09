@@ -2,6 +2,7 @@ import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ProductService } from '../../../core/services/product.service';
 import { AdminService } from '../../../core/services/admin.service';
 import { ProductListItem } from '../../../core/models';
@@ -9,50 +10,50 @@ import { ProductListItem } from '../../../core/models';
 @Component({
   selector: 'app-products-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, TranslatePipe],
   template: `
     <div class="space-y-6">
       <!-- Header -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 class="text-2xl font-bold text-gray-900">Produits</h1>
-          <p class="text-sm text-gray-500 mt-1">{{ total() }} produit(s) au total</p>
+          <h1 class="text-2xl font-bold text-gray-900">{{ 'admin.products_title' | translate }}</h1>
+          <p class="text-sm text-gray-500 mt-1">{{ total() }} {{ 'admin.products_count' | translate }}</p>
         </div>
         <div class="flex gap-3">
           <button (click)="exportCsv()" class="btn-ghost text-sm flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
             </svg>
-            Exporter
+            {{ 'admin.products_export' | translate }}
           </button>
-          <a routerLink="/admin/produits/nouveau" class="btn-primary text-sm">+ Nouveau produit</a>
+          <a routerLink="/admin/produits/nouveau" class="btn-primary text-sm">{{ 'admin.products_new' | translate }}</a>
         </div>
       </div>
 
       <!-- Filters -->
       <div class="card p-4 flex flex-col sm:flex-row gap-3">
         <input [(ngModel)]="search" (ngModelChange)="onSearch()" type="search"
-          placeholder="Rechercher un produit..." class="input-field flex-1 text-sm" />
+          [placeholder]="'admin.products_search_placeholder' | translate" class="input-field flex-1 text-sm" />
         <select [(ngModel)]="statusFilter" (ngModelChange)="load()" class="input-field text-sm w-auto">
-          <option value="">Tous les statuts</option>
-          <option value="active">Actif</option>
-          <option value="inactive">Inactif</option>
-          <option value="outofstock">Rupture</option>
+          <option value="">{{ 'admin.products_status_all' | translate }}</option>
+          <option value="active">{{ 'admin.products_status_active' | translate }}</option>
+          <option value="inactive">{{ 'admin.products_status_inactive' | translate }}</option>
+          <option value="outofstock">{{ 'admin.products_status_outofstock' | translate }}</option>
         </select>
         <select [(ngModel)]="sortBy" (ngModelChange)="load()" class="input-field text-sm w-auto">
-          <option value="name">Nom</option>
-          <option value="price">Prix</option>
-          <option value="stock">Stock</option>
-          <option value="priority">Priorité</option>
+          <option value="name">{{ 'admin.products_sort_name' | translate }}</option>
+          <option value="price">{{ 'admin.products_sort_price' | translate }}</option>
+          <option value="stock">{{ 'admin.products_sort_stock' | translate }}</option>
+          <option value="priority">{{ 'admin.products_sort_priority' | translate }}</option>
         </select>
       </div>
 
       <!-- Bulk actions -->
       @if (selected().size > 0) {
         <div class="bg-primary-50 border border-primary/20 rounded-xl p-3 flex items-center gap-4">
-          <span class="text-sm font-medium text-primary">{{ selected().size }} sélectionné(s)</span>
-          <button (click)="bulkDelete()" class="text-sm text-red-600 hover:text-red-800 font-medium">Supprimer</button>
-          <button (click)="clearSelection()" class="text-sm text-gray-500 ml-auto">Annuler</button>
+          <span class="text-sm font-medium text-primary">{{ selected().size }} {{ 'admin.products_selected' | translate }}</span>
+          <button (click)="bulkDelete()" class="text-sm text-red-600 hover:text-red-800 font-medium">{{ 'admin.products_bulk_delete' | translate }}</button>
+          <button (click)="clearSelection()" class="text-sm text-gray-500 ml-auto">{{ 'admin.products_clear_selection' | translate }}</button>
         </div>
       }
 
@@ -64,8 +65,8 @@ import { ProductListItem } from '../../../core/models';
           </div>
         } @else if (products().length === 0) {
           <div class="p-12 text-center text-gray-500">
-            <p class="text-lg mb-2">Aucun produit trouvé</p>
-            <a routerLink="/admin/produits/nouveau" class="btn-primary text-sm">Créer le premier produit</a>
+            <p class="text-lg mb-2">{{ 'admin.products_none_title' | translate }}</p>
+            <a routerLink="/admin/produits/nouveau" class="btn-primary text-sm">{{ 'admin.products_create_first' | translate }}</a>
           </div>
         } @else {
           <div class="overflow-x-auto">
@@ -77,12 +78,12 @@ import { ProductListItem } from '../../../core/models';
                       [checked]="selected().size === products().length"
                       class="rounded border-gray-300 text-primary" />
                   </th>
-                  <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Produit</th>
-                  <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Réf.</th>
-                  <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Prix TTC</th>
-                  <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Stock</th>
-                  <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Priorité</th>
-                  <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Statut</th>
+                  <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{{ 'admin.col_product' | translate }}</th>
+                  <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{{ 'admin.col_ref' | translate }}</th>
+                  <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{{ 'admin.col_price_ttc' | translate }}</th>
+                  <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{{ 'admin.col_stock' | translate }}</th>
+                  <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{{ 'admin.col_priority' | translate }}</th>
+                  <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">{{ 'admin.col_active' | translate }}</th>
                   <th class="px-4 py-3 w-24"></th>
                 </tr>
               </thead>
@@ -110,7 +111,7 @@ import { ProductListItem } from '../../../core/models';
                         <div class="min-w-0">
                           <p class="font-medium text-gray-900 truncate max-w-[200px]">{{ p.name }}</p>
                           @if (p.isLargeProduct) {
-                            <span class="text-xs text-purple-600 font-medium">Gros produit</span>
+                            <span class="text-xs text-purple-600 font-medium">{{ 'admin.products_large' | translate }}</span>
                           }
                         </div>
                       </div>
@@ -120,7 +121,7 @@ import { ProductListItem } from '../../../core/models';
                     <td class="px-4 py-3">
                       <span [class]="p.stockQuantity === 0 ? 'text-red-600 bg-red-50' : p.stockQuantity < 5 ? 'text-yellow-600 bg-yellow-50' : 'text-green-600 bg-green-50'"
                         class="px-2 py-0.5 rounded-full text-xs font-medium">
-                        {{ p.stockQuantity === 0 ? 'Épuisé' : p.stockQuantity + ' en stock' }}
+                        {{ p.stockQuantity === 0 ? ('admin.products_stock_out' | translate) : (p.stockQuantity + ' ' + ('admin.products_stock_in' | translate)) }}
                       </span>
                     </td>
                     <td class="px-4 py-3">
@@ -130,19 +131,19 @@ import { ProductListItem } from '../../../core/models';
                     </td>
                     <td class="px-4 py-3">
                       <span [class]="p.isActive !== false ? 'badge-success' : 'badge-gray'" class="badge text-xs">
-                        {{ p.isActive !== false ? 'Actif' : 'Inactif' }}
+                        {{ p.isActive !== false ? ('admin.products_active' | translate) : ('admin.products_inactive' | translate) }}
                       </span>
                     </td>
                     <td class="px-4 py-3">
                       <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         <a [routerLink]="['/admin/produits', p.id]"
-                          class="p-1.5 text-gray-400 hover:text-primary hover:bg-primary-50 rounded-lg transition-colors" title="Modifier">
+                          class="p-1.5 text-gray-400 hover:text-primary hover:bg-primary-50 rounded-lg transition-colors" [title]="'common.edit' | translate">
                           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                           </svg>
                         </a>
                         <button (click)="deleteProduct(p.id)"
-                          class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Supprimer">
+                          class="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors" [title]="'common.delete' | translate">
                           <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                           </svg>
@@ -158,10 +159,10 @@ import { ProductListItem } from '../../../core/models';
           <!-- Pagination -->
           @if (totalPages() > 1) {
             <div class="px-5 py-4 border-t border-gray-100 flex items-center justify-between">
-              <p class="text-sm text-gray-500">Page {{ page() }} sur {{ totalPages() }}</p>
+              <p class="text-sm text-gray-500">{{ 'common.page' | translate }} {{ page() }} {{ 'common.of' | translate }} {{ totalPages() }}</p>
               <div class="flex gap-2">
-                <button (click)="page.set(page() - 1); load()" [disabled]="page() === 1" class="btn-ghost text-sm px-3 py-1.5">Précédent</button>
-                <button (click)="page.set(page() + 1); load()" [disabled]="page() === totalPages()" class="btn-ghost text-sm px-3 py-1.5">Suivant</button>
+                <button (click)="page.set(page() - 1); load()" [disabled]="page() === 1" class="btn-ghost text-sm px-3 py-1.5">{{ 'common.previous' | translate }}</button>
+                <button (click)="page.set(page() + 1); load()" [disabled]="page() === totalPages()" class="btn-ghost text-sm px-3 py-1.5">{{ 'common.next' | translate }}</button>
               </div>
             </div>
           }

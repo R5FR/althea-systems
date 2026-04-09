@@ -2,30 +2,31 @@ import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink as RL } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { OrderService } from '../../core/services/order.service';
 import { Order } from '../../core/models';
 
 @Component({
   selector: 'app-order-history',
   standalone: true,
-  imports: [CommonModule, RL, FormsModule],
+  imports: [CommonModule, RL, FormsModule, TranslatePipe],
   template: `
     <div class="space-y-6">
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <h1 class="text-xl font-bold text-navy">Mes commandes</h1>
+        <h1 class="text-xl font-bold text-navy">{{ 'orders.title' | translate }}</h1>
         <!-- Search -->
         <input [(ngModel)]="search" (ngModelChange)="filterOrders()"
-          type="search" placeholder="Rechercher une commande..." class="input-field max-w-xs text-sm" />
+          type="search" [placeholder]="'orders.search_placeholder' | translate" class="input-field max-w-xs text-sm" />
       </div>
 
       <!-- Year filter -->
       @if (years().length > 0) {
-        <div class="flex gap-2 flex-wrap" role="group" aria-label="Filtrer par année">
+        <div class="flex gap-2 flex-wrap" role="group" [attr.aria-label]="'common.filter' | translate">
           <button (click)="selectedYear.set(null); filterOrders()"
             [attr.aria-pressed]="!selectedYear()"
             [class.bg-primary]="!selectedYear()" [class.text-white]="!selectedYear()"
             class="px-4 min-h-[44px] rounded-full text-sm border border-gray-200 transition-colors hover:bg-gray-100">
-            Toutes
+            {{ 'orders.filter_all' | translate }}
           </button>
           @for (y of years(); track y) {
             <button (click)="selectedYear.set(y); filterOrders()"
@@ -42,7 +43,7 @@ import { Order } from '../../core/models';
         <div class="space-y-3">@for (_ of [1,2,3]; track $index) { <div class="card p-4 skeleton h-20"></div> }</div>
       } @else if (filtered().length === 0) {
         <div class="card p-10 text-center text-gray-500">
-          <p>Aucune commande trouvée.</p>
+          <p>{{ 'orders.empty' | translate }}</p>
         </div>
       } @else {
         <!-- Group by year -->
@@ -60,14 +61,14 @@ import { Order } from '../../core/models';
                   </div>
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center gap-2 mb-0.5">
-                      <span class="font-semibold text-gray-900 text-sm">N° {{ order.orderNumber }}</span>
+                      <span class="font-semibold text-gray-900 text-sm">{{ 'orders.order_number' | translate }} {{ order.orderNumber }}</span>
                       <span [class]="statusClass(order.status)" class="badge text-xs">{{ statusLabel(order.status) }}</span>
                     </div>
                     <p class="text-xs text-gray-500">{{ order.createdAt | date:'d MMMM yyyy':'':'fr' }}</p>
                   </div>
                   <div class="text-right flex-shrink-0">
                     <p class="font-bold text-navy">{{ order.totalTtc | number:'1.2-2' }} €</p>
-                    <p class="text-xs text-gray-400">TTC</p>
+                    <p class="text-xs text-gray-400">{{ 'product.price_ttc' | translate }}</p>
                   </div>
                   <svg class="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -83,6 +84,7 @@ import { Order } from '../../core/models';
 })
 export class OrderHistoryComponent implements OnInit {
   private orderSvc = inject(OrderService);
+  private translate = inject(TranslateService);
 
   orders = signal<Order[]>([]);
   filtered = signal<Order[]>([]);
@@ -129,7 +131,14 @@ export class OrderHistoryComponent implements OnInit {
   }
 
   statusLabel(s: string) {
-    const map: Record<string, string> = { Pending: 'En attente', Paid: 'Payée', Shipped: 'Expédiée', Completed: 'Terminée', Cancelled: 'Annulée', Refunded: 'Remboursée' };
+    const map: Record<string, string> = {
+      Pending: this.translate.instant('orders.status_pending'),
+      Paid: this.translate.instant('orders.status_paid'),
+      Shipped: this.translate.instant('orders.status_shipped'),
+      Completed: this.translate.instant('orders.status_completed'),
+      Cancelled: this.translate.instant('orders.status_cancelled'),
+      Refunded: this.translate.instant('orders.status_refunded')
+    };
     return map[s] ?? s;
   }
 
