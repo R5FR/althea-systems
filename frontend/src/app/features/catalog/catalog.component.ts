@@ -237,11 +237,17 @@ export class ProductCardComponent {
           <label class="text-xs text-gray-500 hidden sm:block">{{ 'catalog.sort_by' | translate }}</label>
           <select [(ngModel)]="sortValue" (ngModelChange)="changeSortValue($event)"
             class="input-field w-auto py-2 text-sm bg-white cursor-pointer">
+            <option value="createdAt-desc">{{ 'catalog.sort_newest' | translate }}</option>
             <option value="priority-asc">{{ 'catalog.sort_default' | translate }}</option>
             <option value="price-asc">{{ 'catalog.sort_price_asc' | translate }}</option>
             <option value="price-desc">{{ 'catalog.sort_price_desc' | translate }}</option>
             <option value="name-asc">{{ 'catalog.sort_name_asc' | translate }}</option>
-            <option value="createdAt-desc">{{ 'catalog.sort_newest' | translate }}</option>
+          </select>
+          <select [ngModel]="pageSize()" (ngModelChange)="onPageSizeChange($event)"
+            class="input-field w-auto py-2 text-sm bg-white cursor-pointer">
+            <option [ngValue]="12">12 / page</option>
+            <option [ngValue]="24">24 / page</option>
+            <option [ngValue]="48">48 / page</option>
           </select>
         </div>
       </div>
@@ -359,21 +365,25 @@ export class CatalogComponent implements OnInit {
   products      = signal<ProductListItem[]>([]);
   loading       = signal(true);
   page          = signal(1);
-  pageSize      = 12;
+  pageSize      = signal(12);
   totalCount    = signal(0);
   categorySlug  = '';
 
-  totalPages  = computed(() => Math.ceil(this.totalCount() / this.pageSize));
+  totalPages  = computed(() => Math.ceil(this.totalCount() / this.pageSize()));
   pageNumbers = computed(() => {
     const total = this.totalPages();
-    const current = this.page();
-    return Array.from({ length: total }, (_, i) => i + 1)
-      .slice(Math.max(0, current - 3), Math.min(total, current + 2));
+    if (total <= 0) return [];
+    const current = Math.min(Math.max(1, this.page()), total);
+    const windowSize = 5;
+    let start = Math.max(1, current - 2);
+    let end = Math.min(total, start + windowSize - 1);
+    start = Math.max(1, end - windowSize + 1);
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
   });
 
-  sortBy:  string = 'priority';
-  sortDir: 'asc' | 'desc' = 'asc';
-  sortValue = 'priority-asc';
+  sortBy:  string = 'createdAt';
+  sortDir: 'asc' | 'desc' = 'desc';
+  sortValue = 'createdAt-desc';
 
   ngOnInit() {
     this.route.params.subscribe(params => {
@@ -399,11 +409,11 @@ export class CatalogComponent implements OnInit {
       sortBy:     this.sortBy as any,
       sortDir:    this.sortDir,
       pageNumber: this.page(),
-      pageSize:   this.pageSize,
+      pageSize:   this.pageSize(),
     }).subscribe({
       next: (res: any) => {
         const data: ProductListItem[] = res.data ?? [];
-        this.products.set(this.sortProducts(data));
+        this.products.set(data);
         this.totalCount.set(res.pagination?.totalCount ?? res.total ?? data.length);
         this.loading.set(false);
       },
@@ -425,14 +435,27 @@ export class CatalogComponent implements OnInit {
   }
 
   changePage(p: number) {
-    this.page.set(p);
+    const total = this.totalPages();
+    const next = Math.min(Math.max(1, p), Math.max(1, total));
+    if (next === this.page()) return;
+    this.page.set(next);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (this.category()) this.loadProducts(this.category()!.id);
+  }
+
+  onPageSizeChange(value: number | string) {
+    const parsed = Number.parseInt(String(value), 10);
+    this.pageSize.set(Number.isFinite(parsed) && parsed > 0 ? parsed : 12);
+    this.page.set(1);
     if (this.category()) this.loadProducts(this.category()!.id);
   }
 
   private useExampleProducts(): void {
     const examples = EXAMPLE_PRODUCTS_BY_SLUG[this.categorySlug] ?? [];
-    this.products.set(this.sortProducts(examples));
+    const sorted = this.sortProducts(examples);
+    const start = (this.page() - 1) * this.pageSize();
+    const end = start + this.pageSize();
+    this.products.set(sorted.slice(start, end));
     this.totalCount.set(examples.length);
     this.loading.set(false);
   }

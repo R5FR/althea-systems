@@ -23,7 +23,16 @@ public class ProductRepository : IProductRepository
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 
-    public async Task<List<Product>> SearchAsync(string? searchTerm, Guid? categoryId, decimal? minPrice, decimal? maxPrice, int skip, int take)
+    public async Task<List<Product>> SearchAsync(
+        string? searchTerm,
+        Guid? categoryId,
+        decimal? minPrice,
+        decimal? maxPrice,
+        bool onlyAvailable,
+        string sortBy,
+        string sortDir,
+        int skip,
+        int take)
     {
         var query = _context.Products.AsQueryable();
 
@@ -41,6 +50,19 @@ public class ProductRepository : IProductRepository
 
         if (maxPrice.HasValue)
             query = query.Where(p => p.PriceTtc <= maxPrice.Value);
+
+        if (onlyAvailable)
+            query = query.Where(p => p.StockQuantity > 0);
+
+        var descending = string.Equals(sortDir, "desc", StringComparison.OrdinalIgnoreCase);
+        query = sortBy?.ToLowerInvariant() switch
+        {
+            "price" => descending ? query.OrderByDescending(p => p.PriceTtc) : query.OrderBy(p => p.PriceTtc),
+            "name" => descending ? query.OrderByDescending(p => p.Name) : query.OrderBy(p => p.Name),
+            "availability" => descending ? query.OrderByDescending(p => p.StockQuantity) : query.OrderBy(p => p.StockQuantity),
+            "createdat" => descending ? query.OrderByDescending(p => p.CreatedAt) : query.OrderBy(p => p.CreatedAt),
+            _ => query.OrderByDescending(p => p.CreatedAt)
+        };
 
         return await query
             .Skip(skip)
@@ -50,7 +72,7 @@ public class ProductRepository : IProductRepository
             .ToListAsync();
     }
 
-    public async Task<int> CountAsync(string? searchTerm, Guid? categoryId, decimal? minPrice, decimal? maxPrice)
+    public async Task<int> CountAsync(string? searchTerm, Guid? categoryId, decimal? minPrice, decimal? maxPrice, bool onlyAvailable)
     {
         var query = _context.Products.AsQueryable();
 
@@ -68,6 +90,9 @@ public class ProductRepository : IProductRepository
 
         if (maxPrice.HasValue)
             query = query.Where(p => p.PriceTtc <= maxPrice.Value);
+
+        if (onlyAvailable)
+            query = query.Where(p => p.StockQuantity > 0);
 
         return await query.CountAsync();
     }

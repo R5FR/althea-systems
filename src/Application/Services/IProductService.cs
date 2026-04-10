@@ -70,9 +70,11 @@ public class ProductSearchParams
     public Guid? CategoryId { get; set; }
     public decimal? MinPrice { get; set; }
     public decimal? MaxPrice { get; set; }
+    public bool OnlyAvailable { get; set; }
     public int PageNumber { get; set; } = 1;
     public int PageSize { get; set; } = 10;
-    public string SortBy { get; set; } = "name";
+    public string SortBy { get; set; } = "createdAt";
+    public string SortDir { get; set; } = "desc";
 }
 
 public class PaginatedResult<T>

@@ -23,6 +23,9 @@ public class MappingProfile : Profile
                 ?? src.Images.OrderBy(i => i.DisplayOrder).Select(i => i.ImageUrl).FirstOrDefault()));
 
         CreateMap<Product, ProductListItemDto>()
+            .ForMember(dest => dest.PriceHt, opt => opt.MapFrom(src => src.PriceHt))
+            .ForMember(dest => dest.TvaRate, opt => opt.MapFrom(src => src.TvaRate))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.CreatedAt))
             .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src =>
                 src.Images.OrderBy(i => i.DisplayOrder).Where(i => i.IsMain).Select(i => i.ImageUrl).FirstOrDefault()
                 ?? src.Images.OrderBy(i => i.DisplayOrder).Select(i => i.ImageUrl).FirstOrDefault()));

@@ -116,12 +116,17 @@ const PRODUCT_GRADIENTS = [
             </p>
             <div class="flex items-center gap-3">
               <select [(ngModel)]="sortValue" (ngModelChange)="onSortChange($event)" class="input-field text-sm py-2 w-auto">
+                <option value="createdAt-desc">{{ 'search.sort_newest' | translate }}</option>
                 <option value="price-asc">{{ 'search.sort_price_asc' | translate }}</option>
                 <option value="price-desc">{{ 'search.sort_price_desc' | translate }}</option>
                 <option value="name-asc">{{ 'search.sort_name_asc' | translate }}</option>
                 <option value="name-desc">{{ 'search.sort_name_desc' | translate }}</option>
-                <option value="createdAt-desc">{{ 'search.sort_newest' | translate }}</option>
                 <option value="availability-desc">{{ 'search.sort_availability' | translate }}</option>
+              </select>
+              <select [ngModel]="pageSize()" (ngModelChange)="onPageSizeChange($event)" class="input-field text-sm py-2 w-auto">
+                <option [ngValue]="12">12 / page</option>
+                <option [ngValue]="24">24 / page</option>
+                <option [ngValue]="48">48 / page</option>
               </select>
               <!-- View toggle -->
               <div class="flex border border-gray-200 rounded-lg overflow-hidden">
@@ -267,13 +272,21 @@ export class SearchComponent implements OnInit {
   categories = signal<Category[]>([]);
   loading = signal(false);
   viewMode = signal<'grid' | 'list'>('grid');
-  sortValue = 'price-asc';
+  sortValue = 'createdAt-desc';
   page = signal(1);
-  pageSize = 12;
+  pageSize = signal(12);
   totalCount = signal(0);
-  totalPages = computed(() => Math.ceil(this.totalCount() / this.pageSize));
-  pageNumbers = computed(() => Array.from({ length: this.totalPages() }, (_, i) => i + 1)
-    .slice(Math.max(0, this.page() - 3), Math.min(this.totalPages(), this.page() + 2)));
+  totalPages = computed(() => Math.ceil(this.totalCount() / this.pageSize()));
+  pageNumbers = computed(() => {
+    const total = this.totalPages();
+    if (total <= 0) return [];
+    const current = Math.min(Math.max(1, this.page()), total);
+    const windowSize = 5;
+    let start = Math.max(1, current - 2);
+    let end = Math.min(total, start + windowSize - 1);
+    start = Math.max(1, end - windowSize + 1);
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  });
 
   params: ProductSearchParams = {};
   private searchSubject = new Subject<string>();
@@ -297,8 +310,9 @@ export class SearchComponent implements OnInit {
         maxPrice: this.parseNumberParam(qp['max']),
         onlyAvailable: qp['avail'] === 'true',
       };
-      const nextSort = qp['sort'] || 'price-asc';
+      const nextSort = qp['sort'] || 'createdAt-desc';
       const nextPage = this.parsePositiveIntParam(qp['page']) || 1;
+      const nextPageSize = this.parsePositiveIntParam(qp['ps']) || 12;
 
       const hasChanged =
         this.params.searchTerm !== nextParams.searchTerm ||
@@ -307,11 +321,13 @@ export class SearchComponent implements OnInit {
         this.params.maxPrice !== nextParams.maxPrice ||
         this.params.onlyAvailable !== nextParams.onlyAvailable ||
         this.sortValue !== nextSort ||
-        this.page() !== nextPage;
+        this.page() !== nextPage ||
+        this.pageSize() !== nextPageSize;
 
       this.params = nextParams;
       this.sortValue = nextSort;
       this.page.set(nextPage);
+      this.pageSize.set(nextPageSize);
 
       if (hasChanged || this.products().length === 0) {
         this.syncingFromUrl = true;
@@ -336,6 +352,13 @@ export class SearchComponent implements OnInit {
     this.applyFilters();
   }
 
+  onPageSizeChange(value: number | string) {
+    const pageSize = this.parsePositiveIntParam(value) || 12;
+    this.pageSize.set(pageSize);
+    this.page.set(1);
+    this.applyFilters();
+  }
+
   applyFilters() {
     const [sortBy, sortDir] = this.sortValue.split('-');
     this.loading.set(true);
@@ -344,17 +367,16 @@ export class SearchComponent implements OnInit {
       sortBy: sortBy as any,
       sortDir: sortDir as any,
       pageNumber: this.page(),
-      pageSize: this.pageSize,
+      pageSize: this.pageSize(),
     }).subscribe({
       next: res => {
         const data: ProductListItem[] = res.data ?? [];
-        const sortedData = this.sortProducts(data, sortBy, sortDir);
         // If no results AND no active filter, show the full example catalogue
-        if (sortedData.length === 0 && !this.hasActiveFilters()) {
+        if (data.length === 0 && !this.hasActiveFilters()) {
           this.useExampleCatalogue();
         } else {
-          this.products.set(sortedData);
-          this.totalCount.set(res.pagination?.totalCount ?? res.total ?? sortedData.length);
+          this.products.set(data);
+          this.totalCount.set(res.pagination?.totalCount ?? res.total ?? data.length);
           this.loading.set(false);
         }
         this.syncUrlWithFilters();
@@ -375,14 +397,18 @@ export class SearchComponent implements OnInit {
   }
 
   changePage(p: number) {
-    this.page.set(p);
+    const total = this.totalPages();
+    const next = Math.min(Math.max(1, p), Math.max(1, total));
+    if (next === this.page()) return;
+    this.page.set(next);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     this.applyFilters();
   }
 
   resetFilters() {
     this.params = {};
-    this.sortValue = 'price-asc';
+    this.sortValue = 'createdAt-desc';
+    this.pageSize.set(12);
     this.page.set(1);
     this.applyFilters();
   }
@@ -393,7 +419,10 @@ export class SearchComponent implements OnInit {
 
   private useExampleCatalogue(): void {
     const [sortBy, sortDir] = this.sortValue.split('-');
-    this.products.set(this.sortProducts(EXAMPLE_CATALOGUE, sortBy, sortDir));
+    const sorted = this.sortProducts(EXAMPLE_CATALOGUE, sortBy, sortDir);
+    const start = (this.page() - 1) * this.pageSize();
+    const end = start + this.pageSize();
+    this.products.set(sorted.slice(start, end));
     this.totalCount.set(EXAMPLE_CATALOGUE.length);
     this.loading.set(false);
   }
@@ -439,8 +468,9 @@ export class SearchComponent implements OnInit {
         min: this.params.minPrice ?? null,
         max: this.params.maxPrice ?? null,
         avail: this.params.onlyAvailable ? 'true' : null,
-        sort: this.sortValue !== 'price-asc' ? this.sortValue : null,
+        sort: this.sortValue !== 'createdAt-desc' ? this.sortValue : null,
         page: this.page() > 1 ? this.page() : null,
+        ps: this.pageSize() !== 12 ? this.pageSize() : null,
       },
       queryParamsHandling: 'merge',
       replaceUrl: true,

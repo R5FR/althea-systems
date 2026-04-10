@@ -60,6 +60,9 @@ public class ProductService : IProductService
             searchParams.CategoryId,
             searchParams.MinPrice,
             searchParams.MaxPrice,
+            searchParams.OnlyAvailable,
+            searchParams.SortBy,
+            searchParams.SortDir,
             skip,
             take);
 
@@ -68,7 +71,8 @@ public class ProductService : IProductService
             searchParams.SearchTerm,
             searchParams.CategoryId,
             searchParams.MinPrice,
-            searchParams.MaxPrice);
+            searchParams.MaxPrice,
+            searchParams.OnlyAvailable);
 
         // Mapper les produits
         var items = _mapper.Map<List<ProductListItemDto>>(products);

@@ -71,7 +71,16 @@ public class AdminService : IAdminService
         var ordersWeek = await _unitOfWork.OrderRepository.SearchAsync(null, weekStart, null, 0, int.MaxValue);
         var ordersMonth = await _unitOfWork.OrderRepository.SearchAsync(null, monthStart, null, 0, int.MaxValue);
 
-        var allProducts = await _unitOfWork.ProductRepository.SearchAsync(null, null, null, null, 0, int.MaxValue);
+        var allProducts = await _unitOfWork.ProductRepository.SearchAsync(
+            searchTerm: null,
+            categoryId: null,
+            minPrice: null,
+            maxPrice: null,
+            onlyAvailable: false,
+            sortBy: "createdAt",
+            sortDir: "desc",
+            skip: 0,
+            take: int.MaxValue);
         var lowStockCount = allProducts.Count(p => p.StockQuantity <= 5);
 
         var unreadMessages = await _unitOfWork.ContactRepository.GetUnreadCountAsync();
@@ -193,7 +202,16 @@ public class AdminService : IAdminService
 
     public async Task<byte[]> ExportProductsCsvAsync()
     {
-        var products = await _unitOfWork.ProductRepository.SearchAsync(null, null, null, null, 0, int.MaxValue);
+        var products = await _unitOfWork.ProductRepository.SearchAsync(
+            searchTerm: null,
+            categoryId: null,
+            minPrice: null,
+            maxPrice: null,
+            onlyAvailable: false,
+            sortBy: "createdAt",
+            sortDir: "desc",
+            skip: 0,
+            take: int.MaxValue);
 
         var csv = new StringBuilder();
         csv.AppendLine("Id,Name,Description,PriceHt,TvaRate,PriceTtc,StockQuantity,Status,Slug,CreatedAt,UpdatedAt");
@@ -238,7 +256,16 @@ public class AdminService : IAdminService
 
     public async Task RestockAlertAsync()
     {
-        var products = await _unitOfWork.ProductRepository.SearchAsync(null, null, null, null, 0, int.MaxValue);
+        var products = await _unitOfWork.ProductRepository.SearchAsync(
+            searchTerm: null,
+            categoryId: null,
+            minPrice: null,
+            maxPrice: null,
+            onlyAvailable: false,
+            sortBy: "createdAt",
+            sortDir: "desc",
+            skip: 0,
+            take: int.MaxValue);
         var outOfStock = products.Where(p => p.StockQuantity == 0).ToList();
 
         if (outOfStock.Any())

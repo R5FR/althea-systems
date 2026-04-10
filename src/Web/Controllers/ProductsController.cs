@@ -28,7 +28,16 @@ public class ProductsController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Search([FromQuery] string? searchTerm, [FromQuery] Guid? categoryId, [FromQuery] decimal? minPrice, [FromQuery] decimal? maxPrice, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    public async Task<IActionResult> Search(
+        [FromQuery] string? searchTerm,
+        [FromQuery] Guid? categoryId,
+        [FromQuery] decimal? minPrice,
+        [FromQuery] decimal? maxPrice,
+        [FromQuery] bool onlyAvailable = false,
+        [FromQuery] string sortBy = "createdAt",
+        [FromQuery] string sortDir = "desc",
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 12)
     {
         try
         {
@@ -38,6 +47,9 @@ public class ProductsController : ControllerBase
                 CategoryId = categoryId,
                 MinPrice = minPrice,
                 MaxPrice = maxPrice,
+                OnlyAvailable = onlyAvailable,
+                SortBy = sortBy,
+                SortDir = sortDir,
                 PageNumber = pageNumber,
                 PageSize = pageSize
             };
