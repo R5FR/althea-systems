@@ -14,6 +14,13 @@ const HERO_GRADIENTS = [
   'linear-gradient(135deg, #002323 0%, #003D5C 60%, #003D5C 100%)',
 ];
 
+// ── Default slides shown when no config is saved ───────────────────────────
+const DEFAULT_SLIDES = [
+  { id: '1', title: 'Matériel médical\nde haute précision', subtitle: 'Équipements certifiés CE pour cabinets, cliniques et hôpitaux. Livraison EU sous 48h.', imageUrl: '', linkUrl: '/recherche', displayOrder: 0, isActive: true },
+  { id: '2', title: 'Technologie au service\nde la santé', subtitle: 'Plus de 2 400 références disponibles, sélectionnées par nos ingénieurs biomédicaux.', imageUrl: '', linkUrl: '/recherche', displayOrder: 1, isActive: true },
+  { id: '3', title: 'Support technique\ndédié 5j/7', subtitle: "Installation, maintenance et SAV assurés par notre équipe d'experts certifiés.", imageUrl: '', linkUrl: '/contact', displayOrder: 2, isActive: true },
+];
+
 
 @Component({
   selector: 'app-home',
@@ -470,17 +477,22 @@ export class HomeComponent implements OnInit, OnDestroy {
     // Homepage config (carousel + featured text)
     this.adminSvc.getHomepageConfig().subscribe({
       next: cfg => {
-        const slides = cfg.carousel?.filter((s: CarouselSlide) => s.isActive) ?? [];
-        this.slides.set(slides);
+        const rawSlides: any[] = cfg.carouselSlides ?? cfg.carousel ?? [];
+        const slides: CarouselSlide[] = rawSlides
+          .filter((s: any) => s.isActive !== false)
+          .map((s: any, idx: number) => ({
+            ...s,
+            id: s.id ?? String(idx),
+            linkUrl: s.linkUrl ?? s.ctaLink,
+            isActive: true,
+            displayOrder: s.displayOrder ?? idx,
+          }));
+        this.slides.set(slides.length > 0 ? slides : DEFAULT_SLIDES);
         this.featuredText.set(cfg.featuredText ?? '');
         this.startAutoplay();
       },
       error: () => {
-        this.slides.set([
-          { id: '1', title: 'Matériel médical\nde haute précision', subtitle: 'Équipements certifiés CE pour cabinets, cliniques et hôpitaux. Livraison EU sous 48h.', imageUrl: '', linkUrl: '/recherche', displayOrder: 0, isActive: true },
-          { id: '2', title: 'Technologie au service\nde la santé', subtitle: 'Plus de 2 400 références disponibles, sélectionnées par nos ingénieurs biomédicaux.', imageUrl: '', linkUrl: '/recherche', displayOrder: 1, isActive: true },
-          { id: '3', title: 'Support technique\ndédié 5j/7', subtitle: 'Installation, maintenance et SAV assurés par notre équipe d\'experts certifiés.', imageUrl: '', linkUrl: '/contact', displayOrder: 2, isActive: true },
-        ]);
+        this.slides.set(DEFAULT_SLIDES);
         this.startAutoplay();
       }
     });

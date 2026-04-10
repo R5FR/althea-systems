@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject, HostListener } from '@angular/core';
+import { Component, OnInit, signal, inject, HostListener, ElementRef } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -29,31 +29,46 @@ import { CartService } from '../../../core/services/cart.service';
               contact&#64;althea-systems.fr
             </span>
           </div>
-          <div class="flex items-center gap-4 text-white/60">
+          <div class="flex items-center gap-3 text-white/60">
             <span>Livraison EU sous 48h–72h</span>
             <span class="text-white/20">|</span>
 
-            <!-- Language selector -->
-            <div class="flex items-center gap-1">
-              @for (lang of langs; track lang.code) {
-                <button (click)="setLang(lang.code)"
-                  class="px-1.5 py-0.5 rounded text-xs font-medium transition-colors"
-                  [class.text-white]="currentLang === lang.code"
-                  [class.text-white-40]="currentLang !== lang.code"
-                  [style.opacity]="currentLang === lang.code ? '1' : '0.45'">
-                  {{ lang.label }}
-                </button>
+            <!-- Language dropdown -->
+            <div class="relative">
+              <button (click)="langOpen.set(!langOpen())"
+                class="flex items-center gap-1 px-2 py-1 rounded hover:bg-white/10 transition-colors text-white/70 hover:text-white">
+                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+                </svg>
+                <span class="font-medium">{{ currentLangLabel }}</span>
+                <svg class="w-2.5 h-2.5 transition-transform" [class.rotate-180]="langOpen()" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+              @if (langOpen()) {
+                <div class="absolute right-0 top-full mt-1 w-36 rounded-lg shadow-xl border border-gray-200 py-1 z-[200]" style="background:#fff">
+                  @for (lang of langs; track lang.code) {
+                    <button (click)="setLang(lang.code); langOpen.set(false)"
+                      class="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-left hover:bg-gray-50 transition-colors"
+                      [class.font-semibold]="currentLang === lang.code"
+                      [style.color]="currentLang === lang.code ? '#003D5C' : '#4b5563'">
+                      <span class="text-base leading-none">{{ lang.flag }}</span>
+                      <span>{{ lang.label }}</span>
+                      @if (currentLang === lang.code) {
+                        <svg class="w-3 h-3 ml-auto" fill="none" viewBox="0 0 24 24" stroke="#0094A0">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                        </svg>
+                      }
+                    </button>
+                  }
+                </div>
               }
             </div>
 
             @if (!isLoggedIn()) {
+              <span class="text-white/20">|</span>
               <a routerLink="/login" class="text-white/70 hover:text-white transition-colors">{{ 'nav.login' | translate }}</a>
               <a routerLink="/register" class="text-white/70 hover:text-white transition-colors">{{ 'nav.register' | translate }}</a>
-            } @else {
-              <a routerLink="/mon-compte/profil" class="text-white/70 hover:text-white transition-colors">{{ 'nav.account' | translate }}</a>
-              @if (isAdmin()) {
-                <a routerLink="/admin" class="text-primary-300 hover:text-primary-200 transition-colors">{{ 'nav.admin' | translate }}</a>
-              }
             }
           </div>
         </div>
@@ -111,6 +126,60 @@ import { CartService } from '../../../core/services/cart.service';
           </div>
 
           <div class="flex items-center gap-1 ml-auto">
+
+            <!-- Account dropdown (navbar) -->
+            @if (isLoggedIn()) {
+              <div class="relative hidden lg:block">
+                <button (click)="accountOpen.set(!accountOpen())"
+                  class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                  </svg>
+                  {{ 'nav.account' | translate }}
+                  <svg class="w-3 h-3 transition-transform" [class.rotate-180]="accountOpen()" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                </button>
+                @if (accountOpen()) {
+                  <div class="absolute right-0 top-full mt-1.5 w-48 rounded-xl shadow-xl border border-gray-100 py-1.5 z-[200]" style="background:#fff">
+                    <a routerLink="/mon-compte/profil" (click)="accountOpen.set(false)"
+                      class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                      <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                      </svg>
+                      {{ 'nav.profile' | translate }}
+                    </a>
+                    <a routerLink="/mon-compte/commandes" (click)="accountOpen.set(false)"
+                      class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                      <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                      </svg>
+                      {{ 'nav.orders' | translate }}
+                    </a>
+                    @if (isAdmin()) {
+                      <div class="border-t border-gray-100 my-1"></div>
+                      <a routerLink="/admin" (click)="accountOpen.set(false)"
+                        class="flex items-center gap-3 px-4 py-2.5 text-sm font-medium hover:bg-primary/5 transition-colors" style="color:#0094A0">
+                        <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        {{ 'nav.admin' | translate }}
+                      </a>
+                    }
+                    <div class="border-t border-gray-100 my-1"></div>
+                    <button (click)="logout(); accountOpen.set(false)"
+                      class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                      <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                      </svg>
+                      {{ 'nav.logout' | translate }}
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+
             <!-- Cart -->
             <a routerLink="/panier" class="relative flex items-center gap-2 px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
               <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -289,11 +358,22 @@ export class HeaderComponent implements OnInit {
   private cart      = inject(CartService);
   private router    = inject(Router);
   private translate = inject(TranslateService);
+  private elRef     = inject(ElementRef);
 
   menuOpen    = signal(false);
+  langOpen    = signal(false);
+  accountOpen = signal(false);
   searchTerm  = '';
   currentLang = 'fr';
-  langs = [{ code: 'fr', label: 'FR' }, { code: 'en', label: 'EN' }, { code: 'ar', label: 'عر' }];
+  langs = [
+    { code: 'fr', label: 'Français', flag: '🇫🇷' },
+    { code: 'en', label: 'English',  flag: '🇬🇧' },
+    { code: 'ar', label: 'العربية',  flag: '🇸🇦' },
+  ];
+
+  get currentLangLabel() {
+    return this.langs.find(l => l.code === this.currentLang)?.code.toUpperCase() ?? 'FR';
+  }
 
   readonly isLoggedIn = this.auth.isLoggedIn;
   readonly isAdmin    = this.auth.isAdmin;
@@ -311,8 +391,6 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  changeLang(event: Event) { this.setLang((event.target as HTMLSelectElement).value); }
-
   setLang(lang: string) {
     this.currentLang = lang;
     localStorage.setItem('lang', lang);
@@ -324,5 +402,13 @@ export class HeaderComponent implements OnInit {
   logout() { this.auth.logout(); this.menuOpen.set(false); }
 
   @HostListener('document:keydown.escape')
-  onEsc() { this.menuOpen.set(false); }
+  onEsc() { this.menuOpen.set(false); this.langOpen.set(false); this.accountOpen.set(false); }
+
+  @HostListener('document:click', ['$event'])
+  onDocClick(e: MouseEvent) {
+    if (!this.elRef.nativeElement.contains(e.target)) {
+      this.langOpen.set(false);
+      this.accountOpen.set(false);
+    }
+  }
 }
