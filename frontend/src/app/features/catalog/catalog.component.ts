@@ -1,6 +1,7 @@
 import { Component, OnInit, signal, computed, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ProductService } from '../../core/services/product.service';
 import { CategoryService } from '../../core/services/category.service';
@@ -191,7 +192,7 @@ export class ProductCardComponent {
 @Component({
   selector: 'app-catalog',
   standalone: true,
-  imports: [CommonModule, RouterLink, ProductCardComponent, TranslatePipe],
+  imports: [CommonModule, RouterLink, FormsModule, ProductCardComponent, TranslatePipe],
   template: `
     <div class="page-container py-8 md:py-12">
 
@@ -234,7 +235,7 @@ export class ProductCardComponent {
         </p>
         <div class="flex items-center gap-2">
           <label class="text-xs text-gray-500 hidden sm:block">{{ 'catalog.sort_by' | translate }}</label>
-          <select (change)="changeSort($event)"
+          <select [(ngModel)]="sortValue" (ngModelChange)="changeSortValue($event)"
             class="input-field w-auto py-2 text-sm bg-white cursor-pointer">
             <option value="priority-asc">{{ 'catalog.sort_default' | translate }}</option>
             <option value="price-asc">{{ 'catalog.sort_price_asc' | translate }}</option>
@@ -372,11 +373,13 @@ export class CatalogComponent implements OnInit {
 
   sortBy:  string = 'priority';
   sortDir: 'asc' | 'desc' = 'asc';
+  sortValue = 'priority-asc';
 
   ngOnInit() {
     this.route.params.subscribe(params => {
       const slug = params['slug'];
       this.categorySlug = slug;
+      this.page.set(1);
       this.categorySvc.getBySlug(slug).subscribe({
         next: (cat: Category) => { this.category.set(cat); this.loadProducts(cat.id); },
         error: () => {
@@ -400,13 +403,7 @@ export class CatalogComponent implements OnInit {
     }).subscribe({
       next: (res: any) => {
         const data: ProductListItem[] = res.data ?? [];
-        if (data.length === 0) { this.useExampleProducts(); return; }
-        const sorted = [...data].sort((a: ProductListItem, b: ProductListItem) => {
-          if (a.stockQuantity === 0 && b.stockQuantity > 0) return 1;
-          if (a.stockQuantity > 0 && b.stockQuantity === 0) return -1;
-          return (a.priority ?? 99) - (b.priority ?? 99);
-        });
-        this.products.set(sorted);
+        this.products.set(this.sortProducts(data));
         this.totalCount.set(res.pagination?.totalCount ?? res.total ?? data.length);
         this.loading.set(false);
       },
@@ -414,12 +411,17 @@ export class CatalogComponent implements OnInit {
     });
   }
 
-  changeSort(event: Event) {
-    const [sortBy, sortDir] = (event.target as HTMLSelectElement).value.split('-');
-    this.sortBy  = sortBy;
+  changeSortValue(value: string) {
+    this.sortValue = value;
+    const [sortBy, sortDir] = value.split('-');
+    this.sortBy = sortBy;
     this.sortDir = sortDir as 'asc' | 'desc';
     this.page.set(1);
     if (this.category()) this.loadProducts(this.category()!.id);
+  }
+
+  changeSort(event: Event) {
+    this.changeSortValue((event.target as HTMLSelectElement).value);
   }
 
   changePage(p: number) {
@@ -430,9 +432,40 @@ export class CatalogComponent implements OnInit {
 
   private useExampleProducts(): void {
     const examples = EXAMPLE_PRODUCTS_BY_SLUG[this.categorySlug] ?? [];
-    this.products.set(examples);
+    this.products.set(this.sortProducts(examples));
     this.totalCount.set(examples.length);
     this.loading.set(false);
+  }
+
+  private sortProducts(products: ProductListItem[]): ProductListItem[] {
+    const direction = this.sortDir === 'desc' ? -1 : 1;
+    const byName = (a: ProductListItem, b: ProductListItem) => a.name.localeCompare(b.name) * direction;
+    const byPrice = (a: ProductListItem, b: ProductListItem) => ((a.priceTtc ?? 0) - (b.priceTtc ?? 0)) * direction;
+    const byCreatedAt = (a: ProductListItem, b: ProductListItem) => {
+      const aTs = new Date((a as any).createdAt ?? 0).getTime() || 0;
+      const bTs = new Date((b as any).createdAt ?? 0).getTime() || 0;
+      return (aTs - bTs) * direction;
+    };
+    const byPriority = (a: ProductListItem, b: ProductListItem) => {
+      // Keep in-stock products first for default listing, then apply priority.
+      if (a.stockQuantity === 0 && b.stockQuantity > 0) return 1;
+      if (a.stockQuantity > 0 && b.stockQuantity === 0) return -1;
+      return ((a.priority ?? 999) - (b.priority ?? 999)) * direction;
+    };
+
+    return [...products].sort((a, b) => {
+      switch (this.sortBy) {
+        case 'price':
+          return byPrice(a, b);
+        case 'name':
+          return byName(a, b);
+        case 'createdAt':
+          return byCreatedAt(a, b);
+        case 'priority':
+        default:
+          return byPriority(a, b);
+      }
+    });
   }
 
   getGradient(index: number): string {

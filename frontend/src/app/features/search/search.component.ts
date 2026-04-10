@@ -75,7 +75,7 @@ const PRODUCT_GRADIENTS = [
             <!-- Categories -->
             <div>
               <label class="block text-xs font-medium text-gray-600 mb-1.5">{{ 'search.filter_category' | translate }}</label>
-              <select [(ngModel)]="params.categoryId" (ngModelChange)="applyFilters()" class="input-field text-sm">
+              <select [(ngModel)]="params.categoryId" (ngModelChange)="onFiltersChange()" class="input-field text-sm">
                 <option value="">{{ 'search.filter_category_all' | translate }}</option>
                 @for (cat of categories(); track cat.id) {
                   <option [value]="cat.id">{{ cat.name }}</option>
@@ -87,15 +87,15 @@ const PRODUCT_GRADIENTS = [
             <div>
               <label class="block text-xs font-medium text-gray-600 mb-1.5">{{ 'search.filter_price' | translate }}</label>
               <div class="flex gap-2 items-center">
-                <input [(ngModel)]="params.minPrice" (ngModelChange)="applyFilters()" type="number" min="0" [placeholder]="'search.filter_price_min' | translate" class="input-field text-sm w-full" />
+                <input [(ngModel)]="params.minPrice" (ngModelChange)="onFiltersChange()" type="number" min="0" [placeholder]="'search.filter_price_min' | translate" class="input-field text-sm w-full" />
                 <span class="text-gray-400 flex-shrink-0">–</span>
-                <input [(ngModel)]="params.maxPrice" (ngModelChange)="applyFilters()" type="number" min="0" [placeholder]="'search.filter_price_max' | translate" class="input-field text-sm w-full" />
+                <input [(ngModel)]="params.maxPrice" (ngModelChange)="onFiltersChange()" type="number" min="0" [placeholder]="'search.filter_price_max' | translate" class="input-field text-sm w-full" />
               </div>
             </div>
 
             <!-- Only available -->
             <label class="flex items-center gap-2.5 cursor-pointer group">
-              <input [(ngModel)]="params.onlyAvailable" (ngModelChange)="applyFilters()" type="checkbox"
+              <input [(ngModel)]="params.onlyAvailable" (ngModelChange)="onFiltersChange()" type="checkbox"
                 class="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary" />
               <span class="text-sm text-gray-700 group-hover:text-gray-900">{{ 'search.filter_available' | translate }}</span>
             </label>
@@ -115,7 +115,7 @@ const PRODUCT_GRADIENTS = [
               @else { <span class="font-semibold">{{ totalCount() }}</span> {{ totalCount() === 1 ? ('catalog.products_count_singular' | translate) : ('catalog.products_count_plural' | translate) }} }
             </p>
             <div class="flex items-center gap-3">
-              <select (change)="changeSort($event)" [(ngModel)]="sortValue" class="input-field text-sm py-2 w-auto">
+              <select [(ngModel)]="sortValue" (ngModelChange)="onSortChange($event)" class="input-field text-sm py-2 w-auto">
                 <option value="price-asc">{{ 'search.sort_price_asc' | translate }}</option>
                 <option value="price-desc">{{ 'search.sort_price_desc' | translate }}</option>
                 <option value="name-asc">{{ 'search.sort_name_asc' | translate }}</option>
@@ -277,6 +277,7 @@ export class SearchComponent implements OnInit {
 
   params: ProductSearchParams = {};
   private searchSubject = new Subject<string>();
+  private syncingFromUrl = false;
 
   ngOnInit() {
     this.categorySvc.getAll().subscribe({ next: c => this.categories.set(c), error: () => {} });
@@ -289,20 +290,50 @@ export class SearchComponent implements OnInit {
 
     // Read query params
     this.route.queryParams.subscribe(qp => {
-      this.params = {
+      const nextParams: ProductSearchParams = {
         searchTerm: qp['q'] || '',
         categoryId: qp['cat'] || '',
-        minPrice: qp['min'] ? +qp['min'] : undefined,
-        maxPrice: qp['max'] ? +qp['max'] : undefined,
+        minPrice: this.parseNumberParam(qp['min']),
+        maxPrice: this.parseNumberParam(qp['max']),
         onlyAvailable: qp['avail'] === 'true',
       };
-      this.applyFilters();
+      const nextSort = qp['sort'] || 'price-asc';
+      const nextPage = this.parsePositiveIntParam(qp['page']) || 1;
+
+      const hasChanged =
+        this.params.searchTerm !== nextParams.searchTerm ||
+        this.params.categoryId !== nextParams.categoryId ||
+        this.params.minPrice !== nextParams.minPrice ||
+        this.params.maxPrice !== nextParams.maxPrice ||
+        this.params.onlyAvailable !== nextParams.onlyAvailable ||
+        this.sortValue !== nextSort ||
+        this.page() !== nextPage;
+
+      this.params = nextParams;
+      this.sortValue = nextSort;
+      this.page.set(nextPage);
+
+      if (hasChanged || this.products().length === 0) {
+        this.syncingFromUrl = true;
+        this.applyFilters();
+      }
     });
   }
 
   onSearchChange(term: string) {
     this.page.set(1);
     this.searchSubject.next(term);
+  }
+
+  onFiltersChange() {
+    this.page.set(1);
+    this.applyFilters();
+  }
+
+  onSortChange(value: string) {
+    this.sortValue = value;
+    this.page.set(1);
+    this.applyFilters();
   }
 
   applyFilters() {
@@ -317,27 +348,16 @@ export class SearchComponent implements OnInit {
     }).subscribe({
       next: res => {
         const data: ProductListItem[] = res.data ?? [];
+        const sortedData = this.sortProducts(data, sortBy, sortDir);
         // If no results AND no active filter, show the full example catalogue
-        if (data.length === 0 && !this.hasActiveFilters()) {
+        if (sortedData.length === 0 && !this.hasActiveFilters()) {
           this.useExampleCatalogue();
         } else {
-          this.products.set(data);
-          this.totalCount.set(res.pagination?.totalCount ?? res.total ?? data.length);
+          this.products.set(sortedData);
+          this.totalCount.set(res.pagination?.totalCount ?? res.total ?? sortedData.length);
           this.loading.set(false);
         }
-        // Update URL
-        this.router.navigate([], {
-          relativeTo: this.route,
-          queryParams: {
-            q: this.params.searchTerm || null,
-            cat: this.params.categoryId || null,
-            min: this.params.minPrice ?? null,
-            max: this.params.maxPrice ?? null,
-            avail: this.params.onlyAvailable ? 'true' : null,
-          },
-          queryParamsHandling: 'merge',
-          replaceUrl: true,
-        });
+        this.syncUrlWithFilters();
       },
       error: () => {
         // Backend indisponible : afficher le catalogue d'exemples si pas de filtre actif
@@ -351,9 +371,7 @@ export class SearchComponent implements OnInit {
   }
 
   changeSort(event: Event) {
-    this.sortValue = (event.target as HTMLSelectElement).value;
-    this.page.set(1);
-    this.applyFilters();
+    this.onSortChange((event.target as HTMLSelectElement).value);
   }
 
   changePage(p: number) {
@@ -374,9 +392,71 @@ export class SearchComponent implements OnInit {
   }
 
   private useExampleCatalogue(): void {
-    this.products.set(EXAMPLE_CATALOGUE);
+    const [sortBy, sortDir] = this.sortValue.split('-');
+    this.products.set(this.sortProducts(EXAMPLE_CATALOGUE, sortBy, sortDir));
     this.totalCount.set(EXAMPLE_CATALOGUE.length);
     this.loading.set(false);
+  }
+
+  private sortProducts(products: ProductListItem[], sortBy?: string, sortDir?: string): ProductListItem[] {
+    const direction = sortDir === 'desc' ? -1 : 1;
+    const toTimestamp = (value: unknown): number => {
+      if (typeof value !== 'string' && typeof value !== 'number' && !(value instanceof Date)) return 0;
+      const ts = new Date(value).getTime();
+      return Number.isNaN(ts) ? 0 : ts;
+    };
+
+    return [...products].sort((a, b) => {
+      switch (sortBy) {
+        case 'price':
+          return ((a.priceTtc ?? 0) - (b.priceTtc ?? 0)) * direction;
+        case 'name':
+          return a.name.localeCompare(b.name) * direction;
+        case 'availability':
+          return (((a.stockQuantity ?? 0) - (b.stockQuantity ?? 0)) * direction);
+        case 'createdAt': {
+          const aTs = toTimestamp((a as any).createdAt);
+          const bTs = toTimestamp((b as any).createdAt);
+          return (aTs - bTs) * direction;
+        }
+        default:
+          return 0;
+      }
+    });
+  }
+
+  private syncUrlWithFilters(): void {
+    if (this.syncingFromUrl) {
+      this.syncingFromUrl = false;
+      return;
+    }
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        q: this.params.searchTerm || null,
+        cat: this.params.categoryId || null,
+        min: this.params.minPrice ?? null,
+        max: this.params.maxPrice ?? null,
+        avail: this.params.onlyAvailable ? 'true' : null,
+        sort: this.sortValue !== 'price-asc' ? this.sortValue : null,
+        page: this.page() > 1 ? this.page() : null,
+      },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
+  }
+
+  private parseNumberParam(value: unknown): number | undefined {
+    if (value == null || value === '') return undefined;
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : undefined;
+  }
+
+  private parsePositiveIntParam(value: unknown): number | undefined {
+    if (value == null || value === '') return undefined;
+    const parsed = Number.parseInt(String(value), 10);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined;
   }
 
   getGradient(index: number): string {
