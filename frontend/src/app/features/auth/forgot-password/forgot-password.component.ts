@@ -24,7 +24,7 @@ import { AuthService } from '../../../core/services/auth.service';
               <span class="text-xs font-medium text-primary tracking-widest uppercase">Systems</span>
             </div>
           </a>
-          <h1 class="text-2xl font-bold text-navy">{{ 'auth.forgot_title' | translate }}</h1>
+          <h1 class="text-2xl font-display font-semibold text-navy">{{ 'auth.forgot_title' | translate }}</h1>
           <p class="text-gray-500 mt-1">{{ 'auth.forgot_subtitle' | translate }}</p>
         </div>
         <div class="card p-8">

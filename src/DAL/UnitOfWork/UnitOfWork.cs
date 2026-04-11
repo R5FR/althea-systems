@@ -20,6 +20,7 @@ public class UnitOfWork : IUnitOfWork
     private ICategoryRepository? _categoryRepository;
     private IContactMessageRepository? _contactRepository;
     private IProductImageRepository? _productImageRepository;
+    private IChatMessageRepository? _chatMessageRepository;
 
     public UnitOfWork(AppDbContext context)
     {
@@ -34,6 +35,7 @@ public class UnitOfWork : IUnitOfWork
     public ICategoryRepository CategoryRepository => _categoryRepository ??= new CategoryRepository(_context);
     public IContactMessageRepository ContactRepository => _contactRepository ??= new ContactMessageRepository(_context);
     public IProductImageRepository ProductImageRepository => _productImageRepository ??= new ProductImageRepository(_context);
+    public IChatMessageRepository ChatMessageRepository => _chatMessageRepository ??= new ChatMessageRepository(_context);
 
     public async Task<int> SaveChangesAsync()
     {

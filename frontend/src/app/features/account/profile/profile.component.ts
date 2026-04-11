@@ -11,7 +11,7 @@ import { AuthService } from '../../../core/services/auth.service';
   imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
   template: `
     <div class="space-y-6">
-      <h1 class="text-xl font-bold text-navy">{{ 'account.profile_title' | translate }}</h1>
+      <h1 class="text-xl font-display font-semibold text-navy">{{ 'account.profile_title' | translate }}</h1>
 
       <!-- Personal info -->
       <div class="card p-6">

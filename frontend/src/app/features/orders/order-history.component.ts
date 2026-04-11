@@ -13,7 +13,7 @@ import { Order } from '../../core/models';
   template: `
     <div class="space-y-6">
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <h1 class="text-xl font-bold text-navy">{{ 'orders.title' | translate }}</h1>
+        <h1 class="text-xl font-display font-semibold text-navy">{{ 'orders.title' | translate }}</h1>
         <!-- Search -->
         <input [(ngModel)]="search" (ngModelChange)="filterOrders()"
           type="search" [placeholder]="'orders.search_placeholder' | translate" class="input-field max-w-xs text-sm" />

@@ -24,7 +24,7 @@ import { AuthService } from '../../../core/services/auth.service';
               <span class="text-xs font-medium text-primary tracking-widest uppercase">Systems</span>
             </div>
           </a>
-          <h1 class="text-2xl font-bold text-navy">{{ 'auth.reset_title' | translate }}</h1>
+          <h1 class="text-2xl font-display font-semibold text-navy">{{ 'auth.reset_title' | translate }}</h1>
         </div>
         <div class="card p-8">
           @if (done()) {

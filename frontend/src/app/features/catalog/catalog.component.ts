@@ -158,7 +158,7 @@ const PRODUCT_GRADIENTS = [
                    group-hover:text-primary transition-colors">
           {{ product.name }}
         </p>
-        <div class="mt-3 pt-3 border-t border-gray-50 flex items-end justify-between gap-2">
+        <div class="mt-3 pt-3 border-t border-gray-100 flex items-end justify-between gap-2">
           <div>
             <p class="text-primary font-bold">
               {{ product.priceTtc | number:'1.2-2' }} €
@@ -167,9 +167,8 @@ const PRODUCT_GRADIENTS = [
             <p class="text-gray-400 text-xs">{{ product.priceHt | number:'1.2-2' }} € HT</p>
           </div>
           <!-- Quick-view arrow -->
-          <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0
-                      opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0"
-            class="bg-primary/10">
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-primary/10
+                      opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0">
             <svg class="w-4 h-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
@@ -234,21 +233,32 @@ export class ProductCardComponent {
           {{ totalCount() !== 1 ? ('catalog.products_count_plural' | translate) : ('catalog.products_count_singular' | translate) }}
         </p>
         <div class="flex items-center gap-2">
-          <label class="text-xs text-gray-500 hidden sm:block">{{ 'catalog.sort_by' | translate }}</label>
-          <select [(ngModel)]="sortValue" (ngModelChange)="changeSortValue($event)"
-            class="input-field w-auto py-2 text-sm bg-white cursor-pointer">
-            <option value="createdAt-desc">{{ 'catalog.sort_newest' | translate }}</option>
-            <option value="priority-asc">{{ 'catalog.sort_default' | translate }}</option>
-            <option value="price-asc">{{ 'catalog.sort_price_asc' | translate }}</option>
-            <option value="price-desc">{{ 'catalog.sort_price_desc' | translate }}</option>
-            <option value="name-asc">{{ 'catalog.sort_name_asc' | translate }}</option>
-          </select>
-          <select [ngModel]="pageSize()" (ngModelChange)="onPageSizeChange($event)"
-            class="input-field w-auto py-2 text-sm bg-white cursor-pointer">
-            <option [ngValue]="12">12 / page</option>
-            <option [ngValue]="24">24 / page</option>
-            <option [ngValue]="48">48 / page</option>
-          </select>
+          <!-- Sort select -->
+          <div class="relative">
+            <select [(ngModel)]="sortValue" (ngModelChange)="changeSortValue($event)"
+              class="appearance-none h-9 pl-3 pr-8 rounded-lg border border-gray-200 bg-white text-sm text-gray-700 font-medium cursor-pointer transition-colors hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+              <option value="createdAt-desc">{{ 'catalog.sort_newest' | translate }}</option>
+              <option value="priority-asc">{{ 'catalog.sort_default' | translate }}</option>
+              <option value="price-asc">{{ 'catalog.sort_price_asc' | translate }}</option>
+              <option value="price-desc">{{ 'catalog.sort_price_desc' | translate }}</option>
+              <option value="name-asc">{{ 'catalog.sort_name_asc' | translate }}</option>
+            </select>
+            <svg class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </div>
+          <!-- Page size select -->
+          <div class="relative">
+            <select [ngModel]="pageSize()" (ngModelChange)="onPageSizeChange($event)"
+              class="appearance-none h-9 pl-3 pr-8 rounded-lg border border-gray-200 bg-white text-sm text-gray-700 font-medium cursor-pointer transition-colors hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+              <option [ngValue]="12">12 / page</option>
+              <option [ngValue]="24">24 / page</option>
+              <option [ngValue]="48">48 / page</option>
+            </select>
+            <svg class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </div>
         </div>
       </div>
 

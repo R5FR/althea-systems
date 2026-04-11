@@ -17,7 +17,7 @@ import { Order } from '../../core/models';
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
           </svg>
         </a>
-        <h1 class="text-xl font-bold text-navy">
+        <h1 class="text-xl font-display font-semibold text-navy">
           @if (order()) { {{ 'orders.detail_order_label' | translate }} {{ order()!.orderNumber }} }
           @else { {{ 'orders.detail_title' | translate }} }
         </h1>

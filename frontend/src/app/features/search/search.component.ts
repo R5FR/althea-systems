@@ -114,28 +114,56 @@ const PRODUCT_GRADIENTS = [
               @if (loading()) { {{ 'search.loading' | translate }} }
               @else { <span class="font-semibold">{{ totalCount() }}</span> {{ totalCount() === 1 ? ('catalog.products_count_singular' | translate) : ('catalog.products_count_plural' | translate) }} }
             </p>
-            <div class="flex items-center gap-3">
-              <select [(ngModel)]="sortValue" (ngModelChange)="onSortChange($event)" class="input-field text-sm py-2 w-auto">
-                <option value="createdAt-desc">{{ 'search.sort_newest' | translate }}</option>
-                <option value="price-asc">{{ 'search.sort_price_asc' | translate }}</option>
-                <option value="price-desc">{{ 'search.sort_price_desc' | translate }}</option>
-                <option value="name-asc">{{ 'search.sort_name_asc' | translate }}</option>
-                <option value="name-desc">{{ 'search.sort_name_desc' | translate }}</option>
-                <option value="availability-desc">{{ 'search.sort_availability' | translate }}</option>
-              </select>
-              <select [ngModel]="pageSize()" (ngModelChange)="onPageSizeChange($event)" class="input-field text-sm py-2 w-auto">
-                <option [ngValue]="12">12 / page</option>
-                <option [ngValue]="24">24 / page</option>
-                <option [ngValue]="48">48 / page</option>
-              </select>
-              <!-- View toggle -->
-              <div class="flex border border-gray-200 rounded-lg overflow-hidden">
-                <button (click)="viewMode.set('grid')" [class.bg-primary]="viewMode()==='grid'" [class.text-white]="viewMode()==='grid'"
-                  class="px-3 py-2 transition-colors hover:bg-gray-100">
+            <div class="flex items-center gap-2">
+              <!-- Sort select -->
+              <div class="relative">
+                <select [(ngModel)]="sortValue" (ngModelChange)="onSortChange($event)"
+                  class="appearance-none h-9 pl-3 pr-8 rounded-lg border border-gray-200 bg-white text-sm text-gray-700 font-medium cursor-pointer transition-colors hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                  <option value="createdAt-desc">{{ 'search.sort_newest' | translate }}</option>
+                  <option value="price-asc">{{ 'search.sort_price_asc' | translate }}</option>
+                  <option value="price-desc">{{ 'search.sort_price_desc' | translate }}</option>
+                  <option value="name-asc">{{ 'search.sort_name_asc' | translate }}</option>
+                  <option value="name-desc">{{ 'search.sort_name_desc' | translate }}</option>
+                  <option value="availability-desc">{{ 'search.sort_availability' | translate }}</option>
+                </select>
+                <svg class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </div>
+              <!-- Page size select -->
+              <div class="relative">
+                <select [ngModel]="pageSize()" (ngModelChange)="onPageSizeChange($event)"
+                  class="appearance-none h-9 pl-3 pr-8 rounded-lg border border-gray-200 bg-white text-sm text-gray-700 font-medium cursor-pointer transition-colors hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                  <option [ngValue]="12">12 / page</option>
+                  <option [ngValue]="24">24 / page</option>
+                  <option [ngValue]="48">48 / page</option>
+                </select>
+                <svg class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </div>
+              <!-- Separator -->
+              <div class="w-px h-5 bg-gray-200 hidden sm:block"></div>
+              <!-- View toggle — segmented control -->
+              <div class="flex h-9 items-center bg-gray-100 rounded-lg p-0.5">
+                <button (click)="viewMode.set('grid')"
+                  [attr.aria-pressed]="viewMode()==='grid'"
+                  [attr.aria-label]="'search.view_grid' | translate"
+                  class="w-8 h-8 rounded-md flex items-center justify-center transition-all duration-150"
+                  [class.bg-white]="viewMode()==='grid'"
+                  [class.shadow-sm]="viewMode()==='grid'"
+                  [class.text-primary]="viewMode()==='grid'"
+                  [class.text-gray-400]="viewMode()!=='grid'">
                   <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
                 </button>
-                <button (click)="viewMode.set('list')" [class.bg-primary]="viewMode()==='list'" [class.text-white]="viewMode()==='list'"
-                  class="px-3 py-2 transition-colors hover:bg-gray-100">
+                <button (click)="viewMode.set('list')"
+                  [attr.aria-pressed]="viewMode()==='list'"
+                  [attr.aria-label]="'search.view_list' | translate"
+                  class="w-8 h-8 rounded-md flex items-center justify-center transition-all duration-150"
+                  [class.bg-white]="viewMode()==='list'"
+                  [class.shadow-sm]="viewMode()==='list'"
+                  [class.text-primary]="viewMode()==='list'"
+                  [class.text-gray-400]="viewMode()!=='list'">
                   <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"/></svg>
                 </button>
               </div>
@@ -193,7 +221,7 @@ const PRODUCT_GRADIENTS = [
                     </div>
                     <div class="p-4 flex-1 flex flex-col">
                       <p class="font-semibold text-gray-900 text-sm leading-snug line-clamp-2 mb-auto group-hover:text-primary transition-colors">{{ p.name }}</p>
-                      <div class="mt-3 pt-3 border-t border-gray-50">
+                      <div class="mt-3 pt-3 border-t border-gray-100">
                         <p class="text-primary font-bold">{{ p.priceTtc | number:'1.2-2' }} € <span class="text-xs font-normal text-gray-400">{{ 'product.price_ttc' | translate }}</span></p>
                         <p class="text-gray-400 text-xs">{{ p.priceHt | number:'1.2-2' }} € {{ 'product.price_ht' | translate }}</p>
                       </div>

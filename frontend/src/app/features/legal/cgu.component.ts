@@ -9,12 +9,12 @@ import { TranslatePipe } from '@ngx-translate/core';
   template: `
     <div class="page-container py-12">
       <div class="max-w-3xl mx-auto prose prose-gray">
-        <h1 class="text-3xl font-bold text-navy mb-8">{{ 'legal.cgu_title' | translate }}</h1>
+        <h1 class="text-3xl font-display font-semibold text-navy mb-8">{{ 'legal.cgu_title' | translate }}</h1>
         <p class="text-sm text-gray-400 mb-8">{{ 'legal.cgu_updated' | translate }}</p>
 
         @for (section of sections; track section.title) {
           <div class="mb-8">
-            <h2 class="text-xl font-bold text-navy mb-3">{{ section.title | translate }}</h2>
+            <h2 class="text-xl font-semibold text-navy mb-3">{{ section.title | translate }}</h2>
             <div class="text-gray-600 space-y-2 text-sm leading-relaxed">
               @for (p of section.paragraphs; track p) {
                 <p>{{ p | translate }}</p>

@@ -18,6 +18,7 @@ public class AppDbContext : DbContext
     public DbSet<Invoice> Invoices { get; set; }
     public DbSet<ProductImage> ProductImages { get; set; }
     public DbSet<ContactMessage> ContactMessages { get; set; }
+    public DbSet<ChatMessage> ChatMessages { get; set; }
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -40,5 +41,6 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new InvoiceConfiguration());
         modelBuilder.ApplyConfiguration(new ProductImageConfiguration());
         modelBuilder.ApplyConfiguration(new ContactMessageConfiguration());
+        modelBuilder.ApplyConfiguration(new ChatMessageConfiguration());
     }
 }

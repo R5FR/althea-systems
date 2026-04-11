@@ -18,7 +18,7 @@ const HERO_GRADIENTS = [
 const DEFAULT_SLIDES = [
   { id: '1', title: 'Matériel médical\nde haute précision', subtitle: 'Équipements certifiés CE pour cabinets, cliniques et hôpitaux. Livraison EU sous 48h.', imageUrl: '', linkUrl: '/recherche', displayOrder: 0, isActive: true },
   { id: '2', title: 'Technologie au service\nde la santé', subtitle: 'Plus de 2 400 références disponibles, sélectionnées par nos ingénieurs biomédicaux.', imageUrl: '', linkUrl: '/recherche', displayOrder: 1, isActive: true },
-  { id: '3', title: 'Support technique\ndédié 5j/7', subtitle: "Installation, maintenance et SAV assurés par notre équipe d'experts certifiés.", imageUrl: '', linkUrl: '/contact', displayOrder: 2, isActive: true },
+  { id: '3', title: 'Support technique\ndédié 5j/7', subtitle: "Installation, maintenance et SAV assurés par notre équipe d'experts certifiés.", imageUrl: '', linkUrl: '/recherche', displayOrder: 2, isActive: true },
 ];
 
 
@@ -93,10 +93,9 @@ const DEFAULT_SLIDES = [
               role="tab"
               [attr.aria-selected]="currentSlide() === i"
               [attr.aria-label]="'Diapositive ' + (i + 1)"
-              class="transition-all duration-300 rounded-full"
+              class="h-2 transition-all duration-300 rounded-full"
               [class.w-6]="currentSlide() === i"
               [class.w-2]="currentSlide() !== i"
-              class="h-2"
               [class.bg-primary]="currentSlide() === i"
               [class.bg-white/35]="currentSlide() !== i">
             </button>

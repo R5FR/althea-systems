@@ -10,6 +10,7 @@ public interface IUnitOfWork : IAsyncDisposable
     ICategoryRepository CategoryRepository { get; }
     IContactMessageRepository ContactRepository { get; }
     IProductImageRepository ProductImageRepository { get; }
+    IChatMessageRepository ChatMessageRepository { get; }
 
     Task<int> SaveChangesAsync();
     Task BeginTransactionAsync();

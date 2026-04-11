@@ -46,6 +46,12 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IContactService, ContactService>();
+builder.Services.AddHttpClient<Application.Interfaces.IChatbotClient, Web.Services.OllamaChatbotClient>(client =>
+{
+    var baseUrl = builder.Configuration["Chatbot:BaseUrl"] ?? "http://ollama:11434";
+    client.BaseAddress = new Uri(baseUrl);
+    client.Timeout = TimeSpan.FromSeconds(120);
+});
 builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
 builder.Services.AddScoped<Project.Domain.Services.IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<Application.Interfaces.IBlobStorageService, Web.Services.BlobStorageService>();
@@ -144,6 +150,21 @@ using (var scope = app.Services.CreateScope())
         IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
                        WHERE TABLE_NAME = 'Users' AND COLUMN_NAME = 'StripeCustomerId')
             ALTER TABLE Users ADD StripeCustomerId NVARCHAR(255) NULL;
+    ");
+    // Create ChatMessages table if not exists
+    db.Database.ExecuteSqlRaw(@"
+        IF NOT EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'ChatMessages')
+        BEGIN
+            CREATE TABLE ChatMessages (
+                Id UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+                UserId UNIQUEIDENTIFIER NOT NULL,
+                Role NVARCHAR(20) NOT NULL,
+                Content NVARCHAR(MAX) NOT NULL,
+                CreatedAt DATETIME2 NOT NULL DEFAULT GETUTCDATE(),
+                CONSTRAINT FK_ChatMessages_Users FOREIGN KEY (UserId) REFERENCES Users(Id) ON DELETE CASCADE
+            );
+            CREATE INDEX IX_ChatMessages_UserId_CreatedAt ON ChatMessages(UserId, CreatedAt);
+        END
     ");
 }
 

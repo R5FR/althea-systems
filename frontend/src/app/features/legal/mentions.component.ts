@@ -9,11 +9,11 @@ import { TranslatePipe } from '@ngx-translate/core';
   template: `
     <div class="page-container py-12">
       <div class="max-w-3xl mx-auto">
-        <h1 class="text-3xl font-bold text-navy mb-8">{{ 'legal.mentions_title' | translate }}</h1>
+        <h1 class="text-3xl font-display font-semibold text-navy mb-8">{{ 'legal.mentions_title' | translate }}</h1>
 
         @for (section of sections; track section.title) {
           <div class="mb-8">
-            <h2 class="text-xl font-bold text-navy mb-3">{{ section.title | translate }}</h2>
+            <h2 class="text-xl font-semibold text-navy mb-3">{{ section.title | translate }}</h2>
             <div class="text-gray-600 text-sm leading-relaxed space-y-1">
               @for (line of section.lines; track line) {
                 @if (line === '') { <br /> }

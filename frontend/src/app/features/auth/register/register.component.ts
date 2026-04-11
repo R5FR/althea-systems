@@ -31,7 +31,7 @@ const passwordStrengthValidator = (ctrl: AbstractControl) => {
               <span class="text-xs font-medium text-primary tracking-widest uppercase">Systems</span>
             </div>
           </a>
-          <h1 class="text-2xl font-bold text-navy">{{ 'auth.register_title' | translate }}</h1>
+          <h1 class="text-2xl font-display font-semibold text-navy">{{ 'auth.register_title' | translate }}</h1>
           <p class="text-gray-500 mt-1">{{ 'auth.register_subtitle' | translate }}</p>
         </div>
 

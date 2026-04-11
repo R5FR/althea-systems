@@ -19,7 +19,7 @@ type Step = 'address' | 'payment' | 'confirm';
   imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink, TranslatePipe],
   template: `
     <div class="page-container py-8 max-w-5xl mx-auto">
-      <h1 class="text-2xl font-bold text-navy mb-8">{{ 'checkout.title' | translate }}</h1>
+      <h1 class="text-2xl font-display font-semibold text-navy mb-8">{{ 'checkout.title' | translate }}</h1>
 
       <!-- Step indicator -->
       <div class="flex items-center mb-10">
@@ -53,7 +53,7 @@ type Step = 'address' | 'payment' | 'confirm';
 
           <!-- ── Step 1: Address ──────────────────────────────── -->
           <div [hidden]="currentStep() !== 'address'" class="card p-6">
-            <h2 class="font-bold text-navy text-lg mb-5">{{ 'checkout.address_title' | translate }}</h2>
+            <h2 class="font-semibold text-navy text-lg mb-5">{{ 'checkout.address_title' | translate }}</h2>
 
             <!-- Saved addresses -->
             @if (savedAddresses().length > 0) {
@@ -143,7 +143,7 @@ type Step = 'address' | 'payment' | 'confirm';
           <!-- ── Step 2: Payment ──────────────────────────────── -->
           <!-- [hidden] (not @if) so #stripeCard stays in DOM when moving to confirm step -->
           <div [hidden]="currentStep() !== 'payment'" class="card p-6">
-            <h2 class="font-bold text-navy text-lg mb-5">{{ 'checkout.payment_title' | translate }}</h2>
+            <h2 class="font-semibold text-navy text-lg mb-5">{{ 'checkout.payment_title' | translate }}</h2>
 
             <!-- Saved cards -->
             @if (savedCards().length > 0) {
@@ -212,7 +212,7 @@ type Step = 'address' | 'payment' | 'confirm';
 
           <!-- ── Step 3: Confirmation ─────────────────────────── -->
           <div [hidden]="currentStep() !== 'confirm'" class="card p-6">
-            <h2 class="font-bold text-navy text-lg mb-5">{{ 'checkout.confirm_title' | translate }}</h2>
+            <h2 class="font-semibold text-navy text-lg mb-5">{{ 'checkout.confirm_title' | translate }}</h2>
 
               <!-- Recap address -->
               <div class="mb-5">
@@ -288,7 +288,7 @@ type Step = 'address' | 'payment' | 'confirm';
         <!-- Right: Order summary -->
         <div class="lg:col-span-1">
           <div class="card p-5 sticky top-24">
-            <h2 class="font-bold text-navy mb-4">{{ 'checkout.order_summary' | translate }}</h2>
+            <h2 class="font-semibold text-navy mb-4">{{ 'checkout.order_summary' | translate }}</h2>
             <div class="space-y-2 text-sm text-gray-600 mb-4">
               @for (item of cart()?.items ?? []; track item.id) {
                 <div class="flex justify-between">

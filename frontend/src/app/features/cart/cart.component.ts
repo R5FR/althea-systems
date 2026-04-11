@@ -12,7 +12,7 @@ import { Cart } from '../../core/models';
   imports: [CommonModule, RouterLink, TranslatePipe],
   template: `
     <div class="page-container py-8 max-w-4xl mx-auto">
-      <h1 class="text-2xl font-bold text-navy mb-6 flex items-center gap-3">
+      <h1 class="text-2xl font-display font-semibold text-navy mb-6 flex items-center gap-3">
         <svg class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
         </svg>
@@ -107,7 +107,7 @@ import { Cart } from '../../core/models';
           <!-- Order summary -->
           <div class="lg:col-span-1">
             <div class="card p-5 sticky top-24">
-              <h2 class="font-bold text-navy text-lg mb-4">{{ 'cart.summary' | translate }}</h2>
+              <h2 class="font-semibold text-navy text-lg mb-4">{{ 'cart.summary' | translate }}</h2>
               <div class="space-y-2 text-sm">
                 <div class="flex justify-between text-gray-600">
                   <span>{{ 'cart.total_ht' | translate }}</span>
