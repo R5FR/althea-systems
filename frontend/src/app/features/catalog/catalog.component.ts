@@ -1,10 +1,12 @@
-import { Component, OnInit, signal, computed, inject, Input } from '@angular/core';
+import { Component, OnInit, OnChanges, OnDestroy, signal, computed, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 import { ProductService } from '../../core/services/product.service';
 import { CategoryService } from '../../core/services/category.service';
+import { TranslationApiService } from '../../core/services/translation-api.service';
 import { Category, ProductListItem } from '../../core/models';
 
 // ── Example products per category slug (fallback when API returns no data) ─
@@ -156,7 +158,7 @@ const PRODUCT_GRADIENTS = [
       <div class="p-4 flex-1 flex flex-col">
         <p class="font-semibold text-gray-900 text-sm leading-snug mb-auto line-clamp-2
                    group-hover:text-primary transition-colors">
-          {{ product.name }}
+          {{ translatedName() }}
         </p>
         <div class="mt-3 pt-3 border-t border-gray-100 flex items-end justify-between gap-2">
           <div>
@@ -178,9 +180,31 @@ const PRODUCT_GRADIENTS = [
     </a>
   `,
 })
-export class ProductCardComponent {
+export class ProductCardComponent implements OnInit, OnChanges, OnDestroy {
+  private translateService = inject(TranslateService);
+  private translationApi   = inject(TranslationApiService);
+  private langSub?: Subscription;
+
   @Input({ required: true }) product!: ProductListItem;
   @Input() index: number = 0;
+
+  translatedName = signal('');
+
+  ngOnInit() {
+    this.updateTranslation();
+    this.langSub = this.translateService.onLangChange.subscribe(() => this.updateTranslation());
+  }
+
+  ngOnChanges() { this.updateTranslation(); }
+
+  ngOnDestroy() { this.langSub?.unsubscribe(); }
+
+  private async updateTranslation() {
+    const lang = this.translateService.currentLang || 'fr';
+    if (lang === 'fr') { this.translatedName.set(this.product.name); return; }
+    const t = await this.translationApi.translate(this.product.name, 'fr', lang);
+    this.translatedName.set(t);
+  }
 
   get gradient(): string {
     return PRODUCT_GRADIENTS[this.index % PRODUCT_GRADIENTS.length];

@@ -3,6 +3,8 @@
 !.gitignore
 !frontend/
 !frontend/**
+!docs/
+!docs/**
 
 # Ignorer les artefacts de build dans frontend
 frontend/node_modules/

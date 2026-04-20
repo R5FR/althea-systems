@@ -1,11 +1,12 @@
-import { Component, OnInit, signal, inject, computed } from '@angular/core';
+import { Component, OnInit, effect, signal, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { ProductService } from '../../core/services/product.service';
 import { CategoryService } from '../../core/services/category.service';
+import { TranslationApiService } from '../../core/services/translation-api.service';
 import { Category, ProductListItem, ProductSearchParams } from '../../core/models';
 
 // ── Catalogue d'exemples (toutes catégories) ─────────────────────────────
@@ -118,7 +119,7 @@ const PRODUCT_GRADIENTS = [
               <!-- Sort select -->
               <div class="relative">
                 <select [(ngModel)]="sortValue" (ngModelChange)="onSortChange($event)"
-                  class="appearance-none h-9 pl-3 pr-8 rounded-lg border border-gray-200 bg-white text-sm text-gray-700 font-medium cursor-pointer transition-colors hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                  class="bg-none h-9 pl-3 pr-8 rounded-lg border border-gray-200 bg-white text-sm text-gray-700 font-medium cursor-pointer transition-colors hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
                   <option value="createdAt-desc">{{ 'search.sort_newest' | translate }}</option>
                   <option value="price-asc">{{ 'search.sort_price_asc' | translate }}</option>
                   <option value="price-desc">{{ 'search.sort_price_desc' | translate }}</option>
@@ -133,7 +134,7 @@ const PRODUCT_GRADIENTS = [
               <!-- Page size select -->
               <div class="relative">
                 <select [ngModel]="pageSize()" (ngModelChange)="onPageSizeChange($event)"
-                  class="appearance-none h-9 pl-3 pr-8 rounded-lg border border-gray-200 bg-white text-sm text-gray-700 font-medium cursor-pointer transition-colors hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                  class="bg-none h-9 pl-3 pr-8 rounded-lg border border-gray-200 bg-white text-sm text-gray-700 font-medium cursor-pointer transition-colors hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
                   <option [ngValue]="12">12 / page</option>
                   <option [ngValue]="24">24 / page</option>
                   <option [ngValue]="48">48 / page</option>
@@ -194,7 +195,7 @@ const PRODUCT_GRADIENTS = [
                   <a [routerLink]="['/produits', p.slug]" class="card-hover group flex flex-col">
                     <div class="relative overflow-hidden rounded-t-xl" style="aspect-ratio:1;">
                       @if (p.imageUrl) {
-                        <img [src]="p.imageUrl" [alt]="p.name"
+                        <img [src]="p.imageUrl" [alt]="tName(p)"
                           class="w-full h-full object-contain p-4 transition-transform duration-300 group-hover:scale-105" />
                       } @else {
                         <div class="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:scale-105"
@@ -220,7 +221,7 @@ const PRODUCT_GRADIENTS = [
                       }
                     </div>
                     <div class="p-4 flex-1 flex flex-col">
-                      <p class="font-semibold text-gray-900 text-sm leading-snug line-clamp-2 mb-auto group-hover:text-primary transition-colors">{{ p.name }}</p>
+                      <p class="font-semibold text-gray-900 text-sm leading-snug line-clamp-2 mb-auto group-hover:text-primary transition-colors">{{ tName(p) }}</p>
                       <div class="mt-3 pt-3 border-t border-gray-100">
                         <p class="text-primary font-bold">{{ p.priceTtc | number:'1.2-2' }} € <span class="text-xs font-normal text-gray-400">{{ 'product.price_ttc' | translate }}</span></p>
                         <p class="text-gray-400 text-xs">{{ p.priceHt | number:'1.2-2' }} € {{ 'product.price_ht' | translate }}</p>
@@ -238,7 +239,7 @@ const PRODUCT_GRADIENTS = [
                     <div class="w-24 h-24 rounded-xl flex-shrink-0 overflow-hidden flex items-center justify-center"
                       [style.background]="p.imageUrl ? 'transparent' : getGradient(i)">
                       @if (p.imageUrl) {
-                        <img [src]="p.imageUrl" [alt]="p.name" class="w-full h-full object-contain p-2" />
+                        <img [src]="p.imageUrl" [alt]="tName(p)" class="w-full h-full object-contain p-2" />
                       } @else {
                         <svg class="w-8 h-8 text-white opacity-25" viewBox="0 0 24 24" fill="currentColor">
                           <path d="M19 3H14V0H10V3H5C3.9 3 3 3.9 3 5V10H0V14H3V19C3 20.1 3.9 21 5 21H10V24H14V21H19C20.1 21 21 20.1 21 19V14H24V10H21V5C21 3.9 20.1 3 19 3ZM19 19H5V5H19V19Z"/>
@@ -246,7 +247,7 @@ const PRODUCT_GRADIENTS = [
                       }
                     </div>
                     <div class="flex-1 min-w-0">
-                      <h3 class="font-semibold text-gray-900 mb-1 line-clamp-1">{{ p.name }}</h3>
+                      <h3 class="font-semibold text-gray-900 mb-1 line-clamp-1">{{ tName(p) }}</h3>
                       <div class="flex items-center gap-4">
                         <div>
                           <span class="text-primary font-bold">{{ p.priceTtc | number:'1.2-2' }} € {{ 'product.price_ttc' | translate }}</span>
@@ -291,12 +292,38 @@ const PRODUCT_GRADIENTS = [
   `,
 })
 export class SearchComponent implements OnInit {
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-  private productSvc = inject(ProductService);
-  private categorySvc = inject(CategoryService);
+  private route          = inject(ActivatedRoute);
+  private router         = inject(Router);
+  private productSvc     = inject(ProductService);
+  private categorySvc    = inject(CategoryService);
+  private translateService = inject(TranslateService);
+  private translationApi   = inject(TranslationApiService);
 
   products = signal<ProductListItem[]>([]);
+  /** id → translated name (only populated when lang != 'fr') */
+  translatedNames = signal<Record<string, string>>({});
+
+  constructor() {
+    // Re-translate whenever the product list changes
+    effect(() => {
+      const prods = this.products();
+      void this.translateProductNames(prods);
+    });
+  }
+
+  private async translateProductNames(prods: ProductListItem[]) {
+    const lang = this.translateService.currentLang || 'fr';
+    if (lang === 'fr' || prods.length === 0) { this.translatedNames.set({}); return; }
+    const translated = await this.translationApi.translateBatch(prods.map(p => p.name), 'fr', lang);
+    const map: Record<string, string> = {};
+    prods.forEach((p, i) => { map[p.id] = translated[i]; });
+    this.translatedNames.set(map);
+  }
+
+  /** Convenience used in template */
+  tName(p: ProductListItem): string {
+    return this.translatedNames()[p.id] ?? p.name;
+  }
   categories = signal<Category[]>([]);
   loading = signal(false);
   viewMode = signal<'grid' | 'list'>('grid');
@@ -322,6 +349,7 @@ export class SearchComponent implements OnInit {
 
   ngOnInit() {
     this.categorySvc.getAll().subscribe({ next: c => this.categories.set(c), error: () => {} });
+    this.translateService.onLangChange.subscribe(() => void this.translateProductNames(this.products()));
 
     // Fuzzy search with debounce
     this.searchSubject.pipe(

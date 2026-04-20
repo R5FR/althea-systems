@@ -116,7 +116,7 @@ import { CartService } from '../../../core/services/cart.service';
               <input
                 [(ngModel)]="searchTerm" name="q"
                 type="search"
-                placeholder="Rechercher un équipement médical…"
+                [placeholder]="searchPlaceholder()"
                 class="w-full input-field pl-10 pr-4 h-10 text-sm bg-gray-50 border-gray-200"
               />
               <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -208,7 +208,7 @@ import { CartService } from '../../../core/services/cart.service';
         <div class="pb-3 md:hidden">
           <form (ngSubmit)="search()" class="relative">
             <input [(ngModel)]="searchTerm" name="q" type="search"
-              placeholder="Rechercher un équipement…"
+              [placeholder]="searchPlaceholder()"
               class="w-full input-field pl-10 pr-4 py-2 text-sm bg-gray-50" />
             <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
@@ -360,11 +360,12 @@ export class HeaderComponent implements OnInit {
   private translate = inject(TranslateService);
   private elRef     = inject(ElementRef);
 
-  menuOpen    = signal(false);
-  langOpen    = signal(false);
-  accountOpen = signal(false);
-  searchTerm  = '';
-  currentLang = 'fr';
+  menuOpen          = signal(false);
+  langOpen          = signal(false);
+  accountOpen       = signal(false);
+  searchTerm        = '';
+  currentLang       = 'fr';
+  searchPlaceholder = signal('');
   langs = [
     { code: 'fr', label: 'Français', flag: '🇫🇷' },
     { code: 'en', label: 'English',  flag: '🇬🇧' },
@@ -382,6 +383,10 @@ export class HeaderComponent implements OnInit {
   ngOnInit() {
     this.cart.load().subscribe({ error: () => {} });
     this.currentLang = this.translate.currentLang || 'fr';
+    const updatePlaceholder = () =>
+      this.translate.get('nav.search_placeholder').subscribe(t => this.searchPlaceholder.set(t));
+    updatePlaceholder();
+    this.translate.onLangChange.subscribe(() => updatePlaceholder());
   }
 
   search() {

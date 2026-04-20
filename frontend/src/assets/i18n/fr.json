@@ -13,7 +13,8 @@
     "profile": "Profil",
     "addresses": "Adresses",
     "payments": "Paiements",
-    "contact": "Contact"
+    "contact": "Contact",
+    "search_placeholder": "Rechercher un équipement médical…"
   },
   "home": {
     "hero_cta": "Explorer le catalogue",
