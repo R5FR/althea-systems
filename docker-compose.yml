@@ -1,0 +1,93 @@
+services:
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "Althea@Strong1"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
+    ports:
+      - "1930:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+      - ./seed.sql:/seed.sql
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "Althea@Strong1", "-Q", "SELECT 1", "-No"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "2500:5000"
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=b3;User Id=sa;Password=Althea@Strong1;TrustServerCertificate=true;"
+      Cloudinary__CloudName: "${CLOUDINARY_CLOUD_NAME}"
+      Cloudinary__ApiKey: "${CLOUDINARY_API_KEY}"
+      Cloudinary__ApiSecret: "${CLOUDINARY_API_SECRET}"
+      Cloudinary__Folder: "product-images"
+      Jwt__Issuer: "https://b3.local"
+      Jwt__Audience: "b3-api"
+      Jwt__Key: "${JWT_KEY}"
+      Jwt__AccessTokenExpiry: "3600"
+      Jwt__RefreshTokenExpiry: "604800"
+      ASPNETCORE_ENVIRONMENT: "Production"
+      Chatbot__BaseUrl: "http://ollama:11434"
+      Chatbot__Model: "mistral"
+      LibreTranslate__BaseUrl: "http://libretranslate:5000"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+  libretranslate:
+    image: libretranslate/libretranslate:latest
+    ports:
+      - "5100:5000"
+    environment:
+      LT_LOAD_ONLY: "fr,en,ar"
+      LT_UPDATE_MODELS: "false"
+    volumes:
+      - libretranslate_models:/home/libretranslate/.local
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+
+  ollama-init:
+    image: curlimages/curl:8.9.1
+    depends_on:
+      - ollama
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        for i in $(seq 1 40); do
+          if curl -s http://ollama:11434/api/tags >/dev/null; then break; fi;
+          sleep 2;
+        done;
+        curl -s -X POST http://ollama:11434/api/pull -d '{"name":"mistral"}' >/dev/null || true
+    restart: "no"
+
+volumes:
+  sqlserver_data:
+  libretranslate_models:
+  ollama_data:

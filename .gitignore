@@ -1,21 +1,20 @@
-# Tout ignorer sauf le dossier frontend
-*
-!.gitignore
-!frontend/
-!frontend/**
-!docs/
-!docs/**
+# ── Secrets / credentials ────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+CREDENTIALS.md
 
-# Ignorer les artefacts de build dans frontend
+# ── Frontend build artifacts ──────────────────────────────────────────────────
 frontend/node_modules/
 frontend/dist/
 frontend/.angular/
 frontend/.cache/
-frontend/.env
-frontend/.env.*
-frontend/.env.local
 
-# OS & editors
+# ── Backend build artifacts ───────────────────────────────────────────────────
+src/*/bin/
+src/*/obj/
+
+# ── OS & editors ──────────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
 desktop.ini
