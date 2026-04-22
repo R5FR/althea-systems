@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "admin")]
+[Authorize(Roles = "Admin")]
 public class AdminController : ControllerBase
 {
     private readonly IAdminService _adminService;
@@ -485,6 +485,34 @@ public class AdminController : ControllerBase
     {
         var images = await _unitOfWork.ProductImageRepository.GetByProductIdAsync(productId);
         return Ok(images.Select(i => new { i.Id, i.ImageUrl, i.IsMain, i.DisplayOrder }));
+    }
+
+    /// <summary>
+    /// Upload une image sans productId (pour les nouveaux produits) → retourne l'URL Cloudinary.
+    /// </summary>
+    [HttpPost("upload-image")]
+    [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UploadImage(IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+            return BadRequest(new { error = "No file provided" });
+
+        var allowed = new[] { "image/jpeg", "image/png", "image/webp", "image/gif" };
+        if (!allowed.Contains(file.ContentType))
+            return BadRequest(new { error = "Only JPEG, PNG, WEBP or GIF allowed" });
+
+        try
+        {
+            await using var stream = file.OpenReadStream();
+            var url = await _blobStorage.UploadAsync(stream, file.FileName, file.ContentType);
+            return Ok(new { url });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error uploading image");
+            return StatusCode(500, new { error = "Upload failed" });
+        }
     }
 
     // ─── Homepage configuration ──────────────────────────────────────────────────

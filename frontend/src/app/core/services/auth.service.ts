@@ -71,6 +71,7 @@ export class AuthService {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('user');
+    localStorage.removeItem('cart_id');
     this._token.set(null);
     this._user.set(null);
   }

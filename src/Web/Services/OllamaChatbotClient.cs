@@ -38,8 +38,9 @@ public class OllamaChatbotClient : IChatbotClient
         {
             model = _model,
             stream = false,
+            keep_alive = "30m",
             messages = messages.ToArray(),
-            options = new { temperature = 0.2, top_p = 0.9 }
+            options = new { temperature = 0.2, top_p = 0.9, num_predict = 250, num_ctx = 2560 }
         };
 
         var request = new HttpRequestMessage(HttpMethod.Post, "/api/chat")

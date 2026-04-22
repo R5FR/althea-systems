@@ -2,13 +2,14 @@ import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslateDynamicPipe } from '../../shared/pipes/translate-dynamic.pipe';
 import { OrderService } from '../../core/services/order.service';
 import { Order } from '../../core/models';
 
 @Component({
   selector: 'app-order-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, TranslatePipe],
+  imports: [CommonModule, RouterLink, TranslatePipe, TranslateDynamicPipe],
   template: `
     <div class="space-y-6">
       <div class="flex items-center gap-3">
@@ -59,7 +60,7 @@ import { Order } from '../../core/models';
                       }
                     </div>
                     <div class="flex-1 min-w-0">
-                      <p class="font-medium text-gray-900 truncate">{{ item.productNameSnapshot }}</p>
+                      <p class="font-medium text-gray-900 truncate">{{ item.productNameSnapshot | translateDynamic }}</p>
                       @if (item.productReferenceSnapshot) {
                         <p class="text-sm text-gray-500 mt-0.5">{{ 'orders.reference_label' | translate }} {{ item.productReferenceSnapshot }}</p>
                       }

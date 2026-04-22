@@ -59,5 +59,29 @@ namespace Project.Domain.Entities
             StockQuantity += qty;
             UpdatedAt = DateTime.UtcNow;
         }
+
+        public void Update(string name, string? description, decimal priceHt, decimal vatRate, bool isActive, int stock, string? slug = null)
+        {
+            if (string.IsNullOrWhiteSpace(name)) throw new ValidationException("Name is required");
+            if (priceHt < 0) throw new ValidationException("PriceHt cannot be negative");
+            if (vatRate < 0) throw new ValidationException("VatRate cannot be negative");
+            if (stock < 0) throw new ValidationException("Stock cannot be negative");
+
+            Name = name.Trim();
+            Description = description?.Trim() ?? string.Empty;
+            PriceHt = priceHt;
+            TvaRate = vatRate;
+            PriceTtc = Math.Round(priceHt * (1 + vatRate / 100m), 2);
+            StockQuantity = stock;
+            Status = isActive ? Enums.ProductStatus.Published : Enums.ProductStatus.Draft;
+            if (!string.IsNullOrWhiteSpace(slug)) Slug = slug.Trim();
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void UpdateCategory(Category category)
+        {
+            Category = category ?? throw new ValidationException("Category is required");
+            UpdatedAt = DateTime.UtcNow;
+        }
     }
 }

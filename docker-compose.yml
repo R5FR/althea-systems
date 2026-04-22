@@ -37,7 +37,7 @@ services:
       Jwt__RefreshTokenExpiry: "604800"
       ASPNETCORE_ENVIRONMENT: "Production"
       Chatbot__BaseUrl: "http://ollama:11434"
-      Chatbot__Model: "mistral"
+      Chatbot__Model: "qwen2.5:3b"
       LibreTranslate__BaseUrl: "http://libretranslate:5000"
     depends_on:
       sqlserver:
@@ -84,7 +84,7 @@ services:
           if curl -s http://ollama:11434/api/tags >/dev/null; then break; fi;
           sleep 2;
         done;
-        curl -s -X POST http://ollama:11434/api/pull -d '{"name":"mistral"}' >/dev/null || true
+        curl -s -X POST http://ollama:11434/api/pull -d '{"name":"qwen2.5:3b"}' >/dev/null || true
     restart: "no"
 
 volumes:

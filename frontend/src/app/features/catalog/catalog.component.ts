@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs';
 import { ProductService } from '../../core/services/product.service';
 import { CategoryService } from '../../core/services/category.service';
 import { TranslationApiService } from '../../core/services/translation-api.service';
+import { TranslateDynamicPipe } from '../../shared/pipes/translate-dynamic.pipe';
 import { Category, ProductListItem } from '../../core/models';
 
 // ── Example products per category slug (fallback when API returns no data) ─
@@ -215,7 +216,7 @@ export class ProductCardComponent implements OnInit, OnChanges, OnDestroy {
 @Component({
   selector: 'app-catalog',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, ProductCardComponent, TranslatePipe],
+  imports: [CommonModule, RouterLink, FormsModule, ProductCardComponent, TranslatePipe, TranslateDynamicPipe],
   template: `
     <div class="page-container py-8 md:py-12">
 
@@ -238,13 +239,13 @@ export class ProductCardComponent implements OnInit, OnChanges, OnDestroy {
             <nav class="flex items-center gap-1.5 text-xs text-white/50 mb-3" [attr.aria-label]="'catalog.breadcrumb_home' | translate">
               <a routerLink="/" class="hover:text-white/80 transition-colors">{{ 'catalog.breadcrumb_home' | translate }}</a>
               <span aria-hidden="true">/</span>
-              <span class="text-white/80" aria-current="page">{{ category()!.name }}</span>
+              <span class="text-white/80" aria-current="page">{{ category()!.name | translateDynamic }}</span>
             </nav>
             <h1 class="font-display font-semibold text-3xl md:text-4xl text-white mb-2">
-              {{ category()!.name }}
+              {{ category()!.name | translateDynamic }}
             </h1>
             @if (category()!.description) {
-              <p class="text-white/60 text-sm max-w-lg">{{ category()!.description }}</p>
+              <p class="text-white/60 text-sm max-w-lg">{{ category()!.description | translateDynamic }}</p>
             }
           </div>
         </div>
@@ -338,7 +339,7 @@ export class ProductCardComponent implements OnInit, OnChanges, OnDestroy {
                 }
               </div>
               <div class="flex-1 min-w-0">
-                <h3 class="font-semibold text-sm text-gray-900 line-clamp-2 mb-1.5">{{ product.name }}</h3>
+                <h3 class="font-semibold text-sm text-gray-900 line-clamp-2 mb-1.5">{{ product.name | translateDynamic }}</h3>
                 <p class="text-primary font-bold text-sm">{{ product.priceTtc | number:'1.2-2' }} € TTC</p>
                 <p class="text-gray-400 text-xs">{{ product.priceHt | number:'1.2-2' }} € HT</p>
                 @if (product.stockQuantity === 0) {

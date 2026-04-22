@@ -53,10 +53,10 @@ import { Address } from '../../../core/models';
             <div>
               <label class="block text-xs font-medium text-gray-700 mb-1">{{ 'account.country' | translate }}</label>
               <select formControlName="country" class="input-field">
-                <option value="FR">France</option>
-                <option value="BE">Belgique</option>
-                <option value="CH">Suisse</option>
-                <option value="LU">Luxembourg</option>
+                <option value="FR">{{ 'country.fr' | translate }}</option>
+                <option value="BE">{{ 'country.be' | translate }}</option>
+                <option value="CH">{{ 'country.ch' | translate }}</option>
+                <option value="LU">{{ 'country.lu' | translate }}</option>
               </select>
             </div>
             <div class="col-span-2">

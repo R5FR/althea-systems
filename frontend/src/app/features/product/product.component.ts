@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslateDynamicPipe } from '../../shared/pipes/translate-dynamic.pipe';
 import { ProductService } from '../../core/services/product.service';
 import { CartService } from '../../core/services/cart.service';
 import { ContactService } from '../../core/services/contact.service';
@@ -11,7 +12,7 @@ import { Product, ProductListItem } from '../../core/models';
 @Component({
   selector: 'app-product',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, TranslatePipe],
+  imports: [CommonModule, RouterLink, FormsModule, TranslatePipe, TranslateDynamicPipe],
   template: `
     <div class="page-container py-8">
       @if (loading()) {
@@ -68,14 +69,14 @@ import { Product, ProductListItem } from '../../core/models';
               <a routerLink="/" class="hover:text-primary">{{ 'product.breadcrumb_home' | translate }}</a>
               <span aria-hidden="true">/</span>
               @if (product()!.category) {
-                <a [routerLink]="['/categories', product()!.category!.slug]" class="hover:text-primary">{{ product()!.category!.name }}</a>
+                <a [routerLink]="['/categories', product()!.category!.slug]" class="hover:text-primary">{{ product()!.category!.name | translateDynamic }}</a>
                 <span aria-hidden="true">/</span>
               }
-              <span class="text-gray-800 font-medium truncate" aria-current="page">{{ product()!.name }}</span>
+              <span class="text-gray-800 font-medium truncate" aria-current="page">{{ product()!.name | translateDynamic }}</span>
             </nav>
 
             <div>
-              <h1 class="text-2xl md:text-3xl font-display font-semibold text-navy mb-3 leading-tight">{{ product()!.name }}</h1>
+              <h1 class="text-2xl md:text-3xl font-display font-semibold text-navy mb-3 leading-tight">{{ product()!.name | translateDynamic }}</h1>
 
               <!-- Availability -->
               @if (product()!.stockQuantity > 0) {
@@ -101,7 +102,7 @@ import { Product, ProductListItem } from '../../core/models';
             <!-- Description -->
             <div>
               <h2 class="font-semibold text-gray-900 mb-2">{{ 'product.description' | translate }}</h2>
-              <p class="text-gray-600 leading-relaxed text-sm">{{ product()!.description }}</p>
+              <p class="text-gray-600 leading-relaxed text-sm">{{ product()!.description | translateDynamic }}</p>
             </div>
 
             <!-- CTA -->

@@ -3642,35 +3642,43 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Tom\\.nuget\\packages\\": {}
+    "C:\\Users\\tomle\\.nuget\\packages\\": {},
+    "D:\\Programmes\\VisualStudioCache\\compostantsPartages\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\DAL\\DAL.csproj",
+      "projectUniqueName": "D:\\Projets\\DEV\\althea-systems\\althea-systems\\src\\DAL\\DAL.csproj",
       "projectName": "DAL",
-      "projectPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\DAL\\DAL.csproj",
-      "packagesPath": "C:\\Users\\Tom\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\DAL\\obj\\",
+      "projectPath": "D:\\Projets\\DEV\\althea-systems\\althea-systems\\src\\DAL\\DAL.csproj",
+      "packagesPath": "C:\\Users\\tomle\\.nuget\\packages\\",
+      "outputPath": "D:\\Projets\\DEV\\althea-systems\\althea-systems\\src\\DAL\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "D:\\Programmes\\VisualStudioCache\\compostantsPartages\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\Tom\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\tomle\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Application\\Application.csproj": {
-              "projectPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Application\\Application.csproj"
+            "D:\\Projets\\DEV\\althea-systems\\althea-systems\\src\\Application\\Application.csproj": {
+              "projectPath": "D:\\Projets\\DEV\\althea-systems\\althea-systems\\src\\Application\\Application.csproj"
             },
-            "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Domain\\Domain.csproj": {
-              "projectPath": "C:\\Users\\Tom\\Documents\\Cours\\Petude\\althea-systems\\src\\Domain\\Domain.csproj"
+            "D:\\Projets\\DEV\\althea-systems\\althea-systems\\src\\Domain\\Domain.csproj": {
+              "projectPath": "D:\\Projets\\DEV\\althea-systems\\althea-systems\\src\\Domain\\Domain.csproj"
             }
           }
         }
@@ -3684,7 +3692,8 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      }
+      },
+      "SdkAnalysisLevel": "9.0.200"
     },
     "frameworks": {
       "net8.0": {
@@ -3723,7 +3732,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.419/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

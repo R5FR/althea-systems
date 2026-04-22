@@ -22,7 +22,7 @@ import { Category } from '../../../core/models';
           <form [formGroup]="form" (ngSubmit)="save()" class="space-y-4">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'admin.cat_name' | translate }}</label>
-              <input formControlName="name" class="input-field" placeholder="Cardiologie" />
+              <input formControlName="name" class="input-field" [placeholder]="'admin.cat_name_placeholder' | translate" />
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ 'admin.cat_description' | translate }}</label>

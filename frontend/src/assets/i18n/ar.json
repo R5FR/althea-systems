@@ -1,4 +1,23 @@
 {
+  "header": {
+    "delivery_eu": "تسليم الاتحاد الأوروبي في غضون فترة ٤٨ ساعة - ٢٧ ساعة",
+    "navigation": "الملاحة",
+    "account": "الحساب",
+    "language": "اللغة"
+  },
+  "a11y": {
+    "carousel": "Slideshow products",
+    "slides": "Slides",
+    "slide": "Slide",
+    "slide_prev": "الشريحة السابقة",
+    "slide_next": "الخط القادم"
+  },
+  "country": {
+    "fr": "فرنسا",
+    "be": "بلجيكا",
+    "ch": "سويسرا",
+    "lu": "لكسمبرغ"
+  },
   "nav": {
     "home": "البيت",
     "catalog": "الفهرس",
@@ -13,7 +32,8 @@
     "profile": "Profile",
     "addresses": "العناوين",
     "payments": "المدفوعات",
-    "contact": "الاتصال"
+    "contact": "الاتصال",
+    "search_placeholder": "البحث عن معدات طبية"
   },
   "home": {
     "hero_cta": "اجمع الفهرس",
@@ -311,6 +331,9 @@
     "chatbot_greeting": "مرحبا! أنا مساعدتك (ألثيا) كيف يمكنني مساعدتك؟?",
     "chatbot_human_agent": "عميل بشري سيتصل بك ثانية.",
     "chatbot_default_response": "لم أفهم هذا السؤال بعد استعملي النموذج تحت أو اتصلي بنا عند +33 1 23 45 67 89.",
+    "chatbot_login_required": "المطلوب",
+    "chatbot_login_hint": "ادخل للحديث مع المساعد واحتفظ بتاريخك.",
+    "chatbot_login_btn": "اسحب",
     "quick_reply_delivery": "وقت التسليم؟?",
     "quick_reply_order": "كيف نطلب؟?",
     "quick_reply_return": "العودة والرد",
@@ -536,6 +559,11 @@
     "product_form_spec_value_placeholder": "2.5 كغم",
     "product_form_images": "الصور (يورو)",
     "product_form_add_image": "+ أضف",
+    "product_form_image_drop": "السحب والهبوط أو",
+    "product_form_image_browse": "برووز",
+    "product_form_image_formats": "JPEG, PNG, WeBP - max 10 MB",
+    "product_form_image_main": "الرئيسية",
+    "cat_name_placeholder": "Cardiology",
     "product_form_submit_create": "Create Product",
     "product_form_submit_update": "آخر",
     "product_form_back": "إلغاء",

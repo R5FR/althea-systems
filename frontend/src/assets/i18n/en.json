@@ -1,4 +1,23 @@
 {
+  "header": {
+    "delivery_eu": "EU delivery within 48h–72h",
+    "navigation": "Navigation",
+    "account": "Account",
+    "language": "Language"
+  },
+  "a11y": {
+    "carousel": "Slideshow products",
+    "slides": "Slides",
+    "slide": "Slide",
+    "slide_prev": "Previous slide",
+    "slide_next": "Next Slide"
+  },
+  "country": {
+    "fr": "France",
+    "be": "Belgium",
+    "ch": "Switzerland",
+    "lu": "Luxembourg"
+  },
   "nav": {
     "home": "Home",
     "catalog": "Catalogue",
@@ -540,6 +559,11 @@
     "product_form_spec_value_placeholder": "2.5 kg",
     "product_form_images": "Images (URL)",
     "product_form_add_image": "+ Add Image",
+    "product_form_image_drop": "Drag and drop or",
+    "product_form_image_browse": "browse",
+    "product_form_image_formats": "JPEG, PNG, WEBP — max 10 MB",
+    "product_form_image_main": "Main",
+    "cat_name_placeholder": "Cardiology",
     "product_form_submit_create": "Create Product",
     "product_form_submit_update": "Update",
     "product_form_back": "Cancel",

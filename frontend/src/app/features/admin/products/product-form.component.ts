@@ -2,10 +2,12 @@ import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators, FormArray } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { TranslatePipe } from '@ngx-translate/core';
 import { ProductService } from '../../../core/services/product.service';
 import { CategoryService } from '../../../core/services/category.service';
 import { Category } from '../../../core/models';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-product-form',
@@ -13,7 +15,6 @@ import { Category } from '../../../core/models';
   imports: [CommonModule, ReactiveFormsModule, RouterLink, TranslatePipe],
   template: `
     <div class="space-y-6 max-w-4xl">
-      <!-- Header -->
       <div class="flex items-center gap-3">
         <a routerLink="/admin/produits" class="text-gray-400 hover:text-gray-600 transition-colors">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -186,32 +187,68 @@ import { Category } from '../../../core/models';
             </div>
           </div>
 
-          <!-- Image URLs -->
+          <!-- Images drag-drop -->
           <div class="card p-6 space-y-4">
-            <div class="flex items-center justify-between">
-              <h2 class="font-semibold text-gray-900">{{ 'admin.product_form_images' | translate }}</h2>
-              <button type="button" (click)="addImage()" class="btn-ghost text-sm">{{ 'admin.product_form_add_image' | translate }}</button>
+            <h2 class="font-semibold text-gray-900">{{ 'admin.product_form_images' | translate }}</h2>
+
+            <!-- Drop zone -->
+            <div class="relative border-2 border-dashed rounded-xl transition-colors"
+              [class]="dragOver() ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-primary/50'"
+              (dragover)="onDragOver($event)" (dragleave)="dragOver.set(false)" (drop)="onDrop($event)">
+              <input type="file" accept="image/*" multiple class="absolute inset-0 opacity-0 cursor-pointer"
+                (change)="onFileInput($event)" />
+              <div class="flex flex-col items-center justify-center gap-2 py-8 pointer-events-none">
+                <svg class="w-8 h-8 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <p class="text-sm text-gray-500">{{ 'admin.product_form_image_drop' | translate }} <span class="text-primary font-medium">{{ 'admin.product_form_image_browse' | translate }}</span></p>
+                <p class="text-xs text-gray-400">{{ 'admin.product_form_image_formats' | translate }}</p>
+              </div>
             </div>
-            <div formArrayName="imageUrls" class="space-y-3">
+
+            <!-- Uploading indicators -->
+            @if (uploading().length) {
+              <div class="space-y-2">
+                @for (name of uploading(); track name) {
+                  <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                    <div class="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin flex-shrink-0"></div>
+                    <span class="text-sm text-gray-600 truncate">{{ name }}</span>
+                  </div>
+                }
+              </div>
+            }
+
+            <!-- Image previews -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
               @for (ctrl of imagesArray.controls; track $index) {
-                <div class="flex gap-3 items-center">
-                  <input [formControlName]="$index" class="input-field flex-1 text-sm font-mono" placeholder="https://..." />
-                  <button type="button" (click)="removeImage($index)"
-                    class="text-red-400 hover:text-red-600 p-2 hover:bg-red-50 rounded-lg transition-colors">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                  </button>
+                <div class="relative group aspect-square rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
+                  <img [src]="ctrl.value" class="w-full h-full object-cover" />
+                  <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+                    <button type="button" (click)="removeImage($index)"
+                      class="opacity-0 group-hover:opacity-100 transition-opacity bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center">
+                      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                      </svg>
+                    </button>
+                  </div>
+                  @if ($index === 0) {
+                    <span class="absolute top-1.5 left-1.5 text-[10px] font-semibold bg-primary text-white px-1.5 py-0.5 rounded">{{ 'admin.product_form_image_main' | translate }}</span>
+                  }
                 </div>
               }
             </div>
+
+            @if (uploadError()) {
+              <p class="text-sm text-red-500">{{ uploadError() }}</p>
+            }
           </div>
 
           @if (error()) { <p class="text-sm text-red-500">{{ error() }}</p> }
 
           <!-- Actions -->
           <div class="flex gap-4">
-            <button type="submit" [disabled]="saving() || form.invalid" class="btn-primary px-8">
+            <button type="submit" [disabled]="saving() || form.invalid || uploading().length > 0" class="btn-primary px-8">
               @if (saving()) { <span class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span> }
               {{ isEdit() ? ('admin.product_form_submit_update' | translate) : ('admin.product_form_submit_create' | translate) }}
             </button>
@@ -223,43 +260,49 @@ import { Category } from '../../../core/models';
   `,
 })
 export class ProductFormComponent implements OnInit {
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
-  private fb = inject(FormBuilder);
+  private route      = inject(ActivatedRoute);
+  private router     = inject(Router);
+  private fb         = inject(FormBuilder);
+  private http       = inject(HttpClient);
   private productSvc = inject(ProductService);
   private categorySvc = inject(CategoryService);
 
-  isEdit = signal(false);
-  loading = signal(false);
-  saving = signal(false);
-  error = signal('');
-  categories = signal<Category[]>([]);
+  private readonly uploadBase = `${environment.apiUrl}/admin/upload-image`;
+
+  isEdit      = signal(false);
+  loading     = signal(false);
+  saving      = signal(false);
+  error       = signal('');
+  uploadError = signal('');
+  dragOver    = signal(false);
+  uploading   = signal<string[]>([]);
+  categories  = signal<Category[]>([]);
 
   form = this.fb.group({
-    name: ['', Validators.required],
-    reference: ['', Validators.required],
-    categoryId: ['', Validators.required],
-    shortDescription: ['', Validators.required],
-    description: [''],
-    priceHt: [0, [Validators.required, Validators.min(0)]],
-    vatRate: [20, Validators.required],
-    stock: [0, [Validators.required, Validators.min(0)]],
-    minStock: [5],
-    priority: [0],
-    isActive: [true],
-    isLargeProduct: [false],
-    badges: this.fb.array([]),
-    technicalSpecs: this.fb.array([]),
-    imageUrls: this.fb.array([]),
+    name:             ['', Validators.required],
+    reference:        [''],
+    categoryId:       ['', Validators.required],
+    shortDescription: [''],
+    description:      [''],
+    priceHt:          [0, [Validators.required, Validators.min(0)]],
+    vatRate:          [20, Validators.required],
+    stock:            [0, [Validators.required, Validators.min(0)]],
+    minStock:         [5],
+    priority:         [0],
+    isActive:         [true],
+    isLargeProduct:   [false],
+    badges:           this.fb.array([]),
+    technicalSpecs:   this.fb.array([]),
+    imageUrls:        this.fb.array([]),
   });
 
   get badgesArray() { return this.form.get('badges') as FormArray; }
-  get specsArray() { return this.form.get('technicalSpecs') as FormArray; }
+  get specsArray()  { return this.form.get('technicalSpecs') as FormArray; }
   get imagesArray() { return this.form.get('imageUrls') as FormArray; }
 
   priceTtc = () => {
-    const ht = this.form.value.priceHt ?? 0;
-    const vat = this.form.value.vatRate ?? 20;
+    const ht  = this.form.value.priceHt ?? 0;
+    const vat = this.form.value.vatRate  ?? 20;
     return ht * (1 + vat / 100);
   };
 
@@ -272,33 +315,64 @@ export class ProductFormComponent implements OnInit {
       this.loading.set(true);
       this.productSvc.getById(id).subscribe({
         next: p => {
-          this.form.patchValue(p as any);
-          (p.badges ?? []).forEach((b: any) => this.badgesArray.push(this.fb.group({ label: b.label, color: b.color })));
-          ((p as any).technicalSpecs ?? []).forEach((s: any) => this.specsArray.push(this.fb.group({ key: s.key, value: s.value })));
-          ((p as any).imageUrls ?? (p.images ?? []).map((i: any) => i.imageUrl)).forEach((url: string) => this.imagesArray.push(this.fb.control(url)));
+          this.form.patchValue({
+            ...p,
+            vatRate:  (p as any).tvaRate  ?? p.vatRate  ?? 20,
+            stock:    (p as any).stockQuantity ?? p.stock ?? 0,
+            isActive: p.status === 'Published' || (p.isActive ?? true),
+          });
+          (p.badges ?? []).forEach((b: any) =>
+            this.badgesArray.push(this.fb.group({ label: b.label, color: b.color })));
+          ((p as any).technicalSpecs ?? []).forEach((s: any) =>
+            this.specsArray.push(this.fb.group({ key: s.key, value: s.value })));
+          const urls = (p.images ?? []).map((i: any) => i.imageUrl);
+          urls.forEach((url: string) => this.imagesArray.push(this.fb.control(url)));
           this.loading.set(false);
         },
-        error: () => this.loading.set(false)
+        error: () => this.loading.set(false),
       });
     }
   }
 
-  addBadge() { this.badgesArray.push(this.fb.group({ label: ['', Validators.required], color: ['promo'] })); }
+  addBadge()          { this.badgesArray.push(this.fb.group({ label: ['', Validators.required], color: ['promo'] })); }
   removeBadge(i: number) { this.badgesArray.removeAt(i); }
-  addSpec() { this.specsArray.push(this.fb.group({ key: ['', Validators.required], value: ['', Validators.required] })); }
-  removeSpec(i: number) { this.specsArray.removeAt(i); }
-  addImage() { this.imagesArray.push(this.fb.control('')); }
+  addSpec()           { this.specsArray.push(this.fb.group({ key: ['', Validators.required], value: ['', Validators.required] })); }
+  removeSpec(i: number)  { this.specsArray.removeAt(i); }
   removeImage(i: number) { this.imagesArray.removeAt(i); }
+
+  onDragOver(e: DragEvent) { e.preventDefault(); this.dragOver.set(true); }
+  onDrop(e: DragEvent)     { e.preventDefault(); this.dragOver.set(false); this.uploadFiles(Array.from(e.dataTransfer?.files ?? [])); }
+  onFileInput(e: Event)    { this.uploadFiles(Array.from((e.target as HTMLInputElement).files ?? [])); }
+
+  private uploadFiles(files: File[]) {
+    this.uploadError.set('');
+    files.forEach(file => {
+      if (!file.type.startsWith('image/')) { this.uploadError.set('Fichier non supporté : ' + file.name); return; }
+      this.uploading.update(u => [...u, file.name]);
+      const fd = new FormData();
+      fd.append('file', file);
+      this.http.post<{ url: string }>(this.uploadBase, fd).subscribe({
+        next: res => {
+          this.imagesArray.push(this.fb.control(res.url));
+          this.uploading.update(u => u.filter(n => n !== file.name));
+        },
+        error: () => {
+          this.uploadError.set('Échec de l\'upload : ' + file.name);
+          this.uploading.update(u => u.filter(n => n !== file.name));
+        },
+      });
+    });
+  }
 
   save() {
     if (this.form.invalid) return;
     this.saving.set(true); this.error.set('');
-    const id = this.route.snapshot.paramMap.get('id');
+    const id  = this.route.snapshot.paramMap.get('id');
     const dto = this.form.value as any;
     const obs = this.isEdit() ? this.productSvc.update(id!, dto) : this.productSvc.create(dto);
     obs.subscribe({
-      next: () => { this.saving.set(false); this.router.navigate(['/admin/produits']); },
-      error: err => { this.error.set(err?.error?.error || 'Erreur lors de l\'enregistrement.'); this.saving.set(false); }
+      next:  () => { this.saving.set(false); this.router.navigate(['/admin/produits']); },
+      error: err => { this.error.set(err?.error?.error || 'Erreur lors de l\'enregistrement.'); this.saving.set(false); },
     });
   }
 }

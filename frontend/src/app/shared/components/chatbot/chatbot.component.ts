@@ -258,14 +258,12 @@ export class ChatbotComponent implements AfterViewChecked {
     this.shouldScroll = true;
     this.isTyping.set(true);
 
-    setTimeout(() => {
-      this.contactSvc.getChatbotResponse(trimmed).pipe(
-        catchError(() => of(this.translate.instant('contact.chatbot_default_response')))
-      ).subscribe(reply => {
-        this.isTyping.set(false);
-        this.chatMessages.update(msgs => [...msgs, { from: 'bot', text: reply, time: new Date() }]);
-        this.shouldScroll = true;
-      });
-    }, 1000);
+    this.contactSvc.getChatbotResponse(trimmed).pipe(
+      catchError(() => of(this.translate.instant('contact.chatbot_default_response')))
+    ).subscribe(reply => {
+      this.isTyping.set(false);
+      this.chatMessages.update(msgs => [...msgs, { from: 'bot', text: reply, time: new Date() }]);
+      this.shouldScroll = true;
+    });
   }
 }

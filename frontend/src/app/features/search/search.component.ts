@@ -7,35 +7,9 @@ import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { ProductService } from '../../core/services/product.service';
 import { CategoryService } from '../../core/services/category.service';
 import { TranslationApiService } from '../../core/services/translation-api.service';
+import { TranslateDynamicPipe } from '../../shared/pipes/translate-dynamic.pipe';
 import { Category, ProductListItem, ProductSearchParams } from '../../core/models';
 
-// ── Catalogue d'exemples (toutes catégories) ─────────────────────────────
-const EXAMPLE_CATALOGUE: ProductListItem[] = [
-  { id: 'e01', name: 'Échographe portable SonoMax Pro X7',            slug: 'echographe-sonomax-pro-x7',        priceTtc: 15990, priceHt: 13325, tvaRate: 20, stockQuantity: 3,  imageUrl: 'https://picsum.photos/seed/echo-x7/400/400',       badges: [{ type: 'new',    label: 'Nouveau' }],    categoryId: 'imagerie-medicale'  },
-  { id: 'e02', name: 'Moniteur multiparamétrique CardioCare X5',       slug: 'moniteur-cardiocare-x5',           priceTtc: 8750,  priceHt: 7292,  tvaRate: 20, stockQuantity: 7,  imageUrl: 'https://picsum.photos/seed/cardiocare/400/400',     badges: [],                                           categoryId: 'monitoring'         },
-  { id: 'e03', name: 'Défibrillateur HeartSave AED Pro 3000',          slug: 'defibrillateur-heartsave-aed',     priceTtc: 2290,  priceHt: 1908,  tvaRate: 20, stockQuantity: 12, imageUrl: 'https://picsum.photos/seed/heartsave/400/400',     badges: [{ type: 'promo',  label: 'Best-seller' }],  categoryId: 'cardiologie'        },
-  { id: 'e04', name: 'Électrocardiographe 12 dérivations ECG Expert',  slug: 'ecg-expert-12-derivations',        priceTtc: 5490,  priceHt: 4575,  tvaRate: 20, stockQuantity: 5,  imageUrl: 'https://picsum.photos/seed/ecg-expert/400/400',    badges: [],                                           categoryId: 'cardiologie'        },
-  { id: 'e05', name: 'Table d\'examen électrique MedLine Elite',       slug: 'table-examen-medline-elite',       priceTtc: 3450,  priceHt: 2875,  tvaRate: 20, stockQuantity: 2,  imageUrl: 'https://picsum.photos/seed/medline-table/400/400', badges: [],                                           categoryId: 'mobilier-medical'   },
-  { id: 'e06', name: 'Autoclave de stérilisation SterilPro 22L',       slug: 'autoclave-sterilpro-22l',          priceTtc: 4190,  priceHt: 3492,  tvaRate: 20, stockQuantity: 4,  imageUrl: 'https://picsum.photos/seed/sterilpro/400/400',     badges: [{ type: 'custom', label: 'Certifié CE' }],   categoryId: 'sterilisation'      },
-  { id: 'e07', name: 'Otoscope numérique DiagnosticPro HD',             slug: 'otoscope-diagnosticpro-hd',       priceTtc: 890,   priceHt: 742,   tvaRate: 20, stockQuantity: 18, imageUrl: 'https://picsum.photos/seed/otoscope-hd/400/400',   badges: [],                                           categoryId: 'diagnostic'         },
-  { id: 'e08', name: 'Oxymètre de pouls professionnel OxyCheck',       slug: 'oxycheck-pro',                     priceTtc: 490,   priceHt: 408,   tvaRate: 20, stockQuantity: 30, imageUrl: 'https://picsum.photos/seed/oxycheck/400/400',      badges: [{ type: 'promo',  label: 'Promo' }],          categoryId: 'monitoring'         },
-  { id: 'e09', name: 'Bistouri électrique ElectroCut Pro 300W',        slug: 'bistouri-electrocut-pro-300w',     priceTtc: 4490,  priceHt: 3742,  tvaRate: 20, stockQuantity: 4,  imageUrl: 'https://picsum.photos/seed/electrocut/400/400',    badges: [],                                           categoryId: 'chirurgie'          },
-  { id: 'e10', name: 'Lampe opératoire LED SurgiLight 50000lux',       slug: 'lampe-operatoire-surgilight',      priceTtc: 8900,  priceHt: 7417,  tvaRate: 20, stockQuantity: 3,  imageUrl: 'https://picsum.photos/seed/surgilight/400/400',    badges: [{ type: 'new',    label: 'Nouveau' }],    categoryId: 'chirurgie'          },
-  { id: 'e11', name: 'Lampe à fente SlitLamp Pro 900',                  slug: 'lampe-fente-slitlamp-pro-900',    priceTtc: 8490,  priceHt: 7075,  tvaRate: 20, stockQuantity: 3,  imageUrl: 'https://picsum.photos/seed/slitlamp/400/400',      badges: [],                                           categoryId: 'ophtalmologie'      },
-  { id: 'e12', name: 'Réfractomètre automatique AutoRef 7000',         slug: 'refractometre-autoref-7000',       priceTtc: 6490,  priceHt: 5408,  tvaRate: 20, stockQuantity: 3,  imageUrl: 'https://picsum.photos/seed/autoref/400/400',       badges: [],                                           categoryId: 'ophtalmologie'      },
-  { id: 'e13', name: 'Autoclave classe B SteriClass B 34L',             slug: 'autoclave-stericlass-b-34l',      priceTtc: 6990,  priceHt: 5825,  tvaRate: 20, stockQuantity: 3,  imageUrl: 'https://picsum.photos/seed/stericlass/400/400',    badges: [{ type: 'promo',  label: 'Best-seller' }],  categoryId: 'sterilisation'      },
-  { id: 'e14', name: 'Fauteuil de prélèvement PhléboChair Pro',        slug: 'fauteuil-phlebochair-pro',         priceTtc: 2490,  priceHt: 2075,  tvaRate: 20, stockQuantity: 5,  imageUrl: 'https://picsum.photos/seed/phlebochair/400/400',   badges: [],                                           categoryId: 'mobilier-medical'   },
-  { id: 'e15', name: 'Spiromètre numérique LungTest 3000',              slug: 'spirometre-lungtest-3000',         priceTtc: 2490,  priceHt: 2075,  tvaRate: 20, stockQuantity: 7,  imageUrl: 'https://picsum.photos/seed/lungtest/400/400',      badges: [],                                           categoryId: 'diagnostic'         },
-  { id: 'e16', name: 'Holter ECG ambulatoire CardioHolter 24H',        slug: 'holter-ecg-cardioHolter-24h',      priceTtc: 3990,  priceHt: 3325,  tvaRate: 20, stockQuantity: 7,  imageUrl: 'https://picsum.photos/seed/cardio-holter/400/400', badges: [{ type: 'new',    label: 'Nouveau' }],    categoryId: 'cardiologie'        },
-  { id: 'e17', name: 'Microscope clinique BioScope X400',               slug: 'microscope-bioscope-x400',        priceTtc: 4990,  priceHt: 4158,  tvaRate: 20, stockQuantity: 3,  imageUrl: 'https://picsum.photos/seed/bioscope/400/400',      badges: [],                                           categoryId: 'diagnostic'         },
-  { id: 'e18', name: 'Chariot de soins MediCart 5 tiroirs',             slug: 'chariot-soins-medicart-5',        priceTtc: 1290,  priceHt: 1075,  tvaRate: 20, stockQuantity: 8,  imageUrl: 'https://picsum.photos/seed/medicart/400/400',      badges: [],                                           categoryId: 'mobilier-medical'   },
-  { id: 'e19', name: 'Radiographie numérique DR-Panel Pro',             slug: 'radiographie-dr-panel-pro',       priceTtc: 34990, priceHt: 29158, tvaRate: 20, stockQuantity: 1,  imageUrl: 'https://picsum.photos/seed/dr-panel/400/400',      badges: [{ type: 'promo',  label: 'Best-seller' }],  categoryId: 'imagerie-medicale'  },
-  { id: 'e20', name: 'Tonomètre à air non-contact AirTono 3',           slug: 'tonometre-airtono-3',             priceTtc: 4990,  priceHt: 4158,  tvaRate: 20, stockQuantity: 4,  imageUrl: 'https://picsum.photos/seed/airtono/400/400',       badges: [],                                           categoryId: 'ophtalmologie'      },
-  { id: 'e21', name: 'Capnographe portable CO2-Guard 3000',             slug: 'capnographe-co2-guard-3000',      priceTtc: 3290,  priceHt: 2742,  tvaRate: 20, stockQuantity: 5,  imageUrl: 'https://picsum.photos/seed/co2guard/400/400',      badges: [],                                           categoryId: 'monitoring'         },
-  { id: 'e22', name: 'Laveur-désinfecteur WashPro Dental 2 paniers',    slug: 'laveur-washpro-dental',           priceTtc: 8490,  priceHt: 7075,  tvaRate: 20, stockQuantity: 2,  imageUrl: 'https://picsum.photos/seed/washpro/400/400',       badges: [],                                           categoryId: 'sterilisation'      },
-  { id: 'e23', name: 'Système vidéo-endoscopie 4K UltraVis',            slug: 'systeme-video-ultravis-4k',       priceTtc: 14500, priceHt: 12083, tvaRate: 20, stockQuantity: 2,  imageUrl: 'https://picsum.photos/seed/ultravis/400/400',      badges: [],                                           categoryId: 'chirurgie'          },
-  { id: 'e24', name: 'Dermatoscope polarisé DermaScan 200x',            slug: 'dermatoscope-dermascan-200x',     priceTtc: 1290,  priceHt: 1075,  tvaRate: 20, stockQuantity: 10, imageUrl: 'https://picsum.photos/seed/dermascan/400/400',     badges: [],                                           categoryId: 'diagnostic'         },
-];
 
 const PRODUCT_GRADIENTS = [
   'linear-gradient(135deg,#0094A0,#00A8B5)',
@@ -51,7 +25,7 @@ const PRODUCT_GRADIENTS = [
 @Component({
   selector: 'app-search',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, TranslatePipe],
+  imports: [CommonModule, RouterLink, FormsModule, TranslatePipe, TranslateDynamicPipe],
   template: `
     <div class="page-container py-8">
       <h1 class="text-2xl font-bold text-gray-900 mb-6">
@@ -79,7 +53,7 @@ const PRODUCT_GRADIENTS = [
               <select [(ngModel)]="params.categoryId" (ngModelChange)="onFiltersChange()" class="input-field text-sm">
                 <option value="">{{ 'search.filter_category_all' | translate }}</option>
                 @for (cat of categories(); track cat.id) {
-                  <option [value]="cat.id">{{ cat.name }}</option>
+                  <option [value]="cat.id">{{ cat.name | translateDynamic }}</option>
                 }
               </select>
             </div>
@@ -427,23 +401,15 @@ export class SearchComponent implements OnInit {
     }).subscribe({
       next: res => {
         const data: ProductListItem[] = res.data ?? [];
-        // If no results AND no active filter, show the full example catalogue
-        if (data.length === 0 && !this.hasActiveFilters()) {
-          this.useExampleCatalogue();
-        } else {
-          this.products.set(data);
-          this.totalCount.set(res.pagination?.totalCount ?? res.total ?? data.length);
-          this.loading.set(false);
-        }
+        this.products.set(data);
+        this.totalCount.set(res.pagination?.totalCount ?? res.total ?? data.length);
+        this.loading.set(false);
         this.syncUrlWithFilters();
       },
       error: () => {
-        // Backend indisponible : afficher le catalogue d'exemples si pas de filtre actif
-        if (!this.hasActiveFilters()) {
-          this.useExampleCatalogue();
-        } else {
-          this.loading.set(false);
-        }
+        this.products.set([]);
+        this.totalCount.set(0);
+        this.loading.set(false);
       }
     });
   }
@@ -473,17 +439,7 @@ export class SearchComponent implements OnInit {
     return !!(this.params.searchTerm || this.params.categoryId || this.params.minPrice || this.params.maxPrice || this.params.onlyAvailable);
   }
 
-  private useExampleCatalogue(): void {
-    const [sortBy, sortDir] = this.sortValue.split('-');
-    const sorted = this.sortProducts(EXAMPLE_CATALOGUE, sortBy, sortDir);
-    const start = (this.page() - 1) * this.pageSize();
-    const end = start + this.pageSize();
-    this.products.set(sorted.slice(start, end));
-    this.totalCount.set(EXAMPLE_CATALOGUE.length);
-    this.loading.set(false);
-  }
-
-  private sortProducts(products: ProductListItem[], sortBy?: string, sortDir?: string): ProductListItem[] {
+private sortProducts(products: ProductListItem[], sortBy?: string, sortDir?: string): ProductListItem[] {
     const direction = sortDir === 'desc' ? -1 : 1;
     const toTimestamp = (value: unknown): number => {
       if (typeof value !== 'string' && typeof value !== 'number' && !(value instanceof Date)) return 0;

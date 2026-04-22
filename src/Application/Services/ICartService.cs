@@ -52,6 +52,11 @@ public interface ICartService
     Task ClearCartAsync(Guid cartId);
 
     /// <summary>
+    /// Récupère ou crée le panier persistant lié à un compte utilisateur.
+    /// </summary>
+    Task<CartDto> GetOrCreateUserCartAsync(Guid userId);
+
+    /// <summary>
     /// Valide le panier et crée une commande.
     /// </summary>
     /// <exception cref="ValidationException">Si le panier est vide ou invalide</exception>

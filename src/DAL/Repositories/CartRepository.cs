@@ -18,6 +18,7 @@ public class CartRepository : ICartRepository
     public async Task<Cart?> GetByIdAsync(Guid id)
     {
         return await _context.Carts
+            .Include(c => c.User)
             .Include(c => c.Items).ThenInclude(i => i.Product).ThenInclude(p => p.Images)
             .FirstOrDefaultAsync(c => c.Id == id);
     }
@@ -25,6 +26,7 @@ public class CartRepository : ICartRepository
     public async Task<Cart?> GetByItemIdAsync(Guid itemId)
     {
         return await _context.Carts
+            .Include(c => c.User)
             .Include(c => c.Items).ThenInclude(i => i.Product).ThenInclude(p => p.Images)
             .FirstOrDefaultAsync(c => c.Items.Any(i => i.Id == itemId));
     }
@@ -32,7 +34,7 @@ public class CartRepository : ICartRepository
     public async Task<Cart?> GetByUserIdAsync(Guid userId)
     {
         return await _context.Carts
-            .Include(c => c.Items)
+            .Include(c => c.Items).ThenInclude(i => i.Product).ThenInclude(p => p.Images)
             .FirstOrDefaultAsync(c => c.User != null && c.User.Id == userId);
     }
 

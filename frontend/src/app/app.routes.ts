@@ -9,6 +9,7 @@ export const routes: Routes = [
       { path: '', loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent) },
       { path: 'categories/:slug', loadComponent: () => import('./features/catalog/catalog.component').then(m => m.CatalogComponent) },
       { path: 'produits/:slug', loadComponent: () => import('./features/product/product.component').then(m => m.ProductComponent) },
+      { path: 'catalogue', loadComponent: () => import('./features/search/search.component').then(m => m.SearchComponent) },
       { path: 'recherche', loadComponent: () => import('./features/search/search.component').then(m => m.SearchComponent) },
       { path: 'panier', loadComponent: () => import('./features/cart/cart.component').then(m => m.CartComponent) },
       { path: 'checkout', canActivate: [authGuard], loadComponent: () => import('./features/checkout/checkout.component').then(m => m.CheckoutComponent) },

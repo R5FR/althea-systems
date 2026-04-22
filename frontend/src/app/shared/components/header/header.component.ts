@@ -30,7 +30,7 @@ import { CartService } from '../../../core/services/cart.service';
             </span>
           </div>
           <div class="flex items-center gap-3 text-white/60">
-            <span>Livraison EU sous 48h–72h</span>
+            <span>{{ 'header.delivery_eu' | translate }}</span>
             <span class="text-white/20">|</span>
 
             <!-- Language dropdown -->
@@ -100,7 +100,7 @@ import { CartService } from '../../../core/services/cart.service';
               class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
               {{ 'nav.home' | translate }}
             </a>
-            <a routerLink="/recherche" routerLinkActive="text-primary"
+            <a routerLink="/catalogue" routerLinkActive="text-primary"
               class="px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
               {{ 'nav.catalog' | translate }}
             </a>
@@ -244,7 +244,7 @@ import { CartService } from '../../../core/services/cart.service';
           <nav class="flex-1 overflow-y-auto py-3">
             <!-- Main links -->
             <div class="px-3 space-y-0.5">
-              <p class="px-3 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Navigation</p>
+              <p class="px-3 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-widest">{{ 'header.navigation' | translate }}</p>
               <a routerLink="/" (click)="menuOpen.set(false)"
                 class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 text-gray-700 font-medium text-sm transition-colors">
                 <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -252,7 +252,7 @@ import { CartService } from '../../../core/services/cart.service';
                 </svg>
                 {{ 'nav.home' | translate }}
               </a>
-              <a routerLink="/recherche" (click)="menuOpen.set(false)"
+              <a routerLink="/catalogue" (click)="menuOpen.set(false)"
                 class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 text-gray-700 font-medium text-sm transition-colors">
                 <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
@@ -272,7 +272,7 @@ import { CartService } from '../../../core/services/cart.service';
 
             <!-- Account links -->
             <div class="px-3 space-y-0.5">
-              <p class="px-3 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Compte</p>
+              <p class="px-3 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-widest">{{ 'header.account' | translate }}</p>
               @if (isLoggedIn()) {
                 <a routerLink="/mon-compte/profil" (click)="menuOpen.set(false)"
                   class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-gray-50 text-gray-700 font-medium text-sm transition-colors">
@@ -320,7 +320,7 @@ import { CartService } from '../../../core/services/cart.service';
 
             <!-- Language -->
             <div class="px-6">
-              <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2.5">Langue</p>
+              <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-widest mb-2.5">{{ 'header.language' | translate }}</p>
               <div class="flex gap-2">
                 @for (lang of langs; track lang.code) {
                   <button (click)="setLang(lang.code)"

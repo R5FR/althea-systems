@@ -147,6 +147,23 @@ public class CartController : ControllerBase
     }
 
     /// <summary>
+    /// Récupère ou crée le panier persistant de l'utilisateur connecté.
+    /// </summary>
+    [HttpGet("me")]
+    [Authorize]
+    [ProducesResponseType(typeof(CartDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetMyCart()
+    {
+        var userId = GetUserIdFromClaims();
+        if (userId == Guid.Empty)
+            return Unauthorized(new { error = "User not authenticated" });
+
+        var cart = await _cartService.GetOrCreateUserCartAsync(userId);
+        return Ok(cart);
+    }
+
+    /// <summary>
     /// Procède au checkout (crée une commande).
     /// </summary>
     [HttpPost("checkout")]

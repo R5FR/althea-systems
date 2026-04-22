@@ -2,6 +2,7 @@ import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { TranslateDynamicPipe } from '../../shared/pipes/translate-dynamic.pipe';
 import { CartService } from '../../core/services/cart.service';
 import { AuthService } from '../../core/services/auth.service';
 import { Cart } from '../../core/models';
@@ -9,7 +10,7 @@ import { Cart } from '../../core/models';
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CommonModule, RouterLink, TranslatePipe],
+  imports: [CommonModule, RouterLink, TranslatePipe, TranslateDynamicPipe],
   template: `
     <div class="page-container py-8 max-w-4xl mx-auto">
       <h1 class="text-2xl font-display font-semibold text-navy mb-6 flex items-center gap-3">
@@ -54,7 +55,7 @@ import { Cart } from '../../core/models';
                 <div class="flex-1 min-w-0">
                   <div class="flex items-start justify-between gap-2">
                     <div class="min-w-0">
-                      <h3 class="font-semibold text-gray-900 text-sm line-clamp-2">{{ item.productName }}</h3>
+                      <h3 class="font-semibold text-gray-900 text-sm line-clamp-2">{{ item.productName | translateDynamic }}</h3>
                       @if (!item.isAvailable) {
                         <span class="badge-danger badge text-xs mt-1">{{ 'cart.unavailable_badge' | translate }}</span>
                       }

@@ -141,6 +141,24 @@ public class CartService : ICartService
         await _unitOfWork.SaveChangesAsync();
     }
 
+    public async Task<CartDto> GetOrCreateUserCartAsync(Guid userId)
+    {
+        if (userId == Guid.Empty) throw new ArgumentException("UserId cannot be empty", nameof(userId));
+
+        var cart = await _unitOfWork.CartRepository.GetByUserIdAsync(userId);
+        if (cart == null)
+        {
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(userId);
+            if (user == null) throw new NotFoundException($"User '{userId}' not found");
+
+            cart = new Cart(Guid.NewGuid(), user);
+            await _unitOfWork.CartRepository.AddAsync(cart);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        return MapCartToDto(cart);
+    }
+
     public async Task<Guid> CheckoutAsync(CheckoutDto dto, Guid userId)
     {
         if (dto == null) throw new ArgumentNullException(nameof(dto));

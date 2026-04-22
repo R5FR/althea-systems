@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { TranslateDynamicPipe } from '../../shared/pipes/translate-dynamic.pipe';
 import { AdminService } from '../../core/services/admin.service';
 import { ProductService } from '../../core/services/product.service';
 import { CategoryService } from '../../core/services/category.service';
@@ -16,19 +17,19 @@ const HERO_GRADIENTS = [
 
 // ── Default slides shown when no config is saved ───────────────────────────
 const DEFAULT_SLIDES = [
-  { id: '1', title: 'Matériel médical\nde haute précision', subtitle: 'Équipements certifiés CE pour cabinets, cliniques et hôpitaux. Livraison EU sous 48h.', imageUrl: '', linkUrl: '/recherche', displayOrder: 0, isActive: true },
-  { id: '2', title: 'Technologie au service\nde la santé', subtitle: 'Plus de 2 400 références disponibles, sélectionnées par nos ingénieurs biomédicaux.', imageUrl: '', linkUrl: '/recherche', displayOrder: 1, isActive: true },
-  { id: '3', title: 'Support technique\ndédié 5j/7', subtitle: "Installation, maintenance et SAV assurés par notre équipe d'experts certifiés.", imageUrl: '', linkUrl: '/recherche', displayOrder: 2, isActive: true },
+  { id: '1', title: 'Matériel médical\nde haute précision', subtitle: 'Équipements certifiés CE pour cabinets, cliniques et hôpitaux. Livraison EU sous 48h.', imageUrl: '', linkUrl: '/catalogue', displayOrder: 0, isActive: true },
+  { id: '2', title: 'Technologie au service\nde la santé', subtitle: 'Plus de 2 400 références disponibles, sélectionnées par nos ingénieurs biomédicaux.', imageUrl: '', linkUrl: '/catalogue', displayOrder: 1, isActive: true },
+  { id: '3', title: 'Support technique\ndédié 5j/7', subtitle: "Installation, maintenance et SAV assurés par notre équipe d'experts certifiés.", imageUrl: '', linkUrl: '/catalogue', displayOrder: 2, isActive: true },
 ];
 
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterLink, TranslatePipe],
+  imports: [CommonModule, RouterLink, TranslatePipe, TranslateDynamicPipe],
   template: `
     <!-- ── Hero Carousel ─────────────────────────────────────────────────── -->
-    <section class="relative overflow-hidden" style="height: calc(100vh - 104px);" role="region" aria-label="Diaporama produits">
+    <section class="relative overflow-hidden" style="height: calc(100vh - 104px);" role="region" [attr.aria-label]="'a11y.carousel' | translate">
       @for (slide of displaySlides(); track slide.id; let i = $index) {
         <div class="absolute inset-0 transition-opacity duration-700"
           [class.opacity-100]="currentSlide() === i"
@@ -63,9 +64,9 @@ const DEFAULT_SLIDES = [
               </div>
               <!-- Title — supports line breaks via whitespace-pre-line -->
               <h1 class="font-display font-semibold text-white mb-4 leading-[1.15]"
-                style="font-size: clamp(2rem, 4vw, 3.5rem); white-space: pre-line;">{{ slide.title }}</h1>
+                style="font-size: clamp(2rem, 4vw, 3.5rem); white-space: pre-line;">{{ slide.title | translateDynamic }}</h1>
               @if (slide.subtitle) {
-                <p class="text-white/70 text-base md:text-lg leading-relaxed mb-8 max-w-md">{{ slide.subtitle }}</p>
+                <p class="text-white/70 text-base md:text-lg leading-relaxed mb-8 max-w-md">{{ slide.subtitle | translateDynamic }}</p>
               }
               @if (slide.linkUrl) {
                 <div class="flex items-center gap-3">
@@ -87,12 +88,12 @@ const DEFAULT_SLIDES = [
 
       <!-- Dots -->
       @if (displaySlides().length > 1) {
-        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2" role="tablist" aria-label="Diapositives">
+        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2" role="tablist" [attr.aria-label]="'a11y.slides' | translate">
           @for (slide of displaySlides(); track slide.id; let i = $index) {
             <button (click)="goToSlide(i)"
               role="tab"
               [attr.aria-selected]="currentSlide() === i"
-              [attr.aria-label]="'Diapositive ' + (i + 1)"
+              [attr.aria-label]="('a11y.slide' | translate) + ' ' + (i + 1)"
               class="h-2 transition-all duration-300 rounded-full"
               [class.w-6]="currentSlide() === i"
               [class.w-2]="currentSlide() !== i"
@@ -102,12 +103,12 @@ const DEFAULT_SLIDES = [
           }
         </div>
         <button (click)="prevSlide()"
-          aria-label="Diapositive précédente"
+          [attr.aria-label]="'a11y.slide_prev' | translate"
           class="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full flex items-center justify-center text-white transition-all bg-white/10 hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
         </button>
         <button (click)="nextSlide()"
-          aria-label="Diapositive suivante"
+          [attr.aria-label]="'a11y.slide_next' | translate"
           class="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full flex items-center justify-center text-white transition-all bg-white/10 hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50">
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
         </button>
@@ -118,7 +119,7 @@ const DEFAULT_SLIDES = [
     @if (featuredText()) {
       <div class="bg-primary/5 border-y border-primary/10 py-4">
         <div class="page-container text-center text-sm text-primary-700 font-medium">
-          {{ featuredText() }}
+          {{ featuredText() | translateDynamic }}
         </div>
       </div>
     }
@@ -145,7 +146,7 @@ const DEFAULT_SLIDES = [
             <p class="section-label">{{ 'home.categories_label' | translate }}</p>
             <h2 class="section-title mb-0">{{ 'home.categories_title' | translate }}</h2>
           </div>
-          <a routerLink="/recherche" class="hidden md:flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary-700 transition-colors">
+          <a routerLink="/catalogue" class="hidden md:flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary-700 transition-colors">
             {{ 'home.see_all' | translate }}
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -155,7 +156,7 @@ const DEFAULT_SLIDES = [
 
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           @for (cat of displayCategories(); track cat.id; let i = $index) {
-            <a [routerLink]="['/categories', cat.slug]"
+            <a [routerLink]="['/catalogue']" [queryParams]="{ cat: cat.id }"
               class="group relative overflow-hidden rounded-2xl cursor-pointer"
               style="aspect-ratio: 4/3;">
               @if (cat.imageUrl) {
@@ -177,7 +178,7 @@ const DEFAULT_SLIDES = [
               }
               <!-- Label -->
               <div class="absolute bottom-0 left-0 right-0 p-4">
-                <span class="text-white font-semibold text-sm md:text-base leading-tight drop-shadow block">{{ cat.name }}</span>
+                <span class="text-white font-semibold text-sm md:text-base leading-tight drop-shadow block">{{ cat.name | translateDynamic }}</span>
                 <div class="flex items-center gap-1 mt-1 text-white/60 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                   {{ 'home.see_products' | translate }}
                   <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -199,7 +200,7 @@ const DEFAULT_SLIDES = [
             <p class="section-label">{{ 'home.products_label' | translate }}</p>
             <h2 class="section-title mb-0">{{ 'home.products_title' | translate }}</h2>
           </div>
-          <a routerLink="/recherche" class="hidden md:flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary-700 transition-colors">
+          <a routerLink="/catalogue" class="hidden md:flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary-700 transition-colors">
             {{ 'home.see_catalog' | translate }}
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -256,7 +257,7 @@ const DEFAULT_SLIDES = [
                 <!-- Info -->
                 <div class="p-4 flex-1 flex flex-col">
                   <p class="font-semibold text-gray-900 text-sm leading-snug mb-auto line-clamp-2 group-hover:text-primary transition-colors">
-                    {{ product.name }}
+                    {{ product.name | translateDynamic }}
                   </p>
                   <div class="mt-3 pt-3 border-t border-gray-100">
                     <p class="text-primary font-bold text-base">{{ product.priceTtc | number:'1.2-2' }} €
@@ -271,7 +272,7 @@ const DEFAULT_SLIDES = [
         }
 
         <div class="text-center mt-10">
-          <a routerLink="/recherche" class="btn-secondary">
+          <a routerLink="/catalogue" class="btn-secondary">
             {{ 'home.see_all_products' | translate }}
             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -356,7 +357,7 @@ const DEFAULT_SLIDES = [
           <a routerLink="/contact" class="btn-primary bg-white !text-navy hover:bg-gray-50 px-8 py-3">
             {{ 'home.cta_contact' | translate }}
           </a>
-          <a routerLink="/recherche" class="btn-secondary !border-white/30 !text-white hover:!bg-white/10 px-8 py-3">
+          <a routerLink="/catalogue" class="btn-secondary !border-white/30 !text-white hover:!bg-white/10 px-8 py-3">
             {{ 'home.cta_catalog' | translate }}
           </a>
         </div>

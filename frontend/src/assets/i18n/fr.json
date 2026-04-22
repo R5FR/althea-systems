@@ -1,4 +1,23 @@
 {
+  "header": {
+    "delivery_eu": "Livraison EU sous 48h–72h",
+    "navigation": "Navigation",
+    "account": "Compte",
+    "language": "Langue"
+  },
+  "a11y": {
+    "carousel": "Diaporama produits",
+    "slides": "Diapositives",
+    "slide": "Diapositive",
+    "slide_prev": "Diapositive précédente",
+    "slide_next": "Diapositive suivante"
+  },
+  "country": {
+    "fr": "France",
+    "be": "Belgique",
+    "ch": "Suisse",
+    "lu": "Luxembourg"
+  },
   "nav": {
     "home": "Accueil",
     "catalog": "Catalogue",
@@ -540,6 +559,11 @@
     "product_form_spec_value_placeholder": "2,5 kg",
     "product_form_images": "Images (URLs)",
     "product_form_add_image": "+ Ajouter une image",
+    "product_form_image_drop": "Glisser-déposer ou",
+    "product_form_image_browse": "parcourir",
+    "product_form_image_formats": "JPEG, PNG, WEBP — max 10 Mo",
+    "product_form_image_main": "Principale",
+    "cat_name_placeholder": "Cardiologie",
     "product_form_submit_create": "Créer le produit",
     "product_form_submit_update": "Mettre à jour",
     "product_form_back": "Annuler",

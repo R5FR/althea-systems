@@ -132,18 +132,35 @@ public class ProductService : IProductService
 
         var product = await _unitOfWork.ProductRepository.GetByIdAsync(id);
         if (product == null)
-        {
             throw new NotFoundException($"Product with id '{id}' not found");
-        }
 
-        // Valider les données
-        if (!string.IsNullOrWhiteSpace(dto.Name) && string.IsNullOrWhiteSpace(dto.Name))
+        product.Update(dto.Name, dto.Description, dto.PriceHt, dto.VatRate, dto.IsActive, dto.Stock, dto.Slug);
+
+        if (dto.CategoryId != Guid.Empty)
         {
-            throw new ValidationException("Name cannot be empty");
+            var category = await _unitOfWork.CategoryRepository.GetByIdAsync(dto.CategoryId);
+            if (category == null) throw new NotFoundException($"Category '{dto.CategoryId}' not found");
+            product.UpdateCategory(category);
         }
 
-        // À adapter selon l'implémentation réelle de l'entité Product
-        // Pour l'instant, les propriétés Product étant en private set, on doit ajouter des setters ou des méthodes
+        if (dto.ImageUrls != null)
+        {
+            var currentImages = product.Images.ToList();
+            var toRemove = currentImages.Where(img => !dto.ImageUrls.Contains(img.ImageUrl)).ToList();
+            foreach (var img in toRemove)
+                await _unitOfWork.ProductImageRepository.DeleteAsync(img.Id);
+
+            var existingUrls = currentImages.Select(i => i.ImageUrl).ToHashSet();
+            for (int i = 0; i < dto.ImageUrls.Count; i++)
+            {
+                var url = dto.ImageUrls[i];
+                if (!existingUrls.Contains(url))
+                {
+                    var newImg = new Project.Domain.Entities.ProductImage(Guid.NewGuid(), product, url, i == 0, i);
+                    await _unitOfWork.ProductImageRepository.AddAsync(newImg);
+                }
+            }
+        }
 
         await _unitOfWork.ProductRepository.UpdateAsync(product);
         await _unitOfWork.SaveChangesAsync();
