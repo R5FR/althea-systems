@@ -124,20 +124,6 @@ const DEFAULT_SLIDES = [
       </div>
     }
 
-    <!-- ── Stats strip ────────────────────────────────────────────────────── -->
-    <div class="bg-white border-b border-gray-100">
-      <div class="page-container py-5">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          @for (stat of stats; track stat.label) {
-            <div>
-              <p class="font-display font-semibold text-2xl md:text-3xl text-navy mb-0.5">{{ stat.value }}</p>
-              <p class="text-xs text-gray-500">{{ stat.label | translate }}</p>
-            </div>
-          }
-        </div>
-      </div>
-    </div>
-
     <!-- ── Categories ────────────────────────────────────────────────────── -->
     <section class="py-16 md:py-20">
       <div class="page-container">
@@ -179,7 +165,7 @@ const DEFAULT_SLIDES = [
               <!-- Label -->
               <div class="absolute bottom-0 left-0 right-0 p-4">
                 <span class="text-white font-semibold text-sm md:text-base leading-tight drop-shadow block">{{ cat.name | translateDynamic }}</span>
-                <div class="flex items-center gap-1 mt-1 text-white/60 text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                <div class="flex items-center gap-1 mt-1 text-white/60 text-xs font-medium sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                   {{ 'home.see_products' | translate }}
                   <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -354,10 +340,10 @@ const DEFAULT_SLIDES = [
           {{ 'home.cta_desc' | translate }}
         </p>
         <div class="flex flex-col sm:flex-row gap-3 justify-center">
-          <a routerLink="/contact" class="btn-primary bg-white !text-navy hover:bg-gray-50 px-8 py-3">
+          <a routerLink="/contact" class="btn-white px-8 py-3">
             {{ 'home.cta_contact' | translate }}
           </a>
-          <a routerLink="/catalogue" class="btn-secondary !border-white/30 !text-white hover:!bg-white/10 px-8 py-3">
+          <a routerLink="/catalogue" class="btn-ghost-white px-8 py-3">
             {{ 'home.cta_catalog' | translate }}
           </a>
         </div>
@@ -385,13 +371,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   displaySlides     = this.slides;
   displayCategories = this.categories;
   displayProducts   = this.topProducts;
-
-  stats = [
-    { value: '2 400+', label: 'home.stat_products' },
-    { value: '15 ans',  label: 'home.stat_years' },
-    { value: '98 %',    label: 'home.stat_satisfaction' },
-    { value: '48 h',    label: 'home.stat_delivery' },
-  ];
 
   whyPoints = [
     {

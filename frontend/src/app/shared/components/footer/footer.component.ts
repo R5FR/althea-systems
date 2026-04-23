@@ -7,9 +7,9 @@ import { TranslatePipe } from '@ngx-translate/core';
   standalone: true,
   imports: [RouterLink, TranslatePipe],
   template: `
-    <footer class="hidden md:block bg-navy">
+    <footer class="bg-navy">
       <!-- Main footer grid -->
-      <div class="page-container py-16">
+      <div class="page-container py-10 md:py-16">
         <div class="grid grid-cols-1 md:grid-cols-12 gap-10">
 
           <!-- Brand column -->

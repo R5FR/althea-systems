@@ -44,6 +44,8 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+builder.Services.AddSingleton<Web.Services.InvoicePdfGenerator>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IContactService, ContactService>();
 builder.Services.AddHttpClient<Application.Interfaces.IChatbotClient, Web.Services.OllamaChatbotClient>(client =>

@@ -56,6 +56,19 @@ namespace Project.Domain.Entities
             UpdatedAt = DateTime.UtcNow;
         }
 
+        public void UpdatePaymentStatus(Enums.PaymentStatus status)
+        {
+            PaymentStatus = status;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
+        public void MarkAsPaid()
+        {
+            Status = Enums.OrderStatus.Paid;
+            PaymentStatus = Enums.PaymentStatus.Validated;
+            UpdatedAt = DateTime.UtcNow;
+        }
+
         private void RecalculateTotals()
         {
             decimal totalTtc = 0m;

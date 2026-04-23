@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { OrderService } from '../../../core/services/order.service';
+import { InvoiceService } from '../../../core/services/invoice.service';
 import { Order } from '../../../core/models';
 
 @Component({
@@ -64,16 +65,27 @@ import { Order } from '../../../core/models';
   `,
 })
 export class ConfirmationComponent implements OnInit {
-  private route = inject(ActivatedRoute);
-  private orderSvc = inject(OrderService);
+  private route      = inject(ActivatedRoute);
+  private orderSvc   = inject(OrderService);
+  private invoiceSvc = inject(InvoiceService);
 
   order = signal<Order | null>(null);
   loading = signal(true);
 
   ngOnInit() {
     const id = this.route.snapshot.params['id'];
+    // Load order then confirm payment (mark as Paid + generate invoice)
     this.orderSvc.getById(id).subscribe({
-      next: o => { this.order.set(o); this.loading.set(false); },
+      next: o => {
+        this.order.set(o);
+        this.loading.set(false);
+        // Retrieve paymentIntentId stored in session if available
+        const piId = sessionStorage.getItem('last_payment_intent') ?? undefined;
+        this.invoiceSvc.confirmPayment(id, piId).subscribe({
+          next: () => { if (piId) sessionStorage.removeItem('last_payment_intent'); },
+          error: () => { /* non-blocking — invoice generation failures don't break confirmation */ }
+        });
+      },
       error: () => this.loading.set(false)
     });
   }

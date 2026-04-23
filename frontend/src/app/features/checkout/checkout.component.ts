@@ -490,6 +490,8 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
 
       const orderId = await this.orderSvc.placeOrder(dto).toPromise();
       localStorage.removeItem('cart_id');
+      if (intent.paymentIntentId)
+        sessionStorage.setItem('last_payment_intent', intent.paymentIntentId);
       this.router.navigate(['/checkout/confirmation', orderId]);
     } catch (err: any) {
       this.paymentError.set(err?.message || this.translate.instant('checkout.error_generic'));

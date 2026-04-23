@@ -29,5 +29,15 @@ namespace Project.Domain.Entities
             PdfUrl = pdfUrl ?? string.Empty;
             Status = Enums.InvoiceStatus.Pending;
         }
+
+        public void UpdateStatus(Enums.InvoiceStatus status)
+        {
+            Status = status;
+        }
+
+        public void SetPdfUrl(string url)
+        {
+            PdfUrl = url ?? string.Empty;
+        }
     }
 }

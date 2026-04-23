@@ -140,7 +140,7 @@ const PRODUCT_GRADIENTS = [
         @if (product.badges?.length) {
           <div class="absolute top-2.5 left-2.5 flex flex-col gap-1">
             @for (b of product.badges!; track b.label) {
-              <span class="badge badge-promo">{{ b.label }}</span>
+              <span [class]="'badge badge-' + b.type">{{ b.label }}</span>
             }
           </div>
         }

@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
-import { TranslateDynamicPipe } from '../../../shared/pipes/translate-dynamic.pipe';
 import { ProductService } from '../../../core/services/product.service';
 import { AdminService } from '../../../core/services/admin.service';
 import { ProductListItem } from '../../../core/models';
@@ -11,7 +10,7 @@ import { ProductListItem } from '../../../core/models';
 @Component({
   selector: 'app-products-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule, TranslatePipe, TranslateDynamicPipe],
+  imports: [CommonModule, RouterLink, FormsModule, TranslatePipe],
   template: `
     <div class="space-y-6">
       <!-- Header -->
@@ -110,7 +109,7 @@ import { ProductListItem } from '../../../core/models';
                           }
                         </div>
                         <div class="min-w-0">
-                          <p class="font-medium text-gray-900 truncate max-w-[200px]">{{ p.name | translateDynamic }}</p>
+                          <p class="font-medium text-gray-900 truncate max-w-[200px]">{{ p.name }}</p>
                           @if (p.isLargeProduct) {
                             <span class="text-xs text-purple-600 font-medium">{{ 'admin.products_large' | translate }}</span>
                           }

@@ -64,6 +64,14 @@ public class MappingProfile : Profile
 
         // Invoice mappings
         CreateMap<Invoice, InvoiceDto>()
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+            .ForMember(dest => dest.OrderId, opt => opt.MapFrom(src => src.Order != null ? src.Order.Id : Guid.Empty))
+            .ForMember(dest => dest.OrderNumber, opt => opt.MapFrom(src => src.Order != null ? src.Order.OrderNumber : string.Empty))
+            .ForMember(dest => dest.TotalHt, opt => opt.MapFrom(src => src.Order != null ? src.Order.TotalHt : 0m))
+            .ForMember(dest => dest.TotalTva, opt => opt.MapFrom(src => src.Order != null ? src.Order.TotalTva : 0m))
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.User != null ? src.User.Id : Guid.Empty))
+            .ForMember(dest => dest.UserFullName, opt => opt.MapFrom(src => src.User != null ? $"{src.User.FirstName} {src.User.LastName}" : string.Empty))
+            .ForMember(dest => dest.UserEmail, opt => opt.MapFrom(src => src.User != null ? src.User.Email.Value : string.Empty))
+            .ForMember(dest => dest.PdfUrl, opt => opt.MapFrom(src => string.IsNullOrEmpty(src.PdfUrl) ? null : src.PdfUrl));
     }
 }

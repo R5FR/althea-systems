@@ -51,6 +51,7 @@ export const routes: Routes = [
       { path: 'produits/:id', loadComponent: () => import('./features/admin/products/product-form.component').then(m => m.ProductFormComponent) },
       { path: 'categories', loadComponent: () => import('./features/admin/categories/categories.component').then(m => m.CategoriesComponent) },
       { path: 'commandes', loadComponent: () => import('./features/admin/orders/admin-orders.component').then(m => m.AdminOrdersComponent) },
+      { path: 'factures', loadComponent: () => import('./features/admin/invoices/admin-invoices.component').then(m => m.AdminInvoicesComponent) },
       { path: 'utilisateurs', loadComponent: () => import('./features/admin/users/admin-users.component').then(m => m.AdminUsersComponent) },
       { path: 'homepage', loadComponent: () => import('./features/admin/homepage/homepage-config.component').then(m => m.HomepageConfigComponent) },
       { path: 'messages', loadComponent: () => import('./features/admin/messages/admin-messages.component').then(m => m.AdminMessagesComponent) },

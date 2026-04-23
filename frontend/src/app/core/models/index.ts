@@ -276,7 +276,12 @@ export interface Invoice {
   id: string;
   invoiceNumber: string;
   orderId: string;
+  orderNumber: string;
   userId: string;
+  userFullName: string;
+  userEmail: string;
+  totalHt: number;
+  totalTva: number;
   totalTtc: number;
   status: 'Pending' | 'Paid' | 'Cancelled';
   issuedAt: string;

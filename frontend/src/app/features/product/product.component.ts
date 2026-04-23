@@ -90,7 +90,7 @@ import { Product, ProductListItem } from '../../core/models';
             </div>
 
             <!-- Price -->
-            <div class="bg-gray-50 rounded-xl p-4">
+            <div class="rounded-xl p-4 border border-primary-100 bg-primary-50">
               <div class="text-3xl font-bold text-primary">{{ product()!.priceTtc | number:'1.2-2' }} €</div>
               <div class="text-sm text-gray-500 mt-1">
                 <span class="font-medium">{{ product()!.priceHt | number:'1.2-2' }} € {{ 'product.price_ht' | translate }}</span>
@@ -126,7 +126,7 @@ import { Product, ProductListItem } from '../../core/models';
             } @else {
               <!-- Standard product: add to cart -->
               <div class="flex flex-col sm:flex-row gap-3">
-                <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+                <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden">
                   <button (click)="qty.set(Math.max(1, qty()-1))" class="px-4 py-3 hover:bg-gray-100 text-lg font-bold">−</button>
                   <span class="w-12 text-center font-semibold">{{ qty() }}</span>
                   <button (click)="qty.set(Math.min(product()!.stockQuantity, qty()+1))" class="px-4 py-3 hover:bg-gray-100 text-lg font-bold">+</button>
@@ -153,30 +153,42 @@ import { Product, ProductListItem } from '../../core/models';
                   {{ 'product.added_to_cart' | translate }}
                 </p>
               }
+              <div class="flex items-center gap-4 flex-wrap">
+                <span class="flex items-center gap-1.5 text-xs text-gray-400">
+                  <svg class="w-3.5 h-3.5 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                  </svg>
+                  {{ 'home.trust_delivery' | translate }}
+                </span>
+                <span class="flex items-center gap-1.5 text-xs text-gray-400">
+                  <svg class="w-3.5 h-3.5 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+                  </svg>
+                  {{ 'home.trust_quality' | translate }}
+                </span>
+              </div>
             }
 
             <!-- Technical specs -->
-            @if (product()!.description) {
-              <div class="border-t pt-5">
-                <h2 class="font-semibold text-gray-900 mb-3">{{ 'product.specs' | translate }}</h2>
-                <div class="text-sm text-gray-600 space-y-1">
-                  <div class="flex justify-between py-1 border-b border-gray-100">
-                    <span class="text-gray-500">{{ 'product.reference' | translate }}</span>
-                    <span class="font-medium">{{ product()!.slug }}</span>
-                  </div>
-                  <div class="flex justify-between py-1 border-b border-gray-100">
-                    <span class="text-gray-500">{{ 'product.vat_rate' | translate }}</span>
-                    <span class="font-medium">{{ product()!.tvaRate }}%</span>
-                  </div>
-                  <div class="flex justify-between py-1">
-                    <span class="text-gray-500">{{ 'product.availability' | translate }}</span>
-                    <span class="font-medium" [class.text-green-600]="product()!.stockQuantity > 0" [class.text-red-500]="product()!.stockQuantity === 0">
-                      {{ product()!.stockQuantity > 0 ? ('product.in_stock' | translate) : ('product.out_of_stock_short' | translate) }}
-                    </span>
-                  </div>
+            <div class="border-t pt-5">
+              <h2 class="font-semibold text-gray-900 mb-3">{{ 'product.specs' | translate }}</h2>
+              <div class="text-sm text-gray-600 space-y-1">
+                <div class="flex justify-between py-1 border-b border-gray-100">
+                  <span class="text-gray-500">{{ 'product.reference' | translate }}</span>
+                  <span class="font-medium">{{ product()!.slug }}</span>
+                </div>
+                <div class="flex justify-between py-1 border-b border-gray-100">
+                  <span class="text-gray-500">{{ 'product.vat_rate' | translate }}</span>
+                  <span class="font-medium">{{ product()!.tvaRate }}%</span>
+                </div>
+                <div class="flex justify-between py-1">
+                  <span class="text-gray-500">{{ 'product.availability' | translate }}</span>
+                  <span class="font-medium" [class.text-green-600]="product()!.stockQuantity > 0" [class.text-red-500]="product()!.stockQuantity === 0">
+                    {{ product()!.stockQuantity > 0 ? ('product.in_stock' | translate) : ('product.out_of_stock_short' | translate) }}
+                  </span>
                 </div>
               </div>
-            }
+            </div>
           </div>
         </div>
 

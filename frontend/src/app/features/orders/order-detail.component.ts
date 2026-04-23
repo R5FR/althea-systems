@@ -4,6 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { TranslateDynamicPipe } from '../../shared/pipes/translate-dynamic.pipe';
 import { OrderService } from '../../core/services/order.service';
+import { InvoiceService } from '../../core/services/invoice.service';
 import { Order } from '../../core/models';
 
 @Component({
@@ -205,9 +206,10 @@ import { Order } from '../../core/models';
   `,
 })
 export class OrderDetailComponent implements OnInit {
-  private route = inject(ActivatedRoute);
-  private orderSvc = inject(OrderService);
-  private translate = inject(TranslateService);
+  private route      = inject(ActivatedRoute);
+  private orderSvc   = inject(OrderService);
+  private invoiceSvc = inject(InvoiceService);
+  private translate  = inject(TranslateService);
 
   order = signal<Order | null>(null);
   loading = signal(true);
@@ -241,11 +243,24 @@ export class OrderDetailComponent implements OnInit {
   downloadInvoice() {
     const o = this.order();
     if (!o) return;
-    this.orderSvc.exportPdf(o.id).subscribe(blob => {
+    // First ensure invoice exists for this order, then download PDF
+    this.invoiceSvc.getByOrderId(o.id).subscribe({
+      next: inv => this._doDownload(inv.id, o.orderNumber),
+      error: () => {
+        // No invoice yet — nothing to download (should not happen for paid orders)
+        alert(this.translate.instant('orders.invoice_not_available'));
+      }
+    });
+  }
+
+  private _doDownload(invoiceId: string, orderNumber: string) {
+    this.invoiceSvc.downloadPdf(invoiceId).subscribe(blob => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url; a.download = `facture-${o.orderNumber}.pdf`;
-      a.click(); URL.revokeObjectURL(url);
+      a.href = url;
+      a.download = `facture-${orderNumber}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
     });
   }
 
