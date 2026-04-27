@@ -4,6 +4,8 @@
 
 > Precise · Progressive · Trustworthy
 
+![Althea Systems demo](docs/althea-hq.gif)
+
 ---
 
 ## Overview
