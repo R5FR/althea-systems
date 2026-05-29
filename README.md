@@ -236,8 +236,8 @@ cd frontend && npm test
 
 | Name | Role |
 |---|---|
-| Tom Leprieur | Full-stack |
-| Tiago Da Costa | Full-stack |
-| Arthur L'Afféter | Full-stack |
+| Tom Leprieur | Frontend developper |
+| Tiago Da Costa | Backend developper |
+| Arthur L'Afféter | PO and API integration |
 
 CPI Bachelor — B3 — 2026
